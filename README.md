@@ -1,139 +1,193 @@
-# Minimals
+# Tantangan Bebras
 
-Untuk tim kecil dengan cPanel/VPS seadanya: satu service, satu database, satu
-container di belakang Caddy. Tanpa gateway, tanpa microservice, tanpa platform
-tambahan — clone, isi `SECRET_KEY`, jalankan wizard, selesai. "Minimals"
-hanyalah default; di production, brand-nya milikmu.
+Platform latihan dan kompetisi **Computational Thinking** untuk jenjang
+**Siaga, Penggalang, dan Penegak**. Satu aplikasi untuk menyusun bank soal,
+membagikan latihan mandiri, menjalankan event terjadwal, dan membaca hasilnya.
 
-**Status: open alpha** — dipakai sungguhan, tapi skema & kontrak masih bisa
-berubah; kompatibilitas antar versi belum dijanjikan.
+Dibangun sebagai satu service Flask yang sekaligus menyajikan SPA Vue 3 — cukup
+satu proses, satu database, dan satu container di belakang Caddy, tanpa gateway
+dan tanpa layanan tambahan.
+
+> **Status: open alpha.** Sudah dipakai untuk data sungguhan, tetapi skema dan
+> kontrak API masih dapat berubah antar versi.
+
+## Peran pengguna
+
+| Peran | Pekerjaan utama |
+|---|---|
+| **Admin / guru** | Menyusun topik dan soal, menyiapkan latihan dan event, mengelola akun siswa, membaca hasil |
+| **Siswa** | Mengerjakan latihan dan event dari ponsel, lalu melihat skor dan pembahasan |
+| **Operator** | Memasang, memelihara, mencadangkan, dan memulihkan instalasi |
+
+## Fitur
+
+### Bank soal & topik
+
+- Soal pilihan ganda dan esai dengan konten rich text dan gambar (unggah hingga 5 MiB).
+- Kategori **Siaga / Penggalang / Penegak**, tingkat kesulitan, dan status aktif.
+- Topik sebagai pengelompokan bab yang bisa diurutkan ulang.
+- Editor soal dengan penyimpanan otomatis setiap 3 detik, penanda perubahan yang
+  belum tersimpan, dan panel outline untuk berpindah antarsoal.
+- Hapus lunak: soal dapat dipulihkan atau dihapus permanen.
+
+### Latihan mandiri
+
+- Satu klik **Mulai Latihan** — sistem menyusun satu lembar berisi soal acak dari
+  bank sesuai kategori siswa. Jumlah soal per lembar diatur admin.
+- Hitung mundur 30 menit, jawaban tersimpan otomatis, pengumpulan dan penilaian
+  otomatis dengan 10 poin per jawaban benar.
+- Riwayat latihan lengkap dengan skor, durasi, dan pembahasan tiap soal.
+
+### Event & kompetisi
+
+- Event berisi daftar soal pilihan, batas waktu sendiri, dan tenggat pengumpulan.
+- Status **draf / terbit** — soal baru dapat dikerjakan setelah event diterbitkan.
+- Setiap percobaan menyimpan salinan soalnya sendiri, sehingga perubahan pada bank
+  soal tidak mengubah hasil yang sudah berjalan.
+- Halaman hasil untuk guru: skor dan durasi setiap peserta.
+
+### Manajemen siswa
+
+- Data siswa dengan kategori, sekolah, dan kota; aktivasi akun, hapus lunak, dan
+  pemulihan.
+- Impor massal dari XLSX, lengkap dengan templat yang bisa diunduh.
+- Pencarian dan filter berdasarkan kategori maupun status.
+
+### Dasbor & laporan
+
+- Dasbor admin: jumlah soal, siswa, event, dan latihan, plus sebaran sekolah,
+  pendaftaran, dan kategori.
+- Dasbor siswa: latihan yang sedang berjalan dan riwayat skor.
+
+### Operasional
+
+- **Wizard instalasi pertama** — pilih database, uji koneksi, isi brand, buat
+  administrator. Hanya menerima koneksi loopback.
+- **White-label & SEO** — nama, tagline, deskripsi, site URL, dan bahasa diatur
+  sekali, lalu di-inject server-side ke `<title>`, meta, robots, dan Open Graph.
+- **Dua bahasa** — Indonesia dan Inggris, dengan preferensi tersimpan per pengunjung.
+- **Backup** — ekspor seluruh database ke SQL dan impor untuk memulihkan.
+- **Audit log** untuk perubahan sensitif, serta to-do internal untuk pekerjaan tim.
+
+### Pengalaman siswa
+
+- Tampilan mobile-first dengan navigasi bawah dan mode fokus saat mengerjakan.
+- **Panduan interaktif** yang mengantar siswa dari latihan pertama, cara menjawab,
+  sampai membaca hasil — lalu menawarkan event sebagai langkah lanjutan.
+- Animasi perayaan setiap kali latihan atau event selesai.
+
+## Alur kerja
+
+1. **Siapkan** — admin membuat topik, menulis soal, lalu menyusun latihan atau event.
+2. **Kerjakan** — siswa masuk dan mengerjakan latihan kapan saja, atau event pada
+   jendela waktunya.
+3. **Baca hasil** — skor pilihan ganda dihitung otomatis; guru melihat rekap peserta
+   di halaman hasil.
+
+## Teknologi
 
 | | |
 |---|---|
-| **Backend** | Flask 3 · SQLAlchemy 2 · Pydantic 2 · Flask-Login · Alembic · waitress |
-| **Frontend** | Vue 3 · Vite · Pinia · frappe-ui · Tailwind (TS strict) |
+| **Backend** | Flask 3 · SQLAlchemy 2 · Pydantic 2 · Alembic · waitress |
+| **Frontend** | Vue 3 · Vite · Pinia · frappe-ui · Tailwind (TypeScript strict) |
 | **Database** | SQLite · MariaDB/MySQL · PostgreSQL |
 | **Deploy** | Docker (non-root) + Caddy (TLS) |
 
-## Highlights
-
-- **White-label & SEO** — brand (nama, tagline, deskripsi, site URL, bahasa)
-  diatur sekali di wizard, di-inject server-side ke `<title>`/meta/robots/
-  Open Graph, plus label SPA & judul/meta description per halaman. Default
-  seluruh stack "Minimals".
-- **Auth lengkap** — session + API key, role admin/member, dan **registration
-  gate**: admin bisa menutup/membuka pendaftaran lewat API, efektif tanpa
-  restart, untuk deployment invite-only.
-- **First-run wizard** — pilih database (SQLite/MySQL/PostgreSQL), tes
-  koneksi, brand, lalu buat administrator. Hanya menerima klien loopback.
-- **Keamanan aktif by default** — CSRF, rate limit, CSP/HSTS, audit log,
-  password scrypt.
-- **SPA Vue 3 di-serve Flask** — tanpa web server terpisah untuk frontend;
-  Docker image non-root.
-
-## Quick Start
+## Menjalankan di lokal
 
 ```bash
 uv sync
 cp .env.example .env
 python -c "import secrets; print(secrets.token_hex(32))"   # → SECRET_KEY
+uv run python -m app.run                                   # waitress di :8000
 ```
 
-`SECRET_KEY` wajib ≥32 karakter; placeholder ditolak dan app refuse boot.
-SQLite default ada di `data/app.db` (git-ignored).
+`SECRET_KEY` wajib minimal 32 karakter; placeholder ditolak dan aplikasi menolak
+boot. Untuk pengembangan lewat HTTP biasa, set `FORCE_HTTPS=false` agar tidak
+terjadi loop redirect.
+
+Frontend dikembangkan terpisah saat mengubah antarmuka:
 
 ```bash
-uv run python -m app.run                        # waitress di :8000
-MIGRATE_ON_BOOT=true uv run python -m app.run    # migration dulu
+cd frontend
+yarn install
+yarn dev        # Vite :5173, proxy /api → :8000
+yarn build      # hasil build ke app/static/frontend/
+yarn typecheck
 ```
 
-Dev lokal via HTTP biasa: set `FORCE_HTTPS=false` — default `.env.example`
-`true`, dan tanpa TLS proxy akan loop redirect.
-
-## First-run Setup
-
-Sampai setup selesai, SPA mengarahkan semua navigasi ke `/setup`. Wizard
-(loopback-only — buka dari server atau SSH tunnel
-`ssh -L 8000:localhost:8000 server` → `http://127.0.0.1:8000/setup`) menulis
-`DATABASE_URL` ke `.env`, memigrasi target, membuat admin, dan menyimpan brand
-+ bahasa. Kalau database target beda dari engine aktif, respons meminta
-restart.
-
-## White-label & SEO
-
-Brand disimpan di tabel `settings` dan di-inject server-side tiap request
-`index.html` — crawler tidak perlu menjalankan JS. `robots.txt` dan
-`sitemap.xml` mengikuti brand; canonical/`og:url` hanya muncul setelah **Site
-URL** diisi (tidak pernah dari header `Host`).
-
-- Env: `SEO_INDEXABLE=false` → `noindex` + robots disallow; `APP_LANG` →
-  fallback bahasa (`en` default). Preferensi pengunjung di cookie
-  `minimals-lang`.
-- DB lama yang dibuat **sebelum** fitur ini tidak otomatis punya tabel
-  `settings` — recreate DB, atau buat manual
-  (`id CHAR(36) PK, key VARCHAR(64) UNIQUE, value TEXT DEFAULT ''`).
-
-## Development
+Pengujian dan lint:
 
 ```bash
 uv run pytest
 uv run ruff check .
-
-cd frontend && yarn install
-yarn dev                     # Vite :5173, proxy /api → :8000
-yarn build                   # → app/static/frontend/
-yarn typecheck
 ```
 
-## Production (cPanel/VPS + Caddy)
+## Instalasi pertama
 
-1. `cd frontend && yarn install && yarn build`
-2. `.env` dengan `SECRET_KEY` asli + `DATABASE_URL`
-3. Arahkan Caddy (`Caddyfile`) ke `localhost:8000`
-4. `TRUSTED_PROXY=true` (hanya di belakang proxy) — `FORCE_HTTPS=true`
-   (default) asalkan Caddy kirim `X-Forwarded-Proto`
-5. `uv run python -m app.run`
+Selama setup belum selesai, semua navigasi diarahkan ke `/setup`. Wizard hanya
+menerima klien loopback — jalankan dari server, atau lewat SSH tunnel:
 
-## Docker
+```bash
+ssh -L 8000:localhost:8000 server
+# lalu buka http://127.0.0.1:8000/setup
+```
+
+Wizard menulis `DATABASE_URL` ke `.env`, memigrasi database target, membuat
+administrator, dan menyimpan brand beserta bahasa.
+
+## Deploy produksi
+
+Siapkan aset frontend terlebih dahulu:
+
+```bash
+cd frontend && yarn install && yarn build
+```
+
+1. Isi `.env`: `SECRET_KEY` asli, `DATABASE_URL`, dan `SEO_INDEXABLE`.
+2. Arahkan Caddy ke `localhost:8000` — contoh konfigurasi ada di `Caddyfile`.
+3. Di belakang proxy, set `TRUSTED_PROXY=true` dan biarkan `FORCE_HTTPS=true`
+   selama Caddy mengirim `X-Forwarded-Proto`.
+4. Jalankan `uv run python -m app.run`, atau set `MIGRATE_ON_BOOT=true` bila ingin
+   migrasi berjalan otomatis saat start.
+
+Dengan Docker:
 
 ```bash
 docker compose up --build
 ```
 
-Bind `127.0.0.1:8000` (Caddy di depan), `MIGRATE_ON_BOOT=true` sudah
-diset. Kalau SQLite dipakai dan host volume `./data` tak writable oleh
-container, jalankan `sudo chown -R 10001:10001 data` (uid `appuser`).
-Database dari dalam container tidak persist — set `DATABASE_URL` di `.env`.
+Port di-bind ke `127.0.0.1:8000` dengan Caddy di depan. Bila memakai SQLite pada
+volume host, pastikan `./data` dapat ditulis uid `10001`:
+`sudo chown -R 10001:10001 data`. Database di dalam container tidak persisten —
+set `DATABASE_URL` di `.env`.
 
-## Architecture
+## Keamanan
 
-Satu service dengan domain berlapis (`api → dto → services → repositories →
-models → presenters`); commit hanya di service; response camelCase, error
-`{"message": "<snake_case_key>"}`. Detail & konvensi lengkap:
-[`CLAUDE.md`](CLAUDE.md), [`framework/README.md`](framework/README.md).
+Beberapa hal yang perlu dibaca sebelum instalasi dibuka ke internet:
 
-## Security notes
+- `/uploads/*` disajikan tanpa autentikasi — jangan menyimpan berkas sensitif di sana.
+- Pendaftaran akun staf terbuka secara default dan langsung membuat sesi; tutup lewat
+  `PUT /api/v1/auth/registration` untuk instalasi invite-only.
+- `/health`, `/ready`, dan `/api/v1/setup/status` bersifat publik dan menampilkan
+  informasi terbatas tentang instalasi.
+- Rate limit berjalan per IP; untuk deployment multi-worker, arahkan
+  `RATE_LIMIT_STORAGE_URL` ke Redis.
+- CSRF, CSP/HSTS, dan audit log aktif secara default; password di-hash dengan scrypt.
 
-Baca sebelum eksposur internet:
+## Dokumentasi
 
-- `/uploads/*` diserve **tanpa autentikasi** — jangan simpan file sensitif di
-  `app/static/uploads/`
-- `POST /api/v1/auth/register` terbuka (mode default `open`) dan langsung
-  login. Tutup via `PUT /api/v1/auth/registration` (admin) untuk deployment
-  invite-only
-- `/api/v1/setup/status` dan `/health` publik — mengekspos engine aktif,
-  database URL ter-mask, dan metrik agregat
-- API key hanya mengautentikasi request read; mutasi tetap butuh CSRF session
-- Rate limit per IP efektif, hanya route API; set `RATE_LIMIT_STORAGE_URL`
-  (mis. `redis://…`) untuk multi-worker
-- `TRUSTED_PROXY=true` hanya di belakang proxy: rewrite `X-Forwarded-*` cuma
-  dipercaya dari peer private/loopback
+- [`CLAUDE.md`](CLAUDE.md) — konvensi kode, arsitektur berlapis, wire format, dan
+  daftar endpoint lengkap.
+- [`docs/FEATURES.md`](docs/FEATURES.md) — matriks fitur beserta tautan ke
+  spesifikasi tiap domain.
+- [`framework/README.md`](framework/README.md) — base class dan utilitas framework.
 
-## Contributing
+## Kontribusi
 
-Selama open alpha, kontribusi hanya untuk **perbaikan bug** — issue maupun PR
-fix diterima. Fitur baru tidak diterima.
+Selama open alpha, kontribusi dibatasi pada perbaikan bug — issue dan PR perbaikan
+diterima, fitur baru belum.
 
-## License
+## Lisensi
 
 [MIT](LICENSE) — © 2026 Apriliansyah Idris.

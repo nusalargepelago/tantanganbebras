@@ -18,7 +18,7 @@ dengan Vue 3 SPA (frappe-ui) yang di-serve oleh Flask sendiri.
 | `app/` | Service ini: `auth` + `account` domain, `infra` cross-domain, migrations, config, entry point |
 | `frontend/` | Vue 3 + Vite + Pinia + frappe-ui SPA. Build output → `app/static/frontend/` |
 | `tests/` | pytest, 1 file per concern + `conftest.py` |
-| `frappe-ui/` | Checkout sibling dari upstream (git-ignored, `.git` sendiri). **Bukan** dependency yang di-resolve build — `frontend/` ambil `frappe-ui@1.0.0-rc.2` dari npm. Referensi baca saja. **Jangan diedit.** |
+| `frappe-ui/` | Checkout sibling dari upstream (git-ignored, `.git` sendiri). **Bukan** dependency yang di-resolve build — `frontend/` ambil `frappe-ui@1.0.2` dari npm. Referensi baca saja. **Jangan diedit.** |
 
 Single service, so: tidak ada `cells.services` discovery, tidak ada cross-service
 SDK. Endpoint `/api/v1/app/*` adalah read API untuk service **luar** repo ini
@@ -136,7 +136,7 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | /api/v1/auth/register | Register new user (public, rate-limited) |
-| POST | /api/v1/auth/login | Login (public, rate-limited) |
+| POST | /api/v1/auth/login | Login (public, rate-limited; any active account — staff & student, the role decides the menu) |
 | POST | /api/v1/auth/logout | Logout (session) |
 | GET | /api/v1/auth/me | Current user (session) |
 | GET | /api/v1/auth/registration | Registration mode open/closed (public) |
@@ -148,6 +148,8 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | GET | /api/v1/account/users | List users (admin) |
 | GET | /api/v1/account/users/:id | Fetch one user (owner or admin) |
 | PATCH | /api/v1/account/users/:id | Update user (admin) |
+| POST | /api/v1/account/users | Create user (admin) |
+| DELETE | /api/v1/account/users/:id | Delete user (admin) |
 | GET | /api/v1/account/roles | List roles (admin) |
 | POST | /api/v1/account/roles | Create role (admin) |
 | PATCH | /api/v1/account/roles/:id | Update role (admin) |
@@ -155,11 +157,75 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | POST | /api/v1/account/api-keys | Create API key (session) |
 | GET | /api/v1/account/api-keys | List API keys (session) |
 | DELETE | /api/v1/account/api-keys/:id | Revoke API key (session) |
+| GET | /api/v1/topic | List topics (staff, paginated) |
+| POST | /api/v1/topic | Create topic (staff) |
+| GET | /api/v1/topic/:name | Fetch one topic (staff) |
+| PATCH | /api/v1/topic/:name | Update topic (staff) |
+| DELETE | /api/v1/topic/:name | Delete topic (staff) |
+| POST | /api/v1/topic/reorder | Reorder topics (staff) |
+| GET | /api/v1/question | List questions (staff, paginated) |
+| POST | /api/v1/question | Create question (staff) |
+| GET | /api/v1/question/option-list | Enum options for question filters (staff) |
+| GET | /api/v1/question/:name | Fetch one question (staff) |
+| PATCH | /api/v1/question/:name | Update question (staff) |
+| DELETE | /api/v1/question/:name | Soft-delete question (staff) |
+| POST | /api/v1/question/:name/restore | Restore question (staff) |
+| DELETE | /api/v1/question/:name/purge | Purge question (staff) |
+| GET | /api/v1/student/auth/login | Student login branding (public) |
+| POST | /api/v1/student/auth/register | Student self-register (public, rate-limited) |
+| POST | /api/v1/student/auth/login | Student login (public, rate-limited) |
+| POST | /api/v1/student/auth/logout | Student logout (session) |
+| GET | /api/v1/student/auth/me | Current student session |
+| GET | /api/v1/student | List students (staff, paginated) |
+| POST | /api/v1/student | Create student (staff) |
+| GET | /api/v1/student/:userId | Fetch one student (staff) |
+| PATCH | /api/v1/student/:userId | Update student (staff) |
+| DELETE | /api/v1/student/:userId | Soft-delete student (staff) |
+| POST | /api/v1/student/:userId/restore | Restore student (staff) |
+| POST | /api/v1/student/:userId/activate | Activate student (staff) |
+| DELETE | /api/v1/student/:userId/purge | Purge student (staff) |
+| POST | /api/v1/student/import | Import students from XLSX (staff) |
+| GET | /api/v1/student/import-template | Download XLSX import template (staff) |
+| POST | /api/v1/student/practice/create | Create a 10-question practice sheet (student) |
+| GET | /api/v1/student/practice/start | Resume the active practice (student) |
+| POST | /api/v1/student/practice/answer-temp | Autosave one answer (student) |
+| POST | /api/v1/student/practice/store | Submit & score a practice (student) |
+| GET | /api/v1/student/practice/mine | List my practices (student) |
+| GET | /api/v1/student/practice/:name | Practice result detail (owner) |
+| GET | /api/v1/practice/:name | Practice review w/ shuffle (staff) |
+| GET | /api/v1/practice | List all practices (staff, paginated) |
+| GET | /api/v1/practice/settings | Practice settings — min questions (staff) |
+| PUT | /api/v1/practice/settings | Update min questions (admin, audited) |
+| GET | /api/v1/event | List events (staff, paginated) |
+| POST | /api/v1/event | Create event (staff) |
+| GET | /api/v1/event/:name | Fetch one event + questions (staff) |
+| PATCH | /api/v1/event/:name | Update event (staff) |
+| DELETE | /api/v1/event/:name | Soft-delete event (staff) |
+| POST | /api/v1/event/:name/restore | Restore event (staff) |
+| DELETE | /api/v1/event/:name/purge | Purge event (staff) |
+| GET | /api/v1/event/:name/results | Event attempt results (staff) |
+| GET | /api/v1/student/event | Candidate events for student |
+| POST | /api/v1/student/event/make/:name | Start / resume an attempt (student) |
+| GET | /api/v1/student/event/start/:name | Resume attempt runner (student) |
+| POST | /api/v1/student/event/answer-temp | Autosave one answer (student) |
+| POST | /api/v1/student/event/store | Submit & score an attempt (student) |
+| GET | /api/v1/student/event/:name | Attempt result (owner) |
+| GET | /api/v1/dashboard | Admin dashboard counters (staff) |
+| GET | /api/v1/dashboard/stats | Admin dashboard statistics — schools, registrations, categories (staff) |
+| GET | /api/v1/student/dashboard | Student dashboard (student) |
+| GET | /api/v1/todos | List todos (paginated) |
+| POST | /api/v1/todos | Create todo (session) |
+| GET | /api/v1/todos/:id | Fetch one todo (owner or admin) |
+| PATCH | /api/v1/todos/:id | Update todo (owner or admin) |
+| PUT | /api/v1/todos/:id | Update todo (owner or admin) |
+| DELETE | /api/v1/todos/:id | Delete todo (owner or admin) |
 | GET | /api/v1/app/ping | Liveness of the read API (public) |
 | GET | /api/v1/app/users | Cross-service read API (internal token or admin) |
 | GET | /api/v1/app/roles | Cross-service read API (internal token or admin) |
 | POST | /api/v1/uploads | Upload image (admin, max 5 MiB, png/jpg/jpeg/webp/gif) |
 | DELETE | /api/v1/uploads/:name | Delete uploaded image (admin, idempotent 204) |
+| GET | /api/v1/backup/export | Download full SQL backup (admin, audited) |
+| POST | /api/v1/backup/import | Restore SQL backup, overwrite (admin, 2/min, audited) |
 | GET | /robots.txt | Crawler instructions, brand-driven (public) |
 | GET | /sitemap.xml | Canonical site URL for crawlers (public) |
 | GET | /health | Health check (public) |
@@ -318,7 +384,7 @@ semua; `app/config.py` menambah path & static.
 
 ## Frontend
 
-Vue 3 + Vite + Pinia + frappe-ui (`1.0.0-rc.2`), TypeScript strict.
+Vue 3 + Vite + Pinia + frappe-ui (`1.0.2`), TypeScript strict.
 
 ```
 src/
