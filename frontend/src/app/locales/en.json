@@ -1,73 +1,370 @@
 {
+  "celebration": {
+    "title": "Congratulations!"
+  },
   "nav": {
     "home": "Home",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "practice": "Practice",
+    "events": "Events",
+    "event": "Event",
+    "questionBank": "Question Bank",
+    "students": "Students",
+    "practiceReview": "Practice Review",
+    "todo": "ToDo",
+    "users": "Users",
+    "backup": "Backup"
   },
   "menu": {
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
     "system": "System",
-    "settings": "Settings",
+    "language": "Language",
     "logout": "Log out",
-    "section": "Menu"
+    "settings": "Settings",
+    "section": "Menu",
+    "open": "Open menu"
   },
-  "settings": {
-    "title": "Settings",
-    "nav": {
-      "user": "User settings"
+  "tour": {
+    "menu": "Guide",
+    "catalog": {
+      "title": "Guides",
+      "subtitle": "Short, focused walkthroughs. Pick one to replay it whenever you need.",
+      "empty": "No guides are available for your account.",
+      "start": "Start",
+      "replay": "Replay",
+      "completed": "Completed",
+      "steps": "Steps: {count}",
+      "close": "Close"
     },
-    "profile": {
-      "title": "Profile",
-      "fullName": "Full name",
-      "email": "Email",
-      "username": "Username",
-      "role": "Role",
-      "memberSince": "Member since"
+    "controls": {
+      "step": "Step {current} of {total}",
+      "back": "Back",
+      "next": "Next",
+      "finish": "Finish",
+      "skip": "Skip tour",
+      "close": "Close tour",
+      "offRoute": "This step lives on another page. Go back to that page to continue the tour."
     },
-    "preferences": {
-      "title": "Preferences",
-      "theme": "Theme",
-      "themeDescription": "Light, dark, or follow your system.",
-      "language": "Language",
-      "languageDescription": "Language used across the app."
+    "student-start": {
+      "title": "Start with practice",
+      "description": "Practice first at your own pace. Challenges are optional and open whenever you are ready.",
+      "steps": {
+        "dashboard": {
+          "title": "Your progress",
+          "body": "This is your home. It shows how many practices and challenges you have done — tap a card to open that page."
+        },
+        "actions": {
+          "title": "Two ways to start",
+          "body": "Practice is untimed: solve questions and check your score. Challenges are timed events. Start with practice."
+        },
+        "practice": {
+          "title": "The practice page",
+          "body": "Every practice you start shows up here with its score and duration. Finished ones stay available to review."
+        },
+        "practice-start": {
+          "title": "Create a practice",
+          "body": "Tap Start practice and the questions open right away. You can change answers until you submit."
+        },
+        "runner-header": {
+          "title": "While you practise",
+          "body": "The header shows the practice title, the current question, and the autosave status. Answers are saved as you type."
+        },
+        "runner-pager": {
+          "title": "Move between questions",
+          "body": "Use the numbers to jump to any question. Green means answered, blue is the current question."
+        },
+        "runner-submit": {
+          "title": "Submit when ready",
+          "body": "Submit finishes the attempt and opens your score. Nothing is graded before that."
+        },
+        "result": {
+          "title": "Your result",
+          "body": "The score card summarises the attempt. Every finished attempt opens with a celebration."
+        },
+        "answers": {
+          "title": "Review your answers",
+          "body": "Scroll down to compare your answer with the correct one for each question."
+        },
+        "guide": {
+          "title": "Come back any time",
+          "body": "Open this menu and choose Guide (inside Settings on a phone). You can replay this tour, or take the Events tour when you want to join a challenge."
+        }
+      }
+    },
+    "student-event": {
+      "title": "Join an event",
+      "description": "Timed challenges from your teacher. Optional — try one when you feel ready.",
+      "steps": {
+        "event-list": {
+          "title": "Choose a challenge",
+          "body": "Each card shows the category, time limit, deadline, and your status. Challenges that match your category can be started right away."
+        },
+        "event-start": {
+          "title": "Start the challenge",
+          "body": "Tap Start to create an attempt. If you already started, the button becomes Continue."
+        },
+        "runner-header": {
+          "title": "During the challenge",
+          "body": "The header shows the challenge title, the current question, and the autosave status. Answers are saved as you type."
+        },
+        "runner-timer": {
+          "title": "Watch the timer",
+          "body": "The countdown turns amber near the end and submits the attempt automatically when time runs out."
+        },
+        "runner-pager": {
+          "title": "Move between questions",
+          "body": "Use the numbers to jump to any question. Green means answered, blue is the current question."
+        },
+        "runner-submit": {
+          "title": "Submit when ready",
+          "body": "Submit finishes the attempt and opens your score. You can keep changing answers until then."
+        },
+        "result": {
+          "title": "Your result",
+          "body": "The score card summarises the attempt. From here you can go back to the challenge list or your dashboard."
+        }
+      }
+    },
+    "student-results": {
+      "title": "Check your results",
+      "description": "Open a finished practice or challenge and read your score.",
+      "steps": {
+        "list": {
+          "title": "Find a finished attempt",
+          "body": "Finished challenges show a View result button — tap it to open the score. Finished practices are listed on the Practice page."
+        },
+        "score": {
+          "title": "Score card",
+          "body": "This is your final score. The celebration plays every time you open a completed attempt."
+        }
+      }
+    },
+    "admin-dashboard": {
+      "title": "Dashboard overview",
+      "description": "Read the platform statistics and recent activity.",
+      "steps": {
+        "welcome": {
+          "title": "Welcome to your dashboard",
+          "body": "This short guide shows where the key numbers live and how to drill into events, questions, and practice."
+        },
+        "stats": {
+          "title": "Platform statistics",
+          "body": "These counters summarise activity for the current period. Use them to spot busy events and active or inactive students."
+        },
+        "totals": {
+          "title": "Totals",
+          "body": "Total students and schools come from the student directory. They update as students are registered."
+        },
+        "charts": {
+          "title": "Breakdowns",
+          "body": "Compare students by school and category. Hover a bar or slice to read the exact numbers."
+        },
+        "recent": {
+          "title": "Recent activity",
+          "body": "The latest events and students appear here. Click an item to open its detail page."
+        }
+      }
+    },
+    "admin-quiz": {
+      "title": "Add a quiz question",
+      "description": "Create a question, fill in the content, and save it to the bank.",
+      "steps": {
+        "list": {
+          "title": "Open the question bank",
+          "body": "Every question lives here. Click Add Question to create a new one."
+        },
+        "detail": {
+          "title": "Basic details",
+          "body": "Choose the code and type. The category prefix drives the suggested code."
+        },
+        "content": {
+          "title": "Question content",
+          "body": "Write the description and question with rich text, then fill the answer options. Use the editor toolbar for images and formatting."
+        },
+        "settings": {
+          "title": "Settings",
+          "body": "Set the category, difficulty, status, and topic. Saving validates the required fields."
+        },
+        "save": {
+          "title": "Save the question",
+          "body": "Save becomes available once there are unsaved changes. After saving you land on the question detail."
+        }
+      }
+    },
+    "admin-event": {
+      "title": "Create an event and read results",
+      "description": "Build a challenge, publish it, then open its results.",
+      "steps": {
+        "list": {
+          "title": "Create an event",
+          "body": "Start a new challenge here. Existing events are listed below."
+        },
+        "details": {
+          "title": "Event details",
+          "body": "Set the name, category, duration, deadline, and description. Tick Publish to make it visible to students."
+        },
+        "questions": {
+          "title": "Pick questions",
+          "body": "Only active questions from the event's category are listed. Select at least one question to enable Save."
+        },
+        "save": {
+          "title": "Save the event",
+          "body": "Saving opens the event detail, where the challenge is ready to test or share."
+        },
+        "open": {
+          "title": "Open the event",
+          "body": "Click an event row to open its detail. Any event in the list works."
+        },
+        "results-link": {
+          "title": "View results",
+          "body": "From the event detail, click View Results to see every submitted attempt."
+        },
+        "results": {
+          "title": "Results table",
+          "body": "Each row is a submitted attempt with score, duration, and submit time. Use the back button to return to the event."
+        }
+      }
+    },
+    "admin-practice": {
+      "title": "Review practice sheets",
+      "description": "Open a student's practice sheet and inspect the shuffle and answers.",
+      "steps": {
+        "list": {
+          "title": "All practice sheets",
+          "body": "Every sheet created by students is listed with its school, category, score, and status. Filter by category if needed."
+        },
+        "settings": {
+          "title": "Practice settings",
+          "body": "Admins can change how many questions each new sheet contains. The value applies to future sheets only."
+        },
+        "row": {
+          "title": "Open a sheet",
+          "body": "Click any row to open the sheet. You will see the questions before and after shuffling, plus the submitted answers."
+        },
+        "before": {
+          "title": "Before shuffle",
+          "body": "This is the original question set selected for the student."
+        },
+        "after": {
+          "title": "After shuffle",
+          "body": "The shuffled order is what the student actually answered. Options may also be reordered."
+        },
+        "answers": {
+          "title": "Submitted answers",
+          "body": "Each question shows the student's answer and whether it was correct."
+        }
+      }
     }
   },
-  "crumb": {
-    "dashboard": "Dashboard"
-  },
-  "route": {
-    "Login": {
-      "title": "Sign in",
-      "description": "Sign in to your account."
-    },
-    "Register": {
-      "title": "Create account",
-      "description": "Create an account to get started."
-    },
-    "Setup": {
-      "title": "Setup",
-      "description": "First-run setup: connect a database, set your brand, and create the administrator."
-    },
-    "Dashboard": {
-      "title": "Dashboard",
-      "description": "Your account overview: profile and roles."
-    }
-  },
-  "field": {
-    "fullName": "Full name",
-    "username": "Username",
-    "email": "Email",
-    "password": "Password",
-    "description": "Description"
+  "error": {
+    "generic": "An error occurred",
+    "invalid_credentials": "Invalid credentials",
+    "registration_disabled": "Registration is disabled",
+    "email_already_registered": "Email already registered",
+    "username_taken": "Username already taken",
+    "answers_required": "Answers required",
+    "api_key_not_found": "Api key not found",
+    "attempt_already_submitted": "Attempt already submitted",
+    "attempt_not_found": "Attempt not found",
+    "bad_request": "Bad request",
+    "cannot_delete_builtin_role": "Cannot delete builtin role",
+    "could_not_generate_unique_name": "Could not generate unique name",
+    "csrf_token_invalid": "Csrf token invalid",
+    "db_connection_failed": "Db connection failed",
+    "db_not_found": "Db not found",
+    "db_timeout": "Db timeout",
+    "db_unreachable": "Db unreachable",
+    "event_disabled": "Event disabled",
+    "event_expired": "Event expired",
+    "event_not_found": "Event not found",
+    "event_not_published": "Event not published",
+    "file_invalid_name": "File invalid name",
+    "file_required": "File required",
+    "file_too_large": "File too large",
+    "file_type_not_allowed": "File type not allowed",
+    "forbidden": "Forbidden",
+    "idx_invalid": "Idx invalid",
+    "integrity_error": "Integrity error",
+    "internal_server_error": "Internal server error",
+    "invalid_app_role": "Invalid app role",
+    "invalid_date": "Invalid date",
+    "invalid_db_credentials": "Invalid db credentials",
+    "invalid_db_host": "Invalid db host",
+    "invalid_db_name": "Invalid db name",
+    "invalid_db_path": "Invalid db path",
+    "invalid_db_port": "Invalid db port",
+    "invalid_email": "Invalid email",
+    "invalid_username": "Invalid username",
+    "items_must_be_non_empty_strings": "Items must be non empty strings",
+    "list_required": "List required",
+    "malformed": "Malformed",
+    "method_not_allowed": "Method not allowed",
+    "must_be_a_b_c_or_d": "Must be a b c or d",
+    "must_be_list": "Must be list",
+    "must_be_unique": "Must be unique",
+    "must_specify_practice_or_event_student": "Must specify practice or event student",
+    "must_specify_question_id": "Must specify question id",
+    "name_required": "Name required",
+    "no_fields_to_update": "No fields to update",
+    "not_found": "Not found",
+    "password_must_contain_digit": "Password must contain digit",
+    "password_must_contain_lowercase": "Password must contain lowercase",
+    "password_must_contain_special_character": "Password must contain special character",
+    "password_must_contain_uppercase": "Password must contain uppercase",
+    "payload_too_large": "Payload too large",
+    "practice_already_submitted": "Practice already submitted",
+    "practice_not_found": "Practice not found",
+    "question_not_found": "Question not found",
+    "questions_id_required": "Questions id required",
+    "rate_limit_exceeded": "Rate limit exceeded",
+    "required": "Required",
+    "role_already_exists": "Role already exists",
+    "role_not_found": "Role not found",
+    "setup_admin_failed": "Setup admin failed",
+    "setup_already_complete": "Setup already complete",
+    "setup_migration_failed": "Setup migration failed",
+    "site_url_invalid": "Site url invalid",
+    "spa_not_built": "Spa not built",
+    "student_disabled": "Student disabled",
+    "student_not_found": "Student not found",
+    "test_requires_staff": "Test requires staff",
+    "title_required": "Title required",
+    "todo_not_found": "Todo not found",
+    "topic_not_found": "Topic not found",
+    "unauthorized": "Unauthorized",
+    "unprocessable_entity": "Unprocessable entity",
+    "unsupported_engine": "Unsupported engine",
+    "unsupported_host": "Unsupported host",
+    "user_not_found": "User not found",
+    "username_already_registered": "Username already registered",
+    "value_essay_requires_reference_answer": "Value essay requires reference answer",
+    "value_pg_requires_correct_answer": "Value pg requires correct answer",
+    "conflict": "Conflicting data",
+    "database_required": "Database required",
+    "domain_error": "Domain error",
+    "invalid_api_key": "Invalid API key",
+    "invalid_operation": "Invalid operation",
+    "setup_env_write_failed": "Setup env write failed",
+    "setup_repoint_failed": "Setup engine repoint failed",
+    "unknown_db_host": "Unknown database host",
+    "unsupported_lang": "Unsupported language",
+    "username_required": "Username required",
+    "validation_error": "Validation error"
   },
   "auth": {
-    "signIn": "Sign in",
-    "createAccount": "Create account",
-    "haveAccount": "Already have an account?",
     "errors": {
       "loginFailed": "Login failed",
       "registrationFailed": "Registration failed"
+    },
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account?",
+    "field": {
+      "username": "Username",
+      "password": "Password",
+      "email": "Email"
     },
     "login": {
       "identifier": "Email or username",
@@ -76,7 +373,26 @@
       "welcome": "Welcome back, {name}"
     },
     "register": {
+      "fullName": "Full name",
       "created": "Account created — welcome, {name}"
+    },
+    "studentLogin": {
+      "title": "Student Login",
+      "button": "Login",
+      "noAccount": "Don't have an account?",
+      "register": "Register"
+    },
+    "studentRegister": {
+      "title": "Student Register",
+      "adminActivate": "The account will be activated by an admin.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "usernameMin": "Min. 3 characters",
+      "passwordMin": "Min. 6 characters",
+      "category": "Category",
+      "school": "School",
+      "city": "City",
+      "country": "Country"
     },
     "passwordRules": {
       "uppercase": "One uppercase letter",
@@ -92,15 +408,521 @@
     "pagination": "Pagination",
     "prevPage": "Previous page",
     "nextPage": "Next page",
+    "cancel": "Cancel",
+    "save": "Save",
     "ok": "OK",
-    "close": "Close",
     "forbiddenTitle": "Access denied",
-    "forbiddenMessage": "This page requires administrator privileges. Your account is registered as a regular user. Contact an administrator to get access."
+    "forbiddenMessage": "This page requires administrator privileges. Your account is registered as a regular user. Contact an administrator to get access.",
+    "close": "Close"
+  },
+  "list": {
+    "all": "All",
+    "name": "Name",
+    "code": "Code",
+    "type": "Type",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "status": "Status",
+    "actions": "Actions",
+    "email": "Email",
+    "school": "School",
+    "student": "Student",
+    "score": "Score",
+    "date": "Date",
+    "title": "Title",
+    "dueDate": "Due date",
+    "edit": "Edit",
+    "delete": "Delete",
+    "activate": "Activate",
+    "restore": "Restore",
+    "purge": "Purge",
+    "essay": "Essay",
+    "emptyValue": "(empty)",
+    "deleted": "Deleted",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "notSubmitted": "Not Submitted",
+    "pending": "Pending"
+  },
+  "category": {
+    "cub": "Cub",
+    "scout": "Scout",
+    "rover": "Rover"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "question": {
+    "addTopic": "Add {category} Topic",
+    "openEditor": "Open Editor",
+    "addQuestion": "Add Question",
+    "searchPlaceholder": "Search code or question…",
+    "noMatch": "No questions match the filters.",
+    "noData": "No questions yet. Add the first question.",
+    "deleteTitle": "Delete Question",
+    "deleteMessage": "Delete \"{code}\"? Deleted questions cannot be restored from the list, but can be restored from the deleted view.",
+    "deleteFailed": "Failed to delete question",
+    "deletedToast": "Question deleted",
+    "restoreToast": "Question restored",
+    "restoreFailed": "Failed to restore question",
+    "purgeTitle": "Purge Question",
+    "purgeMessage": "Permanently purge \"{code}\"? This cannot be undone.",
+    "purgedToast": "Question purged",
+    "purgeFailed": "Failed to purge question",
+    "loadFailed": "Failed to load question",
+    "saveFailed": "Failed to save question",
+    "updatedToast": "Question updated",
+    "createdToast": "Question created",
+    "topicNone": "None",
+    "questionPlaceholder": "Write the question…",
+    "descriptionPlaceholder": "Optional description shown before the question…",
+    "referencePlaceholder": "The reference answer for graders…",
+    "deleteMessageShort": "Delete \"{code}\"?",
+    "newTopic": "Add topic",
+    "deleteQuestionMessage": "Deleted questions cannot be restored from here, but can be restored from the question list. Continue?",
+    "loadQuestions": "Failed to load questions",
+    "createQuestion": "Failed to create question",
+    "loadTopics": "Failed to load topics",
+    "createTopic": "Failed to create topic",
+    "updateTopic": "Failed to update topic",
+    "deleteTopic": "Failed to delete topic",
+    "reorderTopics": "Failed to reorder topics"
+  },
+  "student": {
+    "import": "Import",
+    "addStudent": "Add Student",
+    "searchPlaceholder": "Search name, email, or school…",
+    "noMatch": "No students match the filters.",
+    "noData": "No students yet. Add a student or import from XLSX.",
+    "activateFailed": "Failed to activate student",
+    "activatedToast": "Student activated",
+    "deleteTitle": "Delete Student",
+    "deleteMessage": "Delete \"{name}\"? They will no longer be able to log in.",
+    "deleteFailed": "Failed to delete student",
+    "deletedToast": "Student deleted",
+    "restoreFailed": "Failed to restore student",
+    "restoreToast": "Student restored",
+    "purgeTitle": "Purge Student",
+    "purgeMessage": "Permanently purge \"{name}\"? This cannot be undone.",
+    "purgeFailed": "Failed to purge student",
+    "purgedToast": "Student purged",
+    "loadFailed": "Failed to load student",
+    "saveFailed": "Failed to save student",
+    "updatedToast": "Student updated",
+    "createdToast": "Student created",
+    "loadStudents": "Failed to load students",
+    "loadStudent": "Failed to load student",
+    "createStudent": "Failed to create student",
+    "updateStudent": "Failed to update student",
+    "purgeStudent": "Failed to purge student",
+    "importStudents": "Failed to import students"
   },
   "dash": {
+    "home": {
+      "welcome": "Welcome back",
+      "there": "there",
+      "cards": {
+        "admin": {
+          "title": "Dashboard",
+          "desc": "Counters, recent events & students."
+        },
+        "question": {
+          "title": "Question Bank",
+          "desc": "Manage the Tantangan Bebras question bank."
+        },
+        "event": {
+          "title": "Events",
+          "desc": "Create and manage challenges."
+        },
+        "student": {
+          "title": "Students",
+          "desc": "Student management."
+        },
+        "practiceReview": {
+          "title": "Practice Review",
+          "desc": "Review student practice sheets."
+        },
+        "studentDash": {
+          "title": "Dashboard",
+          "desc": "Your category and activity."
+        },
+        "practice": {
+          "title": "Practice",
+          "desc": "Practice questions for your category."
+        },
+        "challenges": {
+          "title": "Events",
+          "desc": "Available challenges."
+        }
+      }
+    },
+    "admin": {
+      "activeEvents": "Active Events",
+      "activeStudents": "Active Students",
+      "inactiveStudents": "Inactive Students",
+      "attempts24": "Attempts 24 Hours",
+      "statistics": "Statistics",
+      "totalStudents": "Total Students",
+      "totalSchools": "Total Schools",
+      "studentsBySchool": "Students by School",
+      "studentsBySchoolSub": "Top 10 schools by student count",
+      "studentsByCategory": "Students by Category",
+      "registrationsByYear": "Registrations by Year",
+      "registrationsByYearSub": "New students per year",
+      "seriesStudents": "Students",
+      "seriesRegistrations": "Registrations",
+      "others": "Others",
+      "recentEvents": "Recent Events",
+      "noEvents": "No events yet.",
+      "recentStudents": "Recent Students",
+      "noStudents": "No students yet."
+    },
+    "student": {
+      "startPractice": "Start Practice",
+      "welcome": "Welcome,",
+      "category": "Category:",
+      "totalPractice": "Total Practice",
+      "totalChallenges": "Total Challenges",
+      "practice": "Practice",
+      "challenges": "Challenges",
+      "lastPractice": "Last Practice",
+      "scoreWith": "Score {score}",
+      "notSubmitted": "Not submitted",
+      "lastChallenge": "Last Challenge",
+      "inProgress": "In progress"
+    },
+    "loadStatistics": "Failed to load statistics",
+    "loadDashboard": "Failed to load dashboard",
     "welcomeBack": "Welcome back",
     "roles": "Roles",
     "noRoles": "No roles assigned"
+  },
+  "event": {
+    "searchPlaceholder": "Search events…",
+    "createEvent": "Create Event",
+    "openStudent": "Open Student",
+    "published": "Published",
+    "draft": "Draft",
+    "noMatch": "No events match the filters.",
+    "noData": "No events yet.",
+    "duration": "Duration",
+    "deadline": "Deadline",
+    "questions": "Questions",
+    "minutesShort": "{n} min",
+    "loadFailed": "Failed to load event",
+    "saveFailed": "Failed to save event",
+    "updatedToast": "Event updated",
+    "createdToast": "Event created",
+    "selectQuestions": "Select Questions ({count} available)",
+    "descriptionPlaceholder": "Optional description…",
+    "selectedBadge": "{n} selected",
+    "noActiveQuestions": "No active {category} questions. Add questions in the question bank first.",
+    "deleteTitle": "Delete Event",
+    "deleteMessage": "Delete \"{name}\"? It will be hidden from lists and students cannot start it.",
+    "deletedToast": "Event deleted",
+    "restoreFailed": "Failed to restore event",
+    "restoreToast": "Event restored",
+    "testQuiz": "Test Quiz",
+    "testFailed": "Failed to start the test",
+    "metaLine": "{category} • {minutes} minutes • Deadline: {deadline}",
+    "questionsCount": "Questions ({count})",
+    "viewResults": "View Results",
+    "resultsEmpty": "No student has submitted yet.",
+    "submitTime": "Submit Time",
+    "secondsShort": "{n}s",
+    "backToEvent": "Back to Event",
+    "play": "Play",
+    "loadEvents": "Failed to load events",
+    "loadEvent": "Failed to load event",
+    "createFailed": "Failed to create event",
+    "updateEvent": "Failed to update event",
+    "deleteEvent": "Failed to delete event",
+    "purgeEvent": "Failed to purge event",
+    "loadResults": "Failed to load results"
+  },
+  "users": {
+    "addUser": "Add User",
+    "searchPlaceholder": "Search users…",
+    "noData": "No users found.",
+    "role": "Role",
+    "created": "Created",
+    "deleteTitle": "Delete User",
+    "deleteMessage": "Delete \"{name}\"? This cannot be undone.",
+    "deleteFailed": "Failed to delete user",
+    "deletedToast": "User deleted",
+    "loadFailed": "Failed to load user",
+    "saveFailed": "Failed to save user",
+    "updatedToast": "User updated",
+    "createdToast": "User created",
+    "roleUser": "User",
+    "roleAdmin": "Admin",
+    "resetPassword": "Reset Password",
+    "resetMessage": "Enter a new password for this user.",
+    "resetToast": "Password reset",
+    "resetFieldLabel": "New password",
+    "resetFailed": "Failed to reset password",
+    "loadUsers": "Failed to load users",
+    "loadUser": "Failed to load user",
+    "createUser": "Failed to create user",
+    "updateUser": "Failed to update user"
+  },
+  "import": {
+    "uploadTitle": "Upload XLSX",
+    "uploadDesc1": "Upload an xlsx file. Expected columns:",
+    "uploadDesc2": "(optional:",
+    "uploadDesc3": ").",
+    "chooseFile": "Choose file",
+    "noFile": "No file selected",
+    "upload": "Upload",
+    "downloadTemplate": "Download template",
+    "toastImported": "Imported: {inserted} inserted, {updated} updated",
+    "failed": "Failed to import",
+    "successTitle": "Success: {inserted} inserted, {updated} updated.",
+    "summary": "{inserted} inserted, {updated} updated, {errors} errors.",
+    "rowError": "Row {row}: {message}"
+  },
+  "practice": {
+    "startPractice": "Start Practice",
+    "noData": "No practices yet.",
+    "startFailed": "Failed to start practice",
+    "createdToast": "A new practice sheet was created",
+    "cardTitle": "Practice {date}",
+    "scoreWith": "Score {score}",
+    "notGraded": "Not graded",
+    "durationHours": "Duration {n} hour(s)",
+    "durationMinutes": "Duration {n} minute(s)",
+    "limitMinutes": "Limit {n} minute(s)",
+    "settingsTitle": "Practice settings",
+    "settingsBtn": "Settings",
+    "settingsDesc": "Number of questions drawn from the student's category for every new practice sheet.",
+    "questionsPerPractice": "Questions per practice",
+    "onlyAdmins": "Only admins can change this.",
+    "settingsInvalid": "Questions per practice must be a whole number of at least 1",
+    "settingsFailed": "Failed to update settings",
+    "settingsSaved": "Practice settings updated",
+    "scoreBadge": "Score {score}",
+    "finishedPrefix": "Finished:",
+    "backToList": "Practice List",
+    "loadSettings": "Failed to load settings",
+    "loadPractices": "Failed to load practices",
+    "loadPractice": "Failed to load practice",
+    "submitPractice": "Failed to submit the practice",
+    "testQuiz": "Test Quiz",
+    "testFailed": "Failed to start the test"
+  },
+  "backup": {
+    "exportTitle": "Export database",
+    "exportDesc": "Download a complete SQL backup of every application table, including settings, roles, audit log and API keys.",
+    "exportBtn": "Download .sql",
+    "importTitle": "Restore database",
+    "importWarn": "Restoring replaces every table covered by the backup",
+    "importDesc": "Pick a .sql file created by Export. Its tables are replaced in one transaction, so the database stays untouched if the restore fails. Before anything is replaced, the current database is downloaded automatically as a pre-restore safety copy.",
+    "chooseFile": "Choose file",
+    "noFile": "No file selected",
+    "restoreBtn": "Restore backup",
+    "confirmTitle": "Restore this backup?",
+    "confirmMessage": "Restore {name}? Rows in the tables it covers will be replaced and cannot be recovered. The current database is downloaded first as a safety copy.",
+    "restoreFailed": "Failed to restore the backup",
+    "snapshotFailed": "Safety copy failed, nothing was restored",
+    "restored": "Backup restored: {tables} tables, {rows} rows",
+    "restoredTitle": "Backup restored — {tables} tables, {rows} rows"
+  },
+  "todos": {
+    "add": "Add ToDo",
+    "searchPlaceholder": "Search todos…",
+    "noData": "No todos found",
+    "allStatuses": "All statuses",
+    "editTitle": "Edit ToDo",
+    "newTitle": "New ToDo",
+    "titlePlaceholder": "What needs doing?",
+    "description": "Description",
+    "descPlaceholder": "Optional details…",
+    "saveFailed": "Failed to save todo",
+    "updatedToast": "ToDo \"{title}\" updated",
+    "createdToast": "ToDo created",
+    "deleteTitle": "Delete ToDo",
+    "deleteMessage": "Delete \"{title}\"?",
+    "deleteFailed": "Failed to delete todo",
+    "deletedToast": "ToDo deleted",
+    "loadTodos": "Failed to load todos",
+    "createTodo": "Failed to create todo",
+    "updateTodo": "Failed to update todo"
+  },
+  "eventStudent": {
+    "yourCategory": "Your category:",
+    "noData": "Bebras challenge events will appear here when available.",
+    "categoryMismatch": "Category mismatch",
+    "metaLine": "{timeLimit} minutes · {questionCount} questions",
+    "deadline": "Deadline {date}",
+    "scoreLabel": "Score: {score}",
+    "viewResult": "View Result",
+    "continue": "Continue",
+    "start": "Start",
+    "startFailed": "Failed to start the event",
+    "startedToast": "Event started",
+    "yourScore": "Your score",
+    "secondsShort": "{n} seconds",
+    "submittedAt": "Submitted {date}",
+    "backToList": "Back to event list",
+    "loadEvents": "Failed to load events",
+    "loadEvent": "Failed to load the event",
+    "submitEvent": "Failed to submit the event",
+    "loadResult": "Failed to load the result"
+  },
+  "field": {
+    "fullName": "Full name",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "questionCode": "Question Code",
+    "type": "Type",
+    "question": "Question",
+    "correctAnswer": "Correct answer",
+    "referenceAnswer": "Answer (reference)",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "status": "Status",
+    "topic": "Topic",
+    "option": "Option {letter}",
+    "multipleChoice": "Multiple Choice",
+    "eventName": "Event name",
+    "durationMinutes": "Duration (minutes)",
+    "eventDeadline": "Event deadline",
+    "description": "Description",
+    "publish": "Publish this event",
+    "school": "School",
+    "city": "City",
+    "country": "Country",
+    "newPasswordOptional": "New password (optional)"
+  },
+  "form": {
+    "detail": "Detail",
+    "details": "Details",
+    "content": "Content",
+    "settings": "Settings",
+    "unsaved": "Unsaved",
+    "identity": "Identity",
+    "usernameMin": "Min. 3 characters",
+    "passwordMin": "Min. 6 characters"
+  },
+  "validation": {
+    "questionRequired": "The question is required",
+    "referenceRequired": "The reference answer is required",
+    "optionRequired": "Option {letter} is required",
+    "correctAnswer": "Select the correct answer"
+  },
+  "detail": {
+    "info": "Info",
+    "account": "Account",
+    "userId": "User ID",
+    "slug": "Slug",
+    "referenceAnswer": "Reference answer",
+    "beforeShuffle": "Before Shuffle",
+    "afterShuffle": "After Shuffle",
+    "answers": "Answers",
+    "noAnswers": "No answers yet.",
+    "notAnswered": "(not answered)",
+    "studentLabel": "Student:",
+    "score": "Score",
+    "answerDetail": "Answer Detail",
+    "categoryPrefix": "Category:",
+    "durationPrefix": "Duration:"
+  },
+  "crumb": {
+    "dashboard": "Dashboard",
+    "questionBank": "Question Bank",
+    "newQuestion": "New Question",
+    "question": "Question",
+    "editQuestion": "Edit Question",
+    "editor": "Editor",
+    "students": "Students",
+    "import": "Import",
+    "newStudent": "New Student",
+    "student": "Student",
+    "editStudent": "Edit Student",
+    "users": "Users",
+    "newUser": "New User",
+    "user": "User",
+    "editUser": "Edit User",
+    "practice": "Practice",
+    "result": "Result",
+    "practiceReview": "Practice Review",
+    "practiceDetail": "Detail",
+    "events": "Events",
+    "newEvent": "New Event",
+    "event": "Event",
+    "editEvent": "Edit Event",
+    "eventResults": "Results",
+    "todos": "ToDos",
+    "backup": "Backup & Restore"
+  },
+  "editor": {
+    "outline": "Outline",
+    "noTopics": "No topics yet.",
+    "noTopic": "No topic",
+    "noQuestionSelected": "Select a question on the left to start editing.",
+    "noSettingsSelected": "Select a question to view its settings.",
+    "questionListBtn": "Question List",
+    "lengthLabel": "Length",
+    "lengthValue": "{n} characters",
+    "noValue": "(none)",
+    "editTopic": "Edit Topic",
+    "deleteTopic": "Delete Topic",
+    "topicActions": "Topic actions",
+    "topicCount": "{n} question(s)",
+    "untitled": "(untitled)",
+    "noQuestionsInTopic": "No questions in this topic.",
+    "deleteQuestion": "Delete question",
+    "topicNotFound": "Topic not found",
+    "topicSaveFailed": "Failed to save topic",
+    "topicUpdatedToast": "Topic updated",
+    "topicCreatedToast": "Topic created",
+    "topicEditTitle": "Edit Topic",
+    "topicNewTitle": "New Topic",
+    "topicTitlePlaceholder": "Topic title",
+    "topicOrder": "Order",
+    "topicDeletedToast": "Topic deleted",
+    "deleteTopicMessage": "Deleting a topic will detach the questions inside it (the questions are not deleted). Continue?",
+    "discardTitle": "Discard changes",
+    "discardMessage": "Discard the unsaved edits and reload the last saved version?",
+    "savedToast": "Question saved",
+    "saveFailedBadge": "Failed to save",
+    "savingBadge": "Saving…",
+    "savedStatus": "Saved {relative}",
+    "justNow": "just now",
+    "untitledHeading": "Untitled",
+    "secondsAgo": "{n}s ago",
+    "minutesAgo": "{n}m ago",
+    "referencePlaceholder": "The reference answer…"
+  },
+  "runner": {
+    "yourAnswer": "Your answer",
+    "answerPlaceholder": "Type your answer…",
+    "submit": "Submit Answers",
+    "previous": "Previous",
+    "next": "Next",
+    "unavailable": "This question is unavailable.",
+    "timeUp": "Time's up!",
+    "autoSaved": "Answers are saved automatically",
+    "showSidebar": "Show sidebar",
+    "focusMode": "Focus mode",
+    "leaveTitle": "Leave Practice?",
+    "leaveMessage": "You are working on a practice. Answers already filled in will be saved and graded automatically. Are you sure you want to leave?",
+    "leaveConfirm": "Save & Leave",
+    "leaveCancel": "Keep Working",
+    "noQuestions": "No questions available.",
+    "questionOf": "Question {i} of {n}",
+    "attemptNotFound": "Attempt not found.",
+    "backToEvents": "Back to Events",
+    "noPracticeInProgress": "There is no practice in progress. Start a new practice from the practice list."
   },
   "setup": {
     "title": "Setup",
@@ -132,79 +954,176 @@
     "descPlaceholder": "Shown to search engines (optional)",
     "siteUrl": "Site URL",
     "siteUrlPlaceholder": "https://acme.com (optional)",
-    "language": "Language",
     "usernamePlaceholder": "abdulah (optional)",
     "complete": "Complete setup",
     "connectionFailed": "Connection test failed",
-    "setupFailed": "Setup failed"
+    "setupFailed": "Setup failed",
+    "language": "Language"
   },
-  "error": {
-    "generic": "An error occurred",
-    "invalid_credentials": "Invalid credentials",
-    "registration_disabled": "Registration is disabled",
-    "email_already_registered": "Email already registered",
-    "username_taken": "Username already taken",
-    "api_key_not_found": "Api key not found",
-    "bad_request": "Bad request",
-    "conflict": "Conflicting data",
-    "cannot_delete_builtin_role": "Cannot delete builtin role",
-    "could_not_generate_unique_name": "Could not generate unique name",
-    "csrf_token_invalid": "Csrf token invalid",
-    "database_required": "Database required",
-    "db_connection_failed": "Db connection failed",
-    "db_not_found": "Db not found",
-    "db_timeout": "Db timeout",
-    "db_unreachable": "Db unreachable",
-    "domain_error": "Domain error",
-    "file_invalid_name": "File invalid name",
-    "file_required": "File required",
-    "file_too_large": "File too large",
-    "file_type_not_allowed": "File type not allowed",
-    "forbidden": "Forbidden",
-    "idx_invalid": "Idx invalid",
-    "integrity_error": "Integrity error",
-    "internal_server_error": "Internal server error",
-    "invalid_api_key": "Invalid API key",
-    "invalid_app_role": "Invalid app role",
-    "invalid_date": "Invalid date",
-    "invalid_db_credentials": "Invalid db credentials",
-    "invalid_db_host": "Invalid db host",
-    "invalid_db_name": "Invalid db name",
-    "invalid_db_path": "Invalid db path",
-    "invalid_db_port": "Invalid db port",
-    "invalid_email": "Invalid email",
-    "invalid_operation": "Invalid operation",
-    "invalid_username": "Invalid username",
-    "malformed": "Malformed",
-    "method_not_allowed": "Method not allowed",
-    "name_required": "Name required",
-    "no_fields_to_update": "No fields to update",
-    "not_found": "Not found",
-    "password_must_contain_digit": "Password must contain digit",
-    "password_must_contain_lowercase": "Password must contain lowercase",
-    "password_must_contain_special_character": "Password must contain special character",
-    "password_must_contain_uppercase": "Password must contain uppercase",
-    "payload_too_large": "Payload too large",
-    "rate_limit_exceeded": "Rate limit exceeded",
-    "required": "Required",
-    "role_already_exists": "Role already exists",
-    "role_not_found": "Role not found",
-    "setup_admin_failed": "Setup admin failed",
-    "setup_already_complete": "Setup already complete",
-    "setup_env_write_failed": "Setup env write failed",
-    "setup_migration_failed": "Setup migration failed",
-    "setup_repoint_failed": "Setup engine repoint failed",
-    "site_url_invalid": "Site url invalid",
-    "spa_not_built": "Spa not built",
-    "unauthorized": "Unauthorized",
-    "unprocessable_entity": "Unprocessable entity",
-    "unknown_db_host": "Unknown database host",
-    "unsupported_engine": "Unsupported engine",
-    "unsupported_host": "Unsupported host",
-    "unsupported_lang": "Unsupported language",
-    "user_not_found": "User not found",
-    "username_already_registered": "Username already registered",
-    "username_required": "Username required",
-    "validation_error": "Validation error"
+  "route": {
+    "Login": {
+      "title": "Sign in",
+      "description": "Sign in to your account."
+    },
+    "Register": {
+      "title": "Create account",
+      "description": "Create an account to get started."
+    },
+    "StudentLogin": {
+      "title": "Student Sign in",
+      "description": "Sign in with your student account."
+    },
+    "StudentRegister": {
+      "title": "Student Registration",
+      "description": "Register as a student to join challenges and practice."
+    },
+    "Setup": {
+      "title": "Setup",
+      "description": "First-run setup: connect a database, set your brand, and create the administrator."
+    },
+    "Dashboard": {
+      "title": "Home",
+      "description": "Quick links to your practice, challenges, and account pages."
+    },
+    "AdminDashboard": {
+      "title": "Dashboard",
+      "description": "Overview of events, students, and platform statistics."
+    },
+    "StudentDashboard": {
+      "title": "My Dashboard",
+      "description": "Your practice and challenge activity at a glance."
+    },
+    "QuestionList": {
+      "title": "Questions",
+      "description": "Browse and manage the question bank."
+    },
+    "QuestionNew": {
+      "title": "New Question",
+      "description": "Add a new question to the bank."
+    },
+    "QuestionEditor": {
+      "title": "Question Editor",
+      "description": "Compose question content with the rich-text editor."
+    },
+    "QuestionDetail": {
+      "title": "Question Detail",
+      "description": "View the question prompt, answers, and metadata."
+    },
+    "QuestionEdit": {
+      "title": "Edit Question",
+      "description": "Edit this question."
+    },
+    "StudentList": {
+      "title": "Students",
+      "description": "Browse and manage student accounts."
+    },
+    "StudentImport": {
+      "title": "Import Students",
+      "description": "Import students in bulk from a CSV file."
+    },
+    "StudentNew": {
+      "title": "New Student",
+      "description": "Create a new student account."
+    },
+    "StudentDetail": {
+      "title": "Student Detail"
+    },
+    "StudentEdit": {
+      "title": "Edit Student",
+      "description": "Edit this student profile."
+    },
+    "UsersList": {
+      "title": "Users",
+      "description": "Manage user accounts and roles."
+    },
+    "UserNew": {
+      "title": "New User",
+      "description": "Create a new user account."
+    },
+    "UserDetail": {
+      "title": "User Detail",
+      "description": "View user details, roles, and access."
+    },
+    "UserEdit": {
+      "title": "Edit User",
+      "description": "Edit this user account."
+    },
+    "PracticeList": {
+      "title": "Practice",
+      "description": "Practice questions for your category."
+    },
+    "PracticeAdminList": {
+      "title": "Practice Review",
+      "description": "Review practice sheets submitted by students."
+    },
+    "PracticeAdminDetail": {
+      "title": "Practice Detail",
+      "description": "Compare a practice sheet before and after shuffling."
+    },
+    "PracticeRunner": {
+      "title": "Practice",
+      "description": "Answer the questions in your practice sheet."
+    },
+    "PracticeResult": {
+      "title": "Practice Result",
+      "description": "See your practice score and answer review."
+    },
+    "EventList": {
+      "title": "Events",
+      "description": "Browse and manage challenges."
+    },
+    "EventNew": {
+      "title": "New Event",
+      "description": "Create a new challenge."
+    },
+    "EventResults": {
+      "title": "Event Results",
+      "description": "View participant results for this challenge."
+    },
+    "EventEdit": {
+      "title": "Edit Event",
+      "description": "Edit this challenge."
+    },
+    "EventDetail": {
+      "title": "Event Detail",
+      "description": "View the challenge details and its questions."
+    },
+    "EventStudentList": {
+      "title": "Challenges",
+      "description": "Browse available challenges and your attempts."
+    },
+    "EventStudentRunner": {
+      "title": "Challenge",
+      "description": "Answer the questions in this challenge."
+    },
+    "EventStudentResult": {
+      "title": "Challenge Result",
+      "description": "See your challenge score and answer review."
+    },
+    "TodosList": {
+      "title": "Todos",
+      "description": "Keep track of your tasks and reminders."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "nav": {
+      "user": "User settings"
+    },
+    "profile": {
+      "title": "Profile",
+      "fullName": "Full name",
+      "email": "Email",
+      "username": "Username",
+      "role": "Role",
+      "memberSince": "Member since"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "theme": "Theme",
+      "themeDescription": "Light, dark, or follow your system.",
+      "language": "Language",
+      "languageDescription": "Language used across the app."
+    }
   }
 }

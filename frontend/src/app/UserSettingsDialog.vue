@@ -17,6 +17,7 @@ import {
 } from 'frappe-ui'
 
 import { useAuthStore } from '@/features/auth/store'
+import { openCatalog } from '@/app/tour/store'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 
 const open = defineModel<boolean>('open', { default: false })
@@ -45,6 +46,11 @@ const language = computed({
 function onLogout() {
   open.value = false
   emit('logout')
+}
+
+function openGuide() {
+  open.value = false
+  openCatalog()
 }
 
 const memberSince = computed(() => {
@@ -121,7 +127,16 @@ const memberSince = computed(() => {
             </SettingsRow>
           </div>
 
-          <div class="mt-8 border-t border-outline-gray-1 pt-4 sm:hidden">
+          <div
+            class="mt-8 flex flex-col gap-2 border-t border-outline-gray-1 pt-4 sm:hidden"
+          >
+            <Button
+              variant="outline"
+              theme="gray"
+              icon-left="lucide-compass"
+              :label="t('tour.menu')"
+              @click="openGuide"
+            />
             <Button
               :label="t('menu.logout')"
               icon-left="lucide-log-out"

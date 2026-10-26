@@ -48,7 +48,7 @@ function go(page: number) {
   <nav
     v-if="always || total > perPage"
     :class="[
-      'flex items-center gap-1',
+      'flex flex-wrap items-center gap-1',
       align === 'end' ? 'justify-end' : 'justify-center',
     ]"
     :aria-label="t('shared.pagination')"

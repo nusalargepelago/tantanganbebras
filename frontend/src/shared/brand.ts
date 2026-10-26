@@ -12,7 +12,7 @@ declare global {
 }
 
 const DEFAULT_BRAND: Brand = {
-  name: 'Minimals',
+  name: 'Tantangan Bebras',
   tagline: '',
   description: '',
   siteUrl: '',

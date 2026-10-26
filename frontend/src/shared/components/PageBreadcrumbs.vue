@@ -33,6 +33,7 @@ const crumbs = computed<BreadcrumbItem[]>(() => {
         :label="t('crumb.dashboard')"
         :route="HOME.route"
         :tooltip="t('crumb.dashboard')"
+        class="-ml-1.5"
       />
       <span
         v-if="crumbs.length"

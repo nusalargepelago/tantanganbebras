@@ -1,0 +1,315 @@
+import type { TourDefinition } from './types'
+
+// Steps are filled in per phase; text lives under `tour.<id>` in the locales.
+export const TOURS: TourDefinition[] = [
+  {
+    id: 'student-start',
+    roles: ['student'],
+    starter: true,
+    icon: 'lucide-rocket',
+    steps: [
+      {
+        id: 'dashboard',
+        route: { name: 'StudentDashboard' },
+        target: 'student-dashboard-stats',
+        placement: 'bottom',
+      },
+      {
+        id: 'actions',
+        match: 'StudentDashboard',
+        target: 'student-dashboard-actions',
+        placement: 'top',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'practice',
+        route: { name: 'PracticeList' },
+        target: 'student-practice-list',
+        placement: 'bottom',
+      },
+      {
+        id: 'practice-start',
+        match: 'PracticeList',
+        target: 'student-practice-start',
+        placement: 'bottom',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'runner-header',
+        match: 'PracticeRunner',
+        target: 'runner-header',
+        placement: 'bottom',
+      },
+      {
+        id: 'runner-pager',
+        match: 'PracticeRunner',
+        target: 'runner-pager',
+        placement: 'top',
+      },
+      {
+        id: 'runner-submit',
+        match: 'PracticeRunner',
+        target: 'runner-submit',
+        placement: 'bottom',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'result',
+        match: 'PracticeResult',
+        target: 'student-practice-result',
+        placement: 'bottom',
+      },
+      {
+        id: 'answers',
+        match: 'PracticeResult',
+        target: 'student-practice-answers',
+        placement: 'top',
+      },
+      {
+        id: 'guide',
+        target: 'student-guide-menu',
+        placement: 'bottom',
+      },
+    ],
+  },
+  {
+    id: 'student-event',
+    roles: ['student'],
+    icon: 'lucide-calendar',
+    steps: [
+      {
+        id: 'event-list',
+        route: { name: 'EventStudentList' },
+        target: 'student-event-grid',
+        placement: 'bottom',
+      },
+      {
+        id: 'event-start',
+        match: 'EventStudentList',
+        target: 'student-event-start',
+        placement: 'top',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'runner-header',
+        match: 'EventStudentRunner',
+        target: 'runner-header',
+        placement: 'bottom',
+      },
+      {
+        id: 'runner-timer',
+        match: 'EventStudentRunner',
+        target: 'runner-timer',
+        placement: 'bottom',
+      },
+      {
+        id: 'runner-pager',
+        match: 'EventStudentRunner',
+        target: 'runner-pager',
+        placement: 'top',
+      },
+      {
+        id: 'runner-submit',
+        match: 'EventStudentRunner',
+        target: 'runner-submit',
+        placement: 'bottom',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'result',
+        match: 'EventStudentResult',
+        target: 'student-event-result-score',
+        placement: 'bottom',
+      },
+    ],
+  },
+  {
+    id: 'student-results',
+    roles: ['student'],
+    icon: 'lucide-award',
+    steps: [
+      {
+        id: 'list',
+        route: { name: 'EventStudentList' },
+        target: 'student-event-result-action',
+        placement: 'top',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'score',
+        match: 'EventStudentResult',
+        target: 'student-event-result-score',
+        placement: 'bottom',
+      },
+    ],
+  },
+  {
+    id: 'admin-dashboard',
+    roles: ['staff'],
+    starter: true,
+    icon: 'lucide-layout-dashboard',
+    steps: [
+      { id: 'welcome', route: { name: 'AdminDashboard' } },
+      {
+        id: 'stats',
+        match: 'AdminDashboard',
+        target: 'admin-stats',
+        placement: 'bottom',
+      },
+      {
+        id: 'totals',
+        match: 'AdminDashboard',
+        target: 'admin-totals',
+        placement: 'bottom',
+      },
+      {
+        id: 'charts',
+        match: 'AdminDashboard',
+        target: 'admin-charts',
+        placement: 'top',
+      },
+      {
+        id: 'recent',
+        match: 'AdminDashboard',
+        target: 'admin-recent',
+        placement: 'bottom',
+      },
+    ],
+  },
+  {
+    id: 'admin-quiz',
+    roles: ['staff'],
+    icon: 'lucide-library',
+    steps: [
+      {
+        id: 'list',
+        route: { name: 'QuestionList' },
+        target: 'admin-question-add',
+        placement: 'bottom',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'detail',
+        match: 'QuestionNew',
+        target: 'admin-question-detail',
+        placement: 'bottom',
+      },
+      {
+        id: 'content',
+        match: 'QuestionNew',
+        target: 'admin-question-content',
+        placement: 'top',
+      },
+      {
+        id: 'settings',
+        match: 'QuestionNew',
+        target: 'admin-question-settings',
+        placement: 'top',
+      },
+      {
+        id: 'save',
+        match: 'QuestionNew',
+        target: 'admin-question-save',
+        placement: 'bottom',
+      },
+    ],
+  },
+  {
+    id: 'admin-event',
+    roles: ['staff'],
+    icon: 'lucide-calendar-plus',
+    steps: [
+      {
+        id: 'list',
+        route: { name: 'EventList' },
+        target: 'admin-event-create',
+        placement: 'bottom',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'details',
+        match: 'EventNew',
+        target: 'admin-event-details',
+        placement: 'bottom',
+      },
+      {
+        id: 'questions',
+        match: 'EventNew',
+        target: 'admin-event-questions',
+        placement: 'top',
+      },
+      {
+        id: 'save',
+        match: 'EventNew',
+        target: 'admin-event-save',
+        placement: 'bottom',
+      },
+      {
+        id: 'open',
+        route: { name: 'EventList' },
+        target: 'admin-event-list',
+        placement: 'bottom',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'results-link',
+        match: 'EventDetail',
+        target: 'admin-event-results',
+        placement: 'bottom',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'results',
+        match: 'EventResults',
+        target: 'admin-event-results-table',
+        placement: 'bottom',
+      },
+    ],
+  },
+  {
+    id: 'admin-practice',
+    roles: ['staff'],
+    icon: 'lucide-clipboard-check',
+    steps: [
+      {
+        id: 'list',
+        route: { name: 'PracticeAdminList' },
+        target: 'admin-practice-list',
+        placement: 'bottom',
+      },
+      {
+        id: 'settings',
+        match: 'PracticeAdminList',
+        target: 'admin-practice-settings',
+        placement: 'bottom',
+      },
+      {
+        id: 'row',
+        match: 'PracticeAdminList',
+        target: 'admin-practice-list',
+        placement: 'top',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'before',
+        match: 'PracticeAdminDetail',
+        target: 'admin-practice-before',
+        placement: 'bottom',
+      },
+      {
+        id: 'after',
+        match: 'PracticeAdminDetail',
+        target: 'admin-practice-after',
+        placement: 'top',
+      },
+      {
+        id: 'answers',
+        match: 'PracticeAdminDetail',
+        target: 'admin-practice-answers',
+        placement: 'top',
+      },
+    ],
+  },
+]
+
+export const TOUR_BY_ID = new Map(TOURS.map((tour) => [tour.id, tour]))

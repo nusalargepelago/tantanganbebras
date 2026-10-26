@@ -8,10 +8,19 @@ import {
 
 import { i18n } from '@/app/i18n'
 import AppShell from '@/app/AppShell.vue'
+import { onTourRouteChange } from '@/app/tour/store'
 import { authRoutes } from '@/features/auth/routes'
 import { useAuthStore } from '@/features/auth/store'
+import { backupRoutes } from '@/features/backup/routes'
 import { dashboardRoutes } from '@/features/dashboard/routes'
+import { eventRoutes } from '@/features/event/routes'
+import { eventStudentRoutes } from '@/features/event-student/routes'
+import { practiceRoutes } from '@/features/practice/routes'
+import { questionRoutes } from '@/features/question/routes'
 import { setupRoutes } from '@/features/setup/routes'
+import { studentRoutes } from '@/features/student/routes'
+import { todosRoutes } from '@/features/todos/routes'
+import { usersRoutes } from '@/features/users/routes'
 import { brand } from '@/shared/brand'
 import { authGuard } from './guard'
 
@@ -21,7 +30,17 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: AppShell,
-    children: [...dashboardRoutes],
+    children: [
+      ...dashboardRoutes,
+      ...backupRoutes,
+      ...questionRoutes,
+      ...studentRoutes,
+      ...usersRoutes,
+      ...practiceRoutes,
+      ...eventRoutes,
+      ...eventStudentRoutes,
+      ...todosRoutes,
+    ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
@@ -57,13 +76,17 @@ function applyHead(to: RouteLocationNormalized) {
   }
 }
 
-router.afterEach((to) => applyHead(to))
+router.afterEach((to) => {
+  applyHead(to)
+  onTourRouteChange(to.name ? String(to.name) : null)
+})
 
 watch(i18n.global.locale, () => applyHead(router.currentRoute.value))
 
 window.addEventListener('auth:unauthorized', () => {
   const auth = useAuthStore()
   auth.user = null
+  auth.student = null
   auth.checked = true
   const current = router.currentRoute.value
   if (current.matched.length > 0 && current.meta.requiresAuth) {

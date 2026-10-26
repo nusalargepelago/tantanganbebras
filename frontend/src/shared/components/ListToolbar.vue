@@ -31,20 +31,22 @@ function onPerPage(value: SelectOptionValue | null | undefined) {
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
+  <div class="flex flex-wrap items-center gap-2">
     <TextInput
       v-model="search"
       type="search"
       :placeholder="props.placeholder ?? t('shared.search')"
-      class="w-64"
+      class="w-full min-w-0 sm:w-64"
     />
-    <slot />
-    <Select
-      v-if="showPerPage"
-      :model-value="perPage"
-      :options="props.perPageOptions ?? defaultPerPageOptions"
-      class="ml-auto w-36"
-      @update:model-value="onPerPage"
-    />
+    <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+      <slot />
+      <Select
+        v-if="showPerPage"
+        :model-value="perPage"
+        :options="props.perPageOptions ?? defaultPerPageOptions"
+        class="ml-auto w-36"
+        @update:model-value="onPerPage"
+      />
+    </div>
   </div>
 </template>

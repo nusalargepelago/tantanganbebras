@@ -25,11 +25,7 @@ async function onSubmit() {
   const ok = await auth.login(identifier.value.trim(), password.value)
   submitting.value = false
   if (ok) {
-    toast.success(
-      t('auth.login.welcome', {
-        name: auth.user?.fullName ?? auth.user?.email ?? '',
-      }),
-    )
+    toast.success(t('auth.login.welcome', { name: auth.user?.fullName ?? auth.user?.email }))
     const next = (route.query.redirect as string) || '/'
     if (!next.startsWith('/') || next.startsWith('//')) {
       await router.replace('/')
@@ -66,7 +62,7 @@ async function onSubmit() {
         <FormControl
           v-model="password"
           type="password"
-          :label="t('field.password')"
+          :label="t('auth.field.password')"
           placeholder="••••••••"
           autocomplete="current-password"
           required

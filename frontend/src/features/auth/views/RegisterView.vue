@@ -43,11 +43,7 @@ async function onSubmit() {
   })
   submitting.value = false
   if (ok) {
-    toast.success(
-      t('auth.register.created', {
-        name: auth.user?.fullName ?? auth.user?.email ?? '',
-      }),
-    )
+    toast.success(t('auth.register.created', { name: auth.user?.fullName ?? auth.user?.email }))
     await router.replace('/')
   }
 }
@@ -63,9 +59,7 @@ async function onSubmit() {
           <div class="rounded-full bg-surface-gray-2 p-3 text-ink-gray-5">
             <span class="lucide-package size-6" aria-hidden="true" />
           </div>
-          <h1 class="text-2xl-semibold text-ink-gray-8">
-            {{ t('auth.createAccount') }}
-          </h1>
+          <h1 class="text-2xl-semibold text-ink-gray-8">{{ t('auth.createAccount') }}</h1>
           <p class="text-p-sm text-ink-gray-5">{{ brand.name }}</p>
         </div>
 
@@ -73,14 +67,14 @@ async function onSubmit() {
 
         <FormControl
           v-model="fullName"
-          :label="t('field.fullName')"
+          :label="t('auth.register.fullName')"
           placeholder="Abdullah"
           autocomplete="name"
           required
         />
         <FormControl
           v-model="username"
-          :label="t('field.username')"
+          :label="t('auth.field.username')"
           placeholder="abdulah"
           autocomplete="username"
           required
@@ -88,7 +82,7 @@ async function onSubmit() {
         <FormControl
           v-model="email"
           type="email"
-          :label="t('field.email')"
+          :label="t('auth.field.email')"
           placeholder="abdulah@example.com"
           autocomplete="email"
           required
@@ -96,7 +90,7 @@ async function onSubmit() {
         <FormControl
           v-model="password"
           type="password"
-          :label="t('field.password')"
+          :label="t('auth.field.password')"
           placeholder="••••••••"
           autocomplete="new-password"
           required

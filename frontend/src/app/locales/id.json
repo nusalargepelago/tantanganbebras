@@ -1,73 +1,370 @@
 {
+  "celebration": {
+    "title": "Selamat!"
+  },
   "nav": {
     "home": "Beranda",
-    "dashboard": "Dasbor"
+    "dashboard": "Dasbor",
+    "practice": "Latihan",
+    "events": "Event",
+    "event": "Event",
+    "questionBank": "Bank Soal",
+    "students": "Siswa",
+    "practiceReview": "Review Latihan",
+    "todo": "ToDo",
+    "users": "Pengguna",
+    "backup": "Backup"
   },
   "menu": {
     "theme": "Tema",
     "light": "Terang",
     "dark": "Gelap",
     "system": "Sistem",
-    "settings": "Pengaturan",
+    "language": "Bahasa",
     "logout": "Keluar",
-    "section": "Menu"
+    "settings": "Pengaturan",
+    "section": "Menu",
+    "open": "Buka menu"
   },
-  "settings": {
-    "title": "Pengaturan",
-    "nav": {
-      "user": "Pengaturan pengguna"
+  "tour": {
+    "menu": "Panduan",
+    "catalog": {
+      "title": "Panduan",
+      "subtitle": "Panduan singkat dan fokus. Pilih salah satu untuk mengulang kapan saja.",
+      "empty": "Belum ada panduan untuk akun ini.",
+      "start": "Mulai",
+      "replay": "Ulangi",
+      "completed": "Selesai",
+      "steps": "Langkah: {count}",
+      "close": "Tutup"
     },
-    "profile": {
-      "title": "Profil",
-      "fullName": "Nama lengkap",
-      "email": "Email",
-      "username": "Nama pengguna",
-      "role": "Peran",
-      "memberSince": "Bergabung sejak"
+    "controls": {
+      "step": "Langkah {current} dari {total}",
+      "back": "Kembali",
+      "next": "Lanjut",
+      "finish": "Selesai",
+      "skip": "Lewati panduan",
+      "close": "Tutup panduan",
+      "offRoute": "Langkah ini ada di halaman lain. Kembali ke halaman tersebut untuk melanjutkan panduan."
     },
-    "preferences": {
-      "title": "Preferensi",
-      "theme": "Tema",
-      "themeDescription": "Terang, gelap, atau ikut sistem.",
-      "language": "Bahasa",
-      "languageDescription": "Bahasa yang dipakai di seluruh aplikasi."
+    "student-start": {
+      "title": "Mulai dari latihan",
+      "description": "Latihan dulu sesuai kecepatanmu. Event sifatnya opsional dan bisa dibuka kapan pun kamu siap.",
+      "steps": {
+        "dashboard": {
+          "title": "Progresmu",
+          "body": "Ini halaman utamamu. Di sini terlihat berapa latihan dan event yang sudah kamu kerjakan — ketuk kartunya untuk membuka halaman itu."
+        },
+        "actions": {
+          "title": "Dua cara memulai",
+          "body": "Latihan tanpa batas waktu: kerjakan soal lalu lihat skormu. Event adalah tantangan berwaktu. Mulai dari latihan dulu."
+        },
+        "practice": {
+          "title": "Halaman latihan",
+          "body": "Setiap latihan yang kamu mulai tercatat di sini beserta skor dan durasinya. Yang sudah selesai tetap bisa dibuka lagi."
+        },
+        "practice-start": {
+          "title": "Buat latihan",
+          "body": "Ketuk Mulai Latihan dan soal langsung terbuka. Jawaban masih bisa diubah sampai kamu mengumpulkan."
+        },
+        "runner-header": {
+          "title": "Saat berlatih",
+          "body": "Header menampilkan judul latihan, soal saat ini, dan status simpan otomatis. Jawaban tersimpan saat kamu mengetik."
+        },
+        "runner-pager": {
+          "title": "Berpindah soal",
+          "body": "Gunakan nomor untuk melompat ke soal mana pun. Hijau berarti sudah dijawab, biru adalah soal saat ini."
+        },
+        "runner-submit": {
+          "title": "Kumpulkan jika sudah siap",
+          "body": "Tombol Kumpulkan menyelesaikan latihan dan membuka skormu. Sebelum itu belum ada penilaian."
+        },
+        "result": {
+          "title": "Hasilmu",
+          "body": "Kartu skor merangkum latihanmu. Setiap latihan yang selesai dibuka dengan animasi selamat."
+        },
+        "answers": {
+          "title": "Tinjau jawabanmu",
+          "body": "Gulir ke bawah untuk membandingkan jawabanmu dengan jawaban yang benar di setiap soal."
+        },
+        "guide": {
+          "title": "Kembali kapan saja",
+          "body": "Buka menu ini lalu pilih Panduan (di dalam Pengaturan saat memakai HP). Kamu bisa mengulang panduan ini, atau mengikuti panduan Event kalau ingin ikut tantangan."
+        }
+      }
+    },
+    "student-event": {
+      "title": "Ikut event",
+      "description": "Tantangan berwaktu dari gurumu. Opsional — coba saat kamu sudah siap.",
+      "steps": {
+        "event-list": {
+          "title": "Pilih tantangan",
+          "body": "Setiap kartu menampilkan kategori, batas waktu, tenggat, dan statusmu. Event yang sesuai kategori bisa langsung dimulai."
+        },
+        "event-start": {
+          "title": "Mulai tantangan",
+          "body": "Ketuk Mulai untuk membuat percobaan. Kalau sudah pernah dimulai, tombolnya berubah menjadi Lanjutkan."
+        },
+        "runner-header": {
+          "title": "Saat mengerjakan",
+          "body": "Header menampilkan judul event, soal saat ini, dan status simpan otomatis. Jawaban tersimpan saat kamu mengetik."
+        },
+        "runner-timer": {
+          "title": "Perhatikan timer",
+          "body": "Hitung mundur berubah kuning saat hampir habis dan otomatis mengumpulkan percobaan ketika waktu habis."
+        },
+        "runner-pager": {
+          "title": "Berpindah soal",
+          "body": "Gunakan nomor untuk melompat ke soal mana pun. Hijau berarti sudah dijawab, biru adalah soal saat ini."
+        },
+        "runner-submit": {
+          "title": "Kumpulkan jika sudah siap",
+          "body": "Tombol Kumpulkan menyelesaikan percobaan dan membuka skormu. Jawaban masih bisa diubah sampai saat itu."
+        },
+        "result": {
+          "title": "Hasilmu",
+          "body": "Kartu skor merangkum percobaan. Dari sini kamu bisa kembali ke daftar event atau dasbor."
+        }
+      }
+    },
+    "student-results": {
+      "title": "Cek hasilmu",
+      "description": "Buka latihan atau event yang sudah selesai dan lihat skormu.",
+      "steps": {
+        "list": {
+          "title": "Cari percobaan yang selesai",
+          "body": "Event yang sudah selesai menampilkan tombol Lihat Hasil — ketuk untuk membuka skor. Latihan yang selesai ada di halaman Latihan."
+        },
+        "score": {
+          "title": "Kartu skor",
+          "body": "Ini skor akhirmu. Animasi selamat muncul setiap kali kamu membuka percobaan yang selesai."
+        }
+      }
+    },
+    "admin-dashboard": {
+      "title": "Ringkasan dasbor",
+      "description": "Membaca statistik dan aktivitas terbaru.",
+      "steps": {
+        "welcome": {
+          "title": "Selamat datang di dasbor",
+          "body": "Panduan singkat ini menunjukkan letak angka penting dan cara masuk ke event, soal, serta latihan."
+        },
+        "stats": {
+          "title": "Statistik platform",
+          "body": "Angka-angka ini merangkum aktivitas periode berjalan. Gunakan untuk melihat event yang ramai serta siswa aktif dan tidak aktif."
+        },
+        "totals": {
+          "title": "Total",
+          "body": "Total siswa dan sekolah berasal dari direktori siswa. Nilainya bertambah saat siswa terdaftar."
+        },
+        "charts": {
+          "title": "Rincian",
+          "body": "Bandingkan siswa per sekolah dan kategori. Arahkan kursor ke batang atau irisan untuk melihat angka pastinya."
+        },
+        "recent": {
+          "title": "Aktivitas terbaru",
+          "body": "Event dan siswa terbaru tampil di sini. Klik salah satu untuk membuka halaman detailnya."
+        }
+      }
+    },
+    "admin-quiz": {
+      "title": "Menambah soal kuis",
+      "description": "Buat soal, isi konten, lalu simpan ke bank soal.",
+      "steps": {
+        "list": {
+          "title": "Buka bank soal",
+          "body": "Semua soal ada di sini. Klik Tambah Soal untuk membuat soal baru."
+        },
+        "detail": {
+          "title": "Detail dasar",
+          "body": "Pilih kode dan tipe soal. Prefiks kategori menentukan saran kode."
+        },
+        "content": {
+          "title": "Konten soal",
+          "body": "Tulis deskripsi dan pertanyaan dengan editor teks berformat, lalu isi opsi jawaban. Gunakan toolbar editor untuk gambar dan format."
+        },
+        "settings": {
+          "title": "Pengaturan",
+          "body": "Atur kategori, tingkat kesulitan, status, dan topik. Saat disimpan, kolom wajib akan divalidasi."
+        },
+        "save": {
+          "title": "Simpan soal",
+          "body": "Tombol Simpan aktif setelah ada perubahan. Setelah tersimpan kamu diarahkan ke detail soal."
+        }
+      }
+    },
+    "admin-event": {
+      "title": "Membuat event dan melihat hasil",
+      "description": "Susun event, publikasikan, lalu buka hasilnya.",
+      "steps": {
+        "list": {
+          "title": "Buat event",
+          "body": "Mulai event baru di sini. Event yang sudah ada tercantum di bawah."
+        },
+        "details": {
+          "title": "Detail event",
+          "body": "Isi nama, kategori, durasi, tenggat, dan deskripsi. Centang Publikasikan agar terlihat oleh siswa."
+        },
+        "questions": {
+          "title": "Pilih soal",
+          "body": "Hanya soal aktif dari kategori event yang ditampilkan. Pilih minimal satu soal agar Simpan aktif."
+        },
+        "save": {
+          "title": "Simpan event",
+          "body": "Setelah disimpan, kamu dibawa ke detail event dan siap mengetes atau membagikannya."
+        },
+        "open": {
+          "title": "Buka event",
+          "body": "Klik baris event untuk membuka detailnya. Event mana pun bisa dipakai."
+        },
+        "results-link": {
+          "title": "Lihat hasil",
+          "body": "Dari detail event, klik Lihat Hasil untuk melihat semua percobaan yang terkirim."
+        },
+        "results": {
+          "title": "Tabel hasil",
+          "body": "Setiap baris adalah percobaan terkirim dengan skor, durasi, dan waktu kirim. Gunakan tombol kembali untuk membuka event."
+        }
+      }
+    },
+    "admin-practice": {
+      "title": "Meninjau lembar latihan",
+      "description": "Buka lembar latihan siswa dan periksa pengacakan soal serta jawabannya.",
+      "steps": {
+        "list": {
+          "title": "Semua lembar latihan",
+          "body": "Setiap lembar yang dibuat siswa tercantum dengan sekolah, kategori, skor, dan status. Filter kategori bila perlu."
+        },
+        "settings": {
+          "title": "Pengaturan latihan",
+          "body": "Admin dapat mengubah jumlah soal tiap lembar baru. Nilai ini berlaku untuk lembar berikutnya."
+        },
+        "row": {
+          "title": "Buka lembar",
+          "body": "Klik baris mana pun untuk membuka lembar. Kamu akan melihat soal sebelum dan sesudah diacak, serta jawaban yang dikirim."
+        },
+        "before": {
+          "title": "Sebelum diacak",
+          "body": "Ini adalah kumpulan soal asli yang dipilih untuk siswa."
+        },
+        "after": {
+          "title": "Setelah diacak",
+          "body": "Urutan hasil acak inilah yang dikerjakan siswa. Opsi jawaban juga bisa ikut diacak."
+        },
+        "answers": {
+          "title": "Jawaban terkirim",
+          "body": "Setiap soal menampilkan jawaban siswa dan benar/salahnya."
+        }
+      }
     }
   },
-  "crumb": {
-    "dashboard": "Dasbor"
-  },
-  "route": {
-    "Login": {
-      "title": "Masuk",
-      "description": "Masuk ke akun Anda."
-    },
-    "Register": {
-      "title": "Buat akun",
-      "description": "Buat akun untuk memulai."
-    },
-    "Setup": {
-      "title": "Setup",
-      "description": "Setup awal: hubungkan basis data, atur brand, dan buat administrator."
-    },
-    "Dashboard": {
-      "title": "Dasbor",
-      "description": "Ringkasan akun Anda: profil dan peran."
-    }
-  },
-  "field": {
-    "fullName": "Nama lengkap",
-    "username": "Nama pengguna",
-    "email": "Email",
-    "password": "Kata sandi",
-    "description": "Deskripsi"
+  "error": {
+    "generic": "Terjadi kesalahan",
+    "invalid_credentials": "Kredensial tidak valid",
+    "registration_disabled": "Pendaftaran dinonaktifkan",
+    "email_already_registered": "Email sudah terdaftar",
+    "username_taken": "Nama pengguna sudah dipakai",
+    "answers_required": "Jawaban wajib diisi",
+    "api_key_not_found": "API key tidak ditemukan",
+    "attempt_already_submitted": "Percobaan sudah dikumpulkan",
+    "attempt_not_found": "Percobaan tidak ditemukan",
+    "bad_request": "Permintaan tidak valid",
+    "cannot_delete_builtin_role": "Tidak bisa menghapus peran bawaan",
+    "could_not_generate_unique_name": "Gagal membuat nama unik",
+    "csrf_token_invalid": "Token CSRF tidak valid",
+    "db_connection_failed": "Koneksi basis data gagal",
+    "db_not_found": "Basis data tidak ditemukan",
+    "db_timeout": "Timeout basis data",
+    "db_unreachable": "Basis data tidak terjangkau",
+    "event_disabled": "Event dinonaktifkan",
+    "event_expired": "Event kedaluwarsa",
+    "event_not_found": "Event tidak ditemukan",
+    "event_not_published": "Event belum dipublikasikan",
+    "file_invalid_name": "Nama berkas tidak valid",
+    "file_required": "Berkas wajib diunggah",
+    "file_too_large": "Ukuran berkas terlalu besar",
+    "file_type_not_allowed": "Jenis berkas tidak diizinkan",
+    "forbidden": "Akses ditolak",
+    "idx_invalid": "Indeks tidak valid",
+    "integrity_error": "Pelanggaran integritas data",
+    "internal_server_error": "Terjadi kesalahan server",
+    "invalid_app_role": "Peran aplikasi tidak valid",
+    "invalid_date": "Tanggal tidak valid",
+    "invalid_db_credentials": "Kredensial basis data tidak valid",
+    "invalid_db_host": "Host basis data tidak valid",
+    "invalid_db_name": "Nama basis data tidak valid",
+    "invalid_db_path": "Lokasi basis data tidak valid",
+    "invalid_db_port": "Port basis data tidak valid",
+    "invalid_email": "Email tidak valid",
+    "invalid_username": "Nama pengguna tidak valid",
+    "items_must_be_non_empty_strings": "Semua item harus string non-kosong",
+    "list_required": "Daftar wajib diisi",
+    "malformed": "Format salah",
+    "method_not_allowed": "Metode tidak diizinkan",
+    "must_be_a_b_c_or_d": "Harus a, b, c, atau d",
+    "must_be_list": "Harus berupa daftar",
+    "must_be_unique": "Harus unik",
+    "must_specify_practice_or_event_student": "Harus menentukan latihan atau event siswa",
+    "must_specify_question_id": "Harus menentukan ID soal",
+    "name_required": "Nama wajib diisi",
+    "no_fields_to_update": "Tidak ada kolom untuk diperbarui",
+    "not_found": "Tidak ditemukan",
+    "password_must_contain_digit": "Kata sandi harus mengandung angka",
+    "password_must_contain_lowercase": "Kata sandi harus mengandung huruf kecil",
+    "password_must_contain_special_character": "Kata sandi harus mengandung karakter khusus",
+    "password_must_contain_uppercase": "Kata sandi harus mengandung huruf besar",
+    "payload_too_large": "Ukuran payload terlalu besar",
+    "practice_already_submitted": "Latihan sudah dikumpulkan",
+    "practice_not_found": "Latihan tidak ditemukan",
+    "question_not_found": "Soal tidak ditemukan",
+    "questions_id_required": "ID soal wajib diisi",
+    "rate_limit_exceeded": "Batas rate limit tercapai",
+    "required": "Wajib diisi",
+    "role_already_exists": "Peran sudah ada",
+    "role_not_found": "Peran tidak ditemukan",
+    "setup_admin_failed": "Pembuatan admin gagal",
+    "setup_already_complete": "Setup sudah selesai",
+    "setup_migration_failed": "Migrasi setup gagal",
+    "site_url_invalid": "URL situs tidak valid",
+    "spa_not_built": "Frontend belum di-build",
+    "student_disabled": "Siswa dinonaktifkan",
+    "student_not_found": "Siswa tidak ditemukan",
+    "test_requires_staff": "Hanya staf yang boleh menguji",
+    "title_required": "Judul wajib diisi",
+    "todo_not_found": "Tugas tidak ditemukan",
+    "topic_not_found": "Topik tidak ditemukan",
+    "unauthorized": "Tidak terautentikasi",
+    "unprocessable_entity": "Entitas tidak dapat diproses",
+    "unsupported_engine": "Mesin basis data tidak didukung",
+    "unsupported_host": "Host tidak didukung",
+    "user_not_found": "Pengguna tidak ditemukan",
+    "username_already_registered": "Nama pengguna sudah terdaftar",
+    "value_essay_requires_reference_answer": "Esai harus memiliki jawaban referensi",
+    "value_pg_requires_correct_answer": "Pilihan ganda harus memiliki jawaban benar",
+    "conflict": "Data bentrok",
+    "database_required": "Basis data wajib diisi",
+    "domain_error": "Kesalahan domain",
+    "invalid_api_key": "API key tidak valid",
+    "invalid_operation": "Operasi tidak valid",
+    "setup_env_write_failed": "Penulisan env saat setup gagal",
+    "setup_repoint_failed": "Ganti pointer basis data saat setup gagal",
+    "unknown_db_host": "Host basis data tidak dikenal",
+    "unsupported_lang": "Bahasa tidak didukung",
+    "username_required": "Nama pengguna wajib diisi",
+    "validation_error": "Validasi gagal"
   },
   "auth": {
-    "signIn": "Masuk",
-    "createAccount": "Buat akun",
-    "haveAccount": "Sudah punya akun?",
     "errors": {
       "loginFailed": "Gagal masuk",
       "registrationFailed": "Gagal mendaftar"
+    },
+    "signIn": "Masuk",
+    "createAccount": "Buat akun",
+    "haveAccount": "Sudah punya akun?",
+    "field": {
+      "username": "Nama pengguna",
+      "password": "Kata Sandi",
+      "email": "Email"
     },
     "login": {
       "identifier": "Email atau nama pengguna",
@@ -76,7 +373,26 @@
       "welcome": "Selamat datang kembali, {name}"
     },
     "register": {
+      "fullName": "Nama lengkap",
       "created": "Akun dibuat — selamat datang, {name}"
+    },
+    "studentLogin": {
+      "title": "Login Siswa",
+      "button": "Masuk",
+      "noAccount": "Belum punya akun?",
+      "register": "Daftar"
+    },
+    "studentRegister": {
+      "title": "Registrasi Siswa",
+      "adminActivate": "Akun akan diaktifkan oleh admin.",
+      "firstName": "Nama depan",
+      "lastName": "Nama belakang",
+      "usernameMin": "Min. 3 karakter",
+      "passwordMin": "Min. 6 karakter",
+      "category": "Kategori",
+      "school": "Sekolah",
+      "city": "Kota",
+      "country": "Negara"
     },
     "passwordRules": {
       "uppercase": "Satu huruf besar",
@@ -92,15 +408,521 @@
     "pagination": "Paginasi",
     "prevPage": "Halaman sebelumnya",
     "nextPage": "Halaman berikutnya",
+    "cancel": "Batal",
+    "save": "Simpan",
     "ok": "OK",
-    "close": "Tutup",
     "forbiddenTitle": "Akses Ditolak",
-    "forbiddenMessage": "Halaman ini memerlukan hak akses administrator. Akun Anda terdaftar sebagai pengguna biasa. Hubungi administrator untuk mendapatkan akses."
+    "forbiddenMessage": "Halaman ini memerlukan hak akses administrator. Akun Anda terdaftar sebagai pengguna biasa. Hubungi administrator untuk mendapatkan akses.",
+    "close": "Tutup"
+  },
+  "list": {
+    "all": "Semua",
+    "name": "Nama",
+    "code": "Kode",
+    "type": "Tipe",
+    "category": "Kategori",
+    "difficulty": "Kesulitan",
+    "status": "Status",
+    "actions": "Aksi",
+    "email": "Email",
+    "school": "Sekolah",
+    "student": "Siswa",
+    "score": "Skor",
+    "date": "Tanggal",
+    "title": "Judul",
+    "dueDate": "Jatuh tempo",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "activate": "Aktifkan",
+    "restore": "Pulihkan",
+    "purge": "Hapus permanen",
+    "essay": "Esai",
+    "emptyValue": "(kosong)",
+    "deleted": "Terhapus",
+    "completed": "Selesai",
+    "inProgress": "Berlangsung",
+    "notSubmitted": "Belum Dikirim",
+    "pending": "Tertunda"
+  },
+  "category": {
+    "cub": "Siaga",
+    "scout": "Penggalang",
+    "rover": "Penegak"
+  },
+  "difficulty": {
+    "easy": "Mudah",
+    "medium": "Sedang",
+    "hard": "Sulit"
+  },
+  "status": {
+    "active": "Aktif",
+    "inactive": "Tidak Aktif"
+  },
+  "question": {
+    "addTopic": "Tambah Topik {category}",
+    "openEditor": "Buka Editor",
+    "addQuestion": "Tambah Soal",
+    "searchPlaceholder": "Cari kode atau soal…",
+    "noMatch": "Tidak ada soal yang cocok dengan filter.",
+    "noData": "Belum ada soal. Tambahkan soal pertama.",
+    "deleteTitle": "Hapus Soal",
+    "deleteMessage": "Hapus \"{code}\"? Soal yang dihapus tidak bisa dipulihkan dari daftar ini, hanya dari tampilan terhapus.",
+    "deleteFailed": "Gagal menghapus soal",
+    "deletedToast": "Soal dihapus",
+    "restoreToast": "Soal dipulihkan",
+    "restoreFailed": "Gagal memulihkan soal",
+    "purgeTitle": "Hapus Permanen Soal",
+    "purgeMessage": "Hapus permanen \"{code}\"? Tindakan ini tidak bisa dibatalkan.",
+    "purgedToast": "Soal dihapus permanen",
+    "purgeFailed": "Gagal menghapus permanen soal",
+    "loadFailed": "Gagal memuat soal",
+    "saveFailed": "Gagal menyimpan soal",
+    "updatedToast": "Soal diperbarui",
+    "createdToast": "Soal dibuat",
+    "topicNone": "Tidak ada",
+    "questionPlaceholder": "Tulis pertanyaan…",
+    "descriptionPlaceholder": "Deskripsi opsional yang tampil sebelum pertanyaan…",
+    "referencePlaceholder": "Jawaban referensi untuk penilai…",
+    "deleteMessageShort": "Hapus \"{code}\"?",
+    "newTopic": "Tambah topik",
+    "deleteQuestionMessage": "Soal yang dihapus tidak bisa dipulihkan dari sini, hanya dari daftar soal. Lanjutkan?",
+    "loadQuestions": "Gagal memuat soal",
+    "createQuestion": "Gagal membuat soal",
+    "loadTopics": "Gagal memuat daftar topik",
+    "createTopic": "Gagal membuat topik",
+    "updateTopic": "Gagal memperbarui topik",
+    "deleteTopic": "Gagal menghapus topik",
+    "reorderTopics": "Gagal mengurutkan ulang topik"
+  },
+  "student": {
+    "import": "Impor",
+    "addStudent": "Tambah Siswa",
+    "searchPlaceholder": "Cari nama, email, atau sekolah…",
+    "noMatch": "Tidak ada siswa yang cocok dengan filter.",
+    "noData": "Belum ada siswa. Tambahkan siswa atau impor dari XLSX.",
+    "activateFailed": "Gagal mengaktifkan siswa",
+    "activatedToast": "Siswa diaktifkan",
+    "deleteTitle": "Hapus Siswa",
+    "deleteMessage": "Hapus \"{name}\"? Dia tidak akan bisa masuk ke akun lagi.",
+    "deleteFailed": "Gagal menghapus siswa",
+    "deletedToast": "Siswa dihapus",
+    "restoreFailed": "Gagal memulihkan siswa",
+    "restoreToast": "Siswa dipulihkan",
+    "purgeTitle": "Hapus Permanen Siswa",
+    "purgeMessage": "Hapus permanen \"{name}\"? Tindakan ini tidak bisa dibatalkan.",
+    "purgeFailed": "Gagal menghapus permanen siswa",
+    "purgedToast": "Siswa dihapus permanen",
+    "loadFailed": "Gagal memuat siswa",
+    "saveFailed": "Gagal menyimpan siswa",
+    "updatedToast": "Siswa diperbarui",
+    "createdToast": "Siswa dibuat",
+    "loadStudents": "Gagal memuat daftar siswa",
+    "loadStudent": "Gagal memuat siswa",
+    "createStudent": "Gagal membuat siswa",
+    "updateStudent": "Gagal memperbarui siswa",
+    "purgeStudent": "Gagal menghapus permanen siswa",
+    "importStudents": "Gagal mengimpor siswa"
   },
   "dash": {
+    "home": {
+      "welcome": "Selamat datang kembali",
+      "there": "Anda",
+      "cards": {
+        "admin": {
+          "title": "Dasbor",
+          "desc": "Hitungan, event & siswa terbaru."
+        },
+        "question": {
+          "title": "Bank Soal",
+          "desc": "Kelola bank soal Tantangan Bebras."
+        },
+        "event": {
+          "title": "Event",
+          "desc": "Buat dan kelola tantangan."
+        },
+        "student": {
+          "title": "Siswa",
+          "desc": "Manajemen siswa."
+        },
+        "practiceReview": {
+          "title": "Review Latihan",
+          "desc": "Tinjau lembar latihan siswa."
+        },
+        "studentDash": {
+          "title": "Dasbor",
+          "desc": "Kategori dan aktivitas Anda."
+        },
+        "practice": {
+          "title": "Latihan",
+          "desc": "Soal latihan untuk kategori Anda."
+        },
+        "challenges": {
+          "title": "Event",
+          "desc": "Tantangan yang tersedia."
+        }
+      }
+    },
+    "admin": {
+      "activeEvents": "Event Aktif",
+      "activeStudents": "Siswa Aktif",
+      "inactiveStudents": "Siswa Tidak Aktif",
+      "attempts24": "Percobaan 24 Jam",
+      "statistics": "Statistik",
+      "totalStudents": "Total Siswa",
+      "totalSchools": "Total Sekolah",
+      "studentsBySchool": "Siswa per Sekolah",
+      "studentsBySchoolSub": "10 sekolah teratas berdasarkan jumlah siswa",
+      "studentsByCategory": "Siswa per Kategori",
+      "registrationsByYear": "Pendaftaran per Tahun",
+      "registrationsByYearSub": "Siswa baru per tahun",
+      "seriesStudents": "Siswa",
+      "seriesRegistrations": "Pendaftaran",
+      "others": "Lainnya",
+      "recentEvents": "Event Terbaru",
+      "noEvents": "Belum ada event.",
+      "recentStudents": "Siswa Terbaru",
+      "noStudents": "Belum ada siswa."
+    },
+    "student": {
+      "startPractice": "Mulai Latihan",
+      "welcome": "Selamat datang,",
+      "category": "Kategori:",
+      "totalPractice": "Total Latihan",
+      "totalChallenges": "Total Tantangan",
+      "practice": "Latihan",
+      "challenges": "Tantangan",
+      "lastPractice": "Latihan Terakhir",
+      "scoreWith": "Skor {score}",
+      "notSubmitted": "Belum dikirim",
+      "lastChallenge": "Tantangan Terakhir",
+      "inProgress": "Berlangsung"
+    },
+    "loadStatistics": "Gagal memuat statistik",
+    "loadDashboard": "Gagal memuat dasbor",
     "welcomeBack": "Selamat datang kembali",
     "roles": "Peran",
     "noRoles": "Belum ada peran"
+  },
+  "event": {
+    "searchPlaceholder": "Cari event…",
+    "createEvent": "Buat Event",
+    "openStudent": "Buka Siswa",
+    "published": "Terbit",
+    "draft": "Draf",
+    "noMatch": "Tidak ada event yang cocok dengan filter.",
+    "noData": "Belum ada event.",
+    "duration": "Durasi",
+    "deadline": "Batas Waktu",
+    "questions": "Soal",
+    "minutesShort": "{n} mnt",
+    "loadFailed": "Gagal memuat event",
+    "saveFailed": "Gagal menyimpan event",
+    "updatedToast": "Event diperbarui",
+    "createdToast": "Event dibuat",
+    "selectQuestions": "Pilih Soal ({count} tersedia)",
+    "descriptionPlaceholder": "Deskripsi opsional…",
+    "selectedBadge": "{n} dipilih",
+    "noActiveQuestions": "Tidak ada soal {category} yang aktif. Tambahkan soal di bank soal terlebih dahulu.",
+    "deleteTitle": "Hapus Event",
+    "deleteMessage": "Hapus \"{name}\"? Event akan disembunyikan dari daftar dan siswa tidak bisa memulainya.",
+    "deletedToast": "Event dihapus",
+    "restoreFailed": "Gagal memulihkan event",
+    "restoreToast": "Event dipulihkan",
+    "testQuiz": "Tes Quiz",
+    "testFailed": "Gagal memulai tes",
+    "metaLine": "{category} • {minutes} menit • Batas waktu: {deadline}",
+    "questionsCount": "Soal ({count})",
+    "viewResults": "Lihat Hasil",
+    "resultsEmpty": "Belum ada siswa yang mengumpulkan.",
+    "submitTime": "Waktu Kirim",
+    "secondsShort": "{n} dtk",
+    "backToEvent": "Kembali ke Event",
+    "play": "Mainkan",
+    "loadEvents": "Gagal memuat event",
+    "loadEvent": "Gagal memuat event",
+    "createFailed": "Gagal membuat event",
+    "updateEvent": "Gagal memperbarui event",
+    "deleteEvent": "Gagal menghapus event",
+    "purgeEvent": "Gagal menghapus permanen event",
+    "loadResults": "Gagal memuat hasil"
+  },
+  "users": {
+    "addUser": "Tambah Pengguna",
+    "searchPlaceholder": "Cari pengguna…",
+    "noData": "Tidak ada pengguna.",
+    "role": "Peran",
+    "created": "Dibuat",
+    "deleteTitle": "Hapus Pengguna",
+    "deleteMessage": "Hapus \"{name}\"? Tindakan ini tidak bisa dibatalkan.",
+    "deleteFailed": "Gagal menghapus pengguna",
+    "deletedToast": "Pengguna dihapus",
+    "loadFailed": "Gagal memuat pengguna",
+    "saveFailed": "Gagal menyimpan pengguna",
+    "updatedToast": "Pengguna diperbarui",
+    "createdToast": "Pengguna dibuat",
+    "roleUser": "Pengguna",
+    "roleAdmin": "Admin",
+    "resetPassword": "Atur Ulang Kata Sandi",
+    "resetMessage": "Masukkan kata sandi baru untuk pengguna ini.",
+    "resetToast": "Kata sandi diatur ulang",
+    "resetFieldLabel": "Kata sandi baru",
+    "resetFailed": "Gagal mengatur ulang kata sandi",
+    "loadUsers": "Gagal memuat daftar pengguna",
+    "loadUser": "Gagal memuat pengguna",
+    "createUser": "Gagal membuat pengguna",
+    "updateUser": "Gagal memperbarui pengguna"
+  },
+  "import": {
+    "uploadTitle": "Unggah XLSX",
+    "uploadDesc1": "Unggah berkas xlsx. Kolom yang diharapkan:",
+    "uploadDesc2": "(opsional:",
+    "uploadDesc3": ").",
+    "chooseFile": "Pilih berkas",
+    "noFile": "Belum ada berkas dipilih",
+    "upload": "Unggah",
+    "downloadTemplate": "Unduh templat",
+    "toastImported": "Diimpor: {inserted} ditambahkan, {updated} diperbarui",
+    "failed": "Gagal mengimpor",
+    "successTitle": "Berhasil: {inserted} ditambahkan, {updated} diperbarui.",
+    "summary": "{inserted} ditambahkan, {updated} diperbarui, {errors} galat.",
+    "rowError": "Baris {row}: {message}"
+  },
+  "practice": {
+    "startPractice": "Mulai Latihan",
+    "noData": "Belum ada latihan.",
+    "startFailed": "Gagal memulai latihan",
+    "createdToast": "Lembar latihan baru dibuat",
+    "cardTitle": "Latihan {date}",
+    "scoreWith": "Skor {score}",
+    "notGraded": "Belum dinilai",
+    "durationHours": "Durasi {n} jam",
+    "durationMinutes": "Durasi {n} menit",
+    "limitMinutes": "Batas {n} menit",
+    "settingsTitle": "Pengaturan Latihan",
+    "settingsBtn": "Pengaturan",
+    "settingsDesc": "Jumlah soal yang diambil dari kategori siswa untuk setiap lembar latihan baru.",
+    "questionsPerPractice": "Soal per latihan",
+    "onlyAdmins": "Hanya admin yang bisa mengubah ini.",
+    "settingsInvalid": "Soal per latihan harus bilangan bulat minimal 1",
+    "settingsFailed": "Gagal memperbarui pengaturan",
+    "settingsSaved": "Pengaturan latihan diperbarui",
+    "scoreBadge": "Skor {score}",
+    "finishedPrefix": "Selesai:",
+    "backToList": "Daftar Latihan",
+    "loadSettings": "Gagal memuat pengaturan",
+    "loadPractices": "Gagal memuat daftar latihan",
+    "loadPractice": "Gagal memuat latihan",
+    "submitPractice": "Gagal mengumpulkan latihan",
+    "testQuiz": "Tes Quiz",
+    "testFailed": "Gagal memulai tes"
+  },
+  "backup": {
+    "exportTitle": "Ekspor database",
+    "exportDesc": "Unduh cadangan SQL lengkap untuk semua tabel aplikasi, termasuk pengaturan, role, log audit, dan API key.",
+    "exportBtn": "Unduh .sql",
+    "importTitle": "Pulihkan database",
+    "importWarn": "Pemulihan mengganti semua tabel yang dicakup cadangan",
+    "importDesc": "Pilih file .sql hasil Ekspor. Tabel di dalamnya diganti dalam satu transaksi, jadi database tidak berubah bila pemulihan gagal. Sebelum ada yang diganti, database saat ini diunduh otomatis sebagai cadangan pengaman sebelum pemulihan.",
+    "chooseFile": "Pilih file",
+    "noFile": "Belum ada file",
+    "restoreBtn": "Pulihkan cadangan",
+    "confirmTitle": "Pulihkan cadangan ini?",
+    "confirmMessage": "Pulihkan {name}? Baris pada tabel yang dicakupnya akan diganti dan tidak bisa dikembalikan. Database saat ini diunduh lebih dulu sebagai cadangan pengaman.",
+    "restoreFailed": "Gagal memulihkan cadangan",
+    "snapshotFailed": "Cadangan pengaman gagal, tidak ada yang dipulihkan",
+    "restored": "Cadangan dipulihkan: {tables} tabel, {rows} baris",
+    "restoredTitle": "Cadangan dipulihkan — {tables} tabel, {rows} baris"
+  },
+  "todos": {
+    "add": "Tambah Tugas",
+    "searchPlaceholder": "Cari tugas…",
+    "noData": "Tidak ada tugas",
+    "allStatuses": "Semua status",
+    "editTitle": "Edit Tugas",
+    "newTitle": "Tugas Baru",
+    "titlePlaceholder": "Apa yang perlu dikerjakan?",
+    "description": "Deskripsi",
+    "descPlaceholder": "Detail opsional…",
+    "saveFailed": "Gagal menyimpan tugas",
+    "updatedToast": "Tugas \"{title}\" diperbarui",
+    "createdToast": "Tugas dibuat",
+    "deleteTitle": "Hapus Tugas",
+    "deleteMessage": "Hapus \"{title}\"?",
+    "deleteFailed": "Gagal menghapus tugas",
+    "deletedToast": "Tugas dihapus",
+    "loadTodos": "Gagal memuat daftar tugas",
+    "createTodo": "Gagal membuat tugas",
+    "updateTodo": "Gagal memperbarui tugas"
+  },
+  "eventStudent": {
+    "yourCategory": "Kategori Anda:",
+    "noData": "Event tantangan Bebras akan muncul di sini saat tersedia.",
+    "categoryMismatch": "Kategori tidak cocok",
+    "metaLine": "{timeLimit} menit · {questionCount} soal",
+    "deadline": "Batas waktu: {date}",
+    "scoreLabel": "Skor: {score}",
+    "viewResult": "Lihat Hasil",
+    "continue": "Lanjutkan",
+    "start": "Mulai",
+    "startFailed": "Gagal memulai event",
+    "startedToast": "Event dimulai",
+    "yourScore": "Skor Anda",
+    "secondsShort": "{n} detik",
+    "submittedAt": "Dikirim {date}",
+    "backToList": "Kembali ke daftar event",
+    "loadEvents": "Gagal memuat daftar event",
+    "loadEvent": "Gagal memuat event",
+    "submitEvent": "Gagal mengumpulkan event",
+    "loadResult": "Gagal memuat hasil"
+  },
+  "field": {
+    "fullName": "Nama lengkap",
+    "firstName": "Nama depan",
+    "lastName": "Nama belakang",
+    "email": "Email",
+    "username": "Nama pengguna",
+    "password": "Kata sandi",
+    "questionCode": "Kode Soal",
+    "type": "Tipe",
+    "question": "Pertanyaan",
+    "correctAnswer": "Jawaban benar",
+    "referenceAnswer": "Jawaban (referensi)",
+    "category": "Kategori",
+    "difficulty": "Kesulitan",
+    "status": "Status",
+    "topic": "Topik",
+    "option": "Opsi {letter}",
+    "multipleChoice": "Pilihan Ganda",
+    "eventName": "Nama event",
+    "durationMinutes": "Durasi (menit)",
+    "eventDeadline": "Batas waktu event",
+    "description": "Deskripsi",
+    "publish": "Publikasikan event ini",
+    "school": "Sekolah",
+    "city": "Kota",
+    "country": "Negara",
+    "newPasswordOptional": "Kata sandi baru (opsional)"
+  },
+  "form": {
+    "detail": "Detail",
+    "details": "Detail",
+    "content": "Konten",
+    "settings": "Pengaturan",
+    "unsaved": "Belum disimpan",
+    "identity": "Identitas",
+    "usernameMin": "Min. 3 karakter",
+    "passwordMin": "Min. 6 karakter"
+  },
+  "validation": {
+    "questionRequired": "Pertanyaan wajib diisi",
+    "referenceRequired": "Jawaban referensi wajib diisi",
+    "optionRequired": "Opsi {letter} wajib diisi",
+    "correctAnswer": "Pilih jawaban benar"
+  },
+  "detail": {
+    "info": "Info",
+    "account": "Akun",
+    "userId": "ID Pengguna",
+    "slug": "Slug",
+    "referenceAnswer": "Jawaban referensi",
+    "beforeShuffle": "Sebelum Pengacakan",
+    "afterShuffle": "Sesudah Pengacakan",
+    "answers": "Jawaban",
+    "noAnswers": "Belum ada jawaban.",
+    "notAnswered": "(belum dijawab)",
+    "studentLabel": "Siswa:",
+    "score": "Skor",
+    "answerDetail": "Detail Jawaban",
+    "categoryPrefix": "Kategori:",
+    "durationPrefix": "Durasi:"
+  },
+  "crumb": {
+    "dashboard": "Dasbor",
+    "questionBank": "Bank Soal",
+    "newQuestion": "Soal Baru",
+    "question": "Soal",
+    "editQuestion": "Edit Soal",
+    "editor": "Editor",
+    "students": "Siswa",
+    "import": "Impor",
+    "newStudent": "Siswa Baru",
+    "student": "Siswa",
+    "editStudent": "Edit Siswa",
+    "users": "Pengguna",
+    "newUser": "Pengguna Baru",
+    "user": "Pengguna",
+    "editUser": "Edit Pengguna",
+    "practice": "Latihan",
+    "result": "Hasil",
+    "practiceReview": "Review Latihan",
+    "practiceDetail": "Detail",
+    "events": "Event",
+    "newEvent": "Event Baru",
+    "event": "Event",
+    "editEvent": "Edit Event",
+    "eventResults": "Hasil",
+    "todos": "Tugas",
+    "backup": "Backup & Pemulihan"
+  },
+  "editor": {
+    "outline": "Outline",
+    "noTopics": "Belum ada topik.",
+    "noTopic": "Tanpa topik",
+    "noQuestionSelected": "Pilih soal di panel kiri untuk mulai mengedit.",
+    "noSettingsSelected": "Pilih soal untuk melihat pengaturannya.",
+    "questionListBtn": "Daftar Soal",
+    "lengthLabel": "Panjang",
+    "lengthValue": "{n} karakter",
+    "noValue": "(tidak ada)",
+    "editTopic": "Edit Topik",
+    "deleteTopic": "Hapus Topik",
+    "topicActions": "Aksi topik",
+    "topicCount": "{n} soal",
+    "untitled": "(tanpa judul)",
+    "noQuestionsInTopic": "Belum ada soal di topik ini.",
+    "deleteQuestion": "Hapus soal",
+    "topicNotFound": "Topik tidak ditemukan",
+    "topicSaveFailed": "Gagal menyimpan topik",
+    "topicUpdatedToast": "Topik diperbarui",
+    "topicCreatedToast": "Topik dibuat",
+    "topicEditTitle": "Edit Topik",
+    "topicNewTitle": "Topik Baru",
+    "topicTitlePlaceholder": "Judul topik",
+    "topicOrder": "Urutan",
+    "topicDeletedToast": "Topik dihapus",
+    "deleteTopicMessage": "Menghapus topik akan melepas soal-soal di dalamnya (soalnya tidak ikut terhapus). Lanjutkan?",
+    "discardTitle": "Buang perubahan",
+    "discardMessage": "Buang perubahan yang belum disimpan dan muat ulang versi terakhir?",
+    "savedToast": "Soal disimpan",
+    "saveFailedBadge": "Gagal menyimpan",
+    "savingBadge": "Menyimpan…",
+    "savedStatus": "Tersimpan {relative}",
+    "justNow": "baru saja",
+    "untitledHeading": "Tanpa Judul",
+    "secondsAgo": "{n} dtk lalu",
+    "minutesAgo": "{n} mnt lalu",
+    "referencePlaceholder": "Jawaban referensi…"
+  },
+  "runner": {
+    "yourAnswer": "Jawaban Anda",
+    "answerPlaceholder": "Ketik jawaban Anda…",
+    "submit": "Kumpulkan Jawaban",
+    "previous": "Sebelumnya",
+    "next": "Berikutnya",
+    "unavailable": "Soal ini tidak tersedia.",
+    "timeUp": "Waktu habis!",
+    "autoSaved": "Jawaban disimpan otomatis",
+    "showSidebar": "Tampilkan panel",
+    "focusMode": "Mode fokus",
+    "leaveTitle": "Tinggalkan Latihan?",
+    "leaveMessage": "Anda sedang mengerjakan latihan. Jawaban yang sudah diisi akan disimpan dan dinilai otomatis. Yakin ingin keluar?",
+    "leaveConfirm": "Simpan & Keluar",
+    "leaveCancel": "Lanjutkan Kerja",
+    "noQuestions": "Tidak ada soal tersedia.",
+    "questionOf": "Soal {i} dari {n}",
+    "attemptNotFound": "Percobaan tidak ditemukan.",
+    "backToEvents": "Kembali ke Event",
+    "noPracticeInProgress": "Tidak ada latihan yang sedang berjalan. Mulai latihan baru dari daftar latihan."
   },
   "setup": {
     "title": "Setup",
@@ -132,79 +954,176 @@
     "descPlaceholder": "Tampil di hasil mesin pencari (opsional)",
     "siteUrl": "URL Situs",
     "siteUrlPlaceholder": "https://acme.com (opsional)",
-    "language": "Bahasa",
     "usernamePlaceholder": "abdulah (opsional)",
     "complete": "Selesaikan setup",
     "connectionFailed": "Uji koneksi gagal",
-    "setupFailed": "Setup gagal"
+    "setupFailed": "Setup gagal",
+    "language": "Bahasa"
   },
-  "error": {
-    "generic": "Terjadi kesalahan",
-    "invalid_credentials": "Kredensial tidak valid",
-    "registration_disabled": "Pendaftaran dinonaktifkan",
-    "email_already_registered": "Email sudah terdaftar",
-    "username_taken": "Nama pengguna sudah dipakai",
-    "api_key_not_found": "API key tidak ditemukan",
-    "bad_request": "Permintaan tidak valid",
-    "conflict": "Data bentrok",
-    "cannot_delete_builtin_role": "Tidak bisa menghapus peran bawaan",
-    "could_not_generate_unique_name": "Gagal membuat nama unik",
-    "csrf_token_invalid": "Token CSRF tidak valid",
-    "database_required": "Basis data wajib diisi",
-    "db_connection_failed": "Koneksi basis data gagal",
-    "db_not_found": "Basis data tidak ditemukan",
-    "db_timeout": "Timeout basis data",
-    "db_unreachable": "Basis data tidak terjangkau",
-    "domain_error": "Kesalahan domain",
-    "file_invalid_name": "Nama berkas tidak valid",
-    "file_required": "Berkas wajib diunggah",
-    "file_too_large": "Ukuran berkas terlalu besar",
-    "file_type_not_allowed": "Jenis berkas tidak diizinkan",
-    "forbidden": "Akses ditolak",
-    "idx_invalid": "Indeks tidak valid",
-    "integrity_error": "Pelanggaran integritas data",
-    "internal_server_error": "Terjadi kesalahan server",
-    "invalid_api_key": "API key tidak valid",
-    "invalid_app_role": "Peran aplikasi tidak valid",
-    "invalid_date": "Tanggal tidak valid",
-    "invalid_db_credentials": "Kredensial basis data tidak valid",
-    "invalid_db_host": "Host basis data tidak valid",
-    "invalid_db_name": "Nama basis data tidak valid",
-    "invalid_db_path": "Lokasi basis data tidak valid",
-    "invalid_db_port": "Port basis data tidak valid",
-    "invalid_email": "Email tidak valid",
-    "invalid_operation": "Operasi tidak valid",
-    "invalid_username": "Nama pengguna tidak valid",
-    "malformed": "Format salah",
-    "method_not_allowed": "Metode tidak diizinkan",
-    "name_required": "Nama wajib diisi",
-    "no_fields_to_update": "Tidak ada kolom untuk diperbarui",
-    "not_found": "Tidak ditemukan",
-    "password_must_contain_digit": "Kata sandi harus mengandung angka",
-    "password_must_contain_lowercase": "Kata sandi harus mengandung huruf kecil",
-    "password_must_contain_special_character": "Kata sandi harus mengandung karakter khusus",
-    "password_must_contain_uppercase": "Kata sandi harus mengandung huruf besar",
-    "payload_too_large": "Ukuran payload terlalu besar",
-    "rate_limit_exceeded": "Batas rate limit tercapai",
-    "required": "Wajib diisi",
-    "role_already_exists": "Peran sudah ada",
-    "role_not_found": "Peran tidak ditemukan",
-    "setup_admin_failed": "Pembuatan admin gagal",
-    "setup_already_complete": "Setup sudah selesai",
-    "setup_env_write_failed": "Penulisan env saat setup gagal",
-    "setup_migration_failed": "Migrasi setup gagal",
-    "setup_repoint_failed": "Ganti pointer basis data saat setup gagal",
-    "site_url_invalid": "URL situs tidak valid",
-    "spa_not_built": "Frontend belum di-build",
-    "unauthorized": "Tidak terautentikasi",
-    "unprocessable_entity": "Entitas tidak dapat diproses",
-    "unknown_db_host": "Host basis data tidak dikenal",
-    "unsupported_engine": "Mesin basis data tidak didukung",
-    "unsupported_host": "Host tidak didukung",
-    "unsupported_lang": "Bahasa tidak didukung",
-    "user_not_found": "Pengguna tidak ditemukan",
-    "username_already_registered": "Nama pengguna sudah terdaftar",
-    "username_required": "Nama pengguna wajib diisi",
-    "validation_error": "Validasi gagal"
+  "route": {
+    "Login": {
+      "title": "Masuk",
+      "description": "Masuk ke akun Anda."
+    },
+    "Register": {
+      "title": "Buat akun",
+      "description": "Buat akun untuk memulai."
+    },
+    "StudentLogin": {
+      "title": "Masuk Siswa",
+      "description": "Masuk dengan akun siswa Anda."
+    },
+    "StudentRegister": {
+      "title": "Registrasi Siswa",
+      "description": "Daftar sebagai siswa untuk mengikuti tantangan dan latihan."
+    },
+    "Setup": {
+      "title": "Setup",
+      "description": "Setup awal: hubungkan basis data, atur brand, dan buat administrator."
+    },
+    "Dashboard": {
+      "title": "Beranda",
+      "description": "Tautan cepat ke halaman latihan, tantangan, dan akun Anda."
+    },
+    "AdminDashboard": {
+      "title": "Dasbor",
+      "description": "Ringkasan event, siswa, dan statistik platform."
+    },
+    "StudentDashboard": {
+      "title": "Dasbor Saya",
+      "description": "Aktivitas latihan dan tantangan Anda dalam sekilas."
+    },
+    "QuestionList": {
+      "title": "Soal",
+      "description": "Telusuri dan kelola bank soal."
+    },
+    "QuestionNew": {
+      "title": "Soal Baru",
+      "description": "Tambahkan soal baru ke bank."
+    },
+    "QuestionEditor": {
+      "title": "Editor Soal",
+      "description": "Susun konten soal dengan editor kaya fitur."
+    },
+    "QuestionDetail": {
+      "title": "Detail Soal",
+      "description": "Lihat pertanyaan, jawaban, dan metadata soal."
+    },
+    "QuestionEdit": {
+      "title": "Edit Soal",
+      "description": "Ubah soal ini."
+    },
+    "StudentList": {
+      "title": "Siswa",
+      "description": "Telusuri dan kelola akun siswa."
+    },
+    "StudentImport": {
+      "title": "Impor Siswa",
+      "description": "Impor siswa massal dari file CSV."
+    },
+    "StudentNew": {
+      "title": "Siswa Baru",
+      "description": "Buat akun siswa baru."
+    },
+    "StudentDetail": {
+      "title": "Detail Siswa"
+    },
+    "StudentEdit": {
+      "title": "Edit Siswa",
+      "description": "Ubah profil siswa ini."
+    },
+    "UsersList": {
+      "title": "Pengguna",
+      "description": "Kelola akun dan peran pengguna."
+    },
+    "UserNew": {
+      "title": "Pengguna Baru",
+      "description": "Buat akun pengguna baru."
+    },
+    "UserDetail": {
+      "title": "Detail Pengguna",
+      "description": "Lihat detail, peran, dan akses pengguna."
+    },
+    "UserEdit": {
+      "title": "Edit Pengguna",
+      "description": "Ubah akun pengguna ini."
+    },
+    "PracticeList": {
+      "title": "Latihan",
+      "description": "Soal latihan untuk kategori Anda."
+    },
+    "PracticeAdminList": {
+      "title": "Review Latihan",
+      "description": "Tinjau lembar latihan yang dikirim siswa."
+    },
+    "PracticeAdminDetail": {
+      "title": "Detail Latihan",
+      "description": "Bandingkan lembar latihan sebelum dan sesudah pengacakan."
+    },
+    "PracticeRunner": {
+      "title": "Latihan",
+      "description": "Jawab soal pada lembar latihan Anda."
+    },
+    "PracticeResult": {
+      "title": "Hasil Latihan",
+      "description": "Lihat skor latihan dan tinjauan jawaban Anda."
+    },
+    "EventList": {
+      "title": "Event",
+      "description": "Telusuri dan kelola tantangan."
+    },
+    "EventNew": {
+      "title": "Event Baru",
+      "description": "Buat tantangan baru."
+    },
+    "EventResults": {
+      "title": "Hasil Event",
+      "description": "Lihat hasil peserta untuk tantangan ini."
+    },
+    "EventEdit": {
+      "title": "Edit Event",
+      "description": "Ubah tantangan ini."
+    },
+    "EventDetail": {
+      "title": "Detail Event",
+      "description": "Lihat detail tantangan dan soalnya."
+    },
+    "EventStudentList": {
+      "title": "Tantangan",
+      "description": "Telusuri tantangan yang tersedia dan percobaan Anda."
+    },
+    "EventStudentRunner": {
+      "title": "Tantangan",
+      "description": "Jawab soal pada tantangan ini."
+    },
+    "EventStudentResult": {
+      "title": "Hasil Tantangan",
+      "description": "Lihat skor tantangan dan tinjauan jawaban Anda."
+    },
+    "TodosList": {
+      "title": "Tugas",
+      "description": "Catat tugas dan pengingat Anda."
+    }
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "nav": {
+      "user": "Pengaturan pengguna"
+    },
+    "profile": {
+      "title": "Profil",
+      "fullName": "Nama lengkap",
+      "email": "Email",
+      "username": "Nama pengguna",
+      "role": "Peran",
+      "memberSince": "Bergabung sejak"
+    },
+    "preferences": {
+      "title": "Preferensi",
+      "theme": "Tema",
+      "themeDescription": "Terang, gelap, atau ikut sistem.",
+      "language": "Bahasa",
+      "languageDescription": "Bahasa yang dipakai di seluruh aplikasi."
+    }
   }
 }

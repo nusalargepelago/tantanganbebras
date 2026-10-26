@@ -17,7 +17,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="mt-1 flex h-8 items-center justify-end rounded-b-6 bg-surface-gray-2 px-3">
+  <div
+    class="mt-1 flex min-h-8 items-center justify-end rounded-b-6 bg-surface-gray-2 px-3 py-0.5"
+  >
     <Pagination
       :always="always"
       align="end"

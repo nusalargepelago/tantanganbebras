@@ -21,4 +21,24 @@ export const authRoutes: RouteRecordRaw[] = [
       description: 'Create an account to get started.',
     },
   },
+  {
+    path: '/student-login',
+    name: 'StudentLogin',
+    component: () => import('./views/StudentLoginView.vue'),
+    meta: {
+      guestOnly: true,
+      title: 'Student Sign in',
+      description: 'Sign in with your student account.',
+    },
+  },
+  {
+    path: '/student-register',
+    name: 'StudentRegister',
+    component: () => import('./views/StudentRegisterView.vue'),
+    meta: {
+      guestOnly: true,
+      title: 'Student Registration',
+      description: 'Register as a student to join challenges and practice.',
+    },
+  },
 ]
