@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^1.7.0",
+    "dompurify": "^3.4.17",
     "feather-icons": "^4.29.2",
     "frappe-ui": "1.0.2",
     "pinia": "^2.2.6",
