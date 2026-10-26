@@ -16,7 +16,7 @@ MINIMAL_INDEX = """<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Minimals</title>
+    <title>Tantangan Bebras</title>
   </head>
   <body>
     <div id="app"></div>
@@ -38,7 +38,7 @@ def _write_index(tmp_path):
 def test_get_brand_returns_defaults_when_empty(app):
     with app.app_context():
         assert get_brand() == {
-            "name": "Minimals",
+            "name": "Tantangan Bebras",
             "tagline": "",
             "description": "",
             "siteUrl": "",
@@ -51,7 +51,7 @@ def test_get_brand_falls_back_when_settings_table_missing(app):
     with app.app_context():
         AppSetting.__table__.drop(db.engine)
 
-        assert get_brand()["name"] == "Minimals"
+        assert get_brand()["name"] == "Tantangan Bebras"
 
 
 def test_save_brand_upserts_rows(app):
@@ -184,6 +184,17 @@ def test_index_context_seo_lang_follows_saved_app_lang(app):
     assert ctx["appLang"] == "id"
 
 
+def test_index_lang_follows_language_cookie(app):
+    with app.test_request_context("/", headers={"Cookie": "minimals-lang=id"}):
+        assert index_context()["seo"]["lang"] == "id"
+
+    with app.test_request_context("/", headers={"Cookie": "minimals-lang=xx"}):
+        assert index_context()["seo"]["lang"] == "en"
+
+    with app.app_context():
+        assert index_context()["seo"]["lang"] == "en"
+
+
 def test_render_injects_seo_tags_and_boot(app, tmp_path):
     root = _write_index(tmp_path)
 
@@ -224,7 +235,7 @@ def test_render_survives_provider_failure(app, tmp_path):
         html = _render_index_html(root, boom)
 
     assert "csrfToken" in html
-    assert "<title>Minimals</title>" in html
+    assert "<title>Tantangan Bebras</title>" in html
 
 
 def test_render_escapes_seo_values(app, tmp_path):
@@ -247,7 +258,7 @@ def test_render_without_seo_keeps_static_head(app, tmp_path, provider_result):
     with app.test_request_context("/"):
         html = _render_index_html(root, lambda: provider_result)
 
-    assert "<title>Minimals</title>" in html
+    assert "<title>Tantangan Bebras</title>" in html
     assert 'name="description"' not in html
 
 

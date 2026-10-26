@@ -54,6 +54,17 @@ class Config(BaseConfig):
     )
     APP_LANG = os.environ.get("APP_LANG", "en")
 
+    # --- Security headers -----------------------------------------------------
+    # Legacy question images are hosted on Google's CDN, so this app widens the
+    # framework default beyond 'self' and data: URIs. Keep the framework layer
+    # generic; per-deployment overrides still go through TALISMAN_CSP.
+    TALISMAN_CSP = os.environ.get("TALISMAN_CSP", "") or (
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: https://*.googleusercontent.com; "
+        "font-src 'self'; base-uri 'self'; object-src 'none'"
+    )
+
     # data/ is the only writable path in the container (and is git-ignored),
     # so the default log has to live there — app/logs/ is not created by the
     # image and would raise PermissionError for the non-root user.

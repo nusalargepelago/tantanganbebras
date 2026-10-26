@@ -90,9 +90,11 @@ class BaseConfig:
     # --- Request size -------------------------------------------------------
     # Rejects oversized bodies before they are parsed. The auth endpoints take
     # a token anonymously, so without a cap a single request can force the
-    # server to materialise an arbitrarily large JSON document.
+    # server to materialise an arbitrarily large JSON document. The floor is
+    # set by the full-database backup restore (tens of MB) and the 5 MiB image
+    # upload; tighten it in .env for deployments that disable either.
     MAX_CONTENT_LENGTH = int(
-        os.environ.get("MAX_CONTENT_LENGTH", str(1024 * 1024))
+        os.environ.get("MAX_CONTENT_LENGTH", str(64 * 1024 * 1024))
     )
 
     # --- Cookie security -----------------------------------------------------

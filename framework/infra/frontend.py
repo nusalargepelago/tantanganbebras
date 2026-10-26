@@ -142,7 +142,10 @@ def _render_index_html(
 
 def _serve_index(static_root: str, index_context: IndexContextProvider | None = None):
     html = _render_index_html(static_root, index_context)
-    return html, 200, {"Content-Type": "text/html; charset=utf-8"}
+    return html, 200, {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-cache",
+    }
 
 
 def _spa_not_built(url_prefix: str):

@@ -18,7 +18,7 @@ bp = Blueprint("seo", __name__)
 limiter.exempt(bp)
 
 DEFAULT_BRAND: dict[str, str] = {
-    "name": "Minimals",
+    "name": "Tantangan Bebras",
     "tagline": "",
     "description": "",
     "siteUrl": "",

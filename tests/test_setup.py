@@ -327,7 +327,7 @@ def test_setup_defaults_brand_when_omitted(client, app, tmp_path, restore_engine
     assert response.status_code == 201, response.get_json()
 
     with app.app_context():
-        assert get_brand()["name"] == "Minimals"
+        assert get_brand()["name"] == "Tantangan Bebras"
 
 
 def test_setup_seeds_app_lang(client, app, tmp_path, restore_engine):

@@ -31,7 +31,7 @@ class AdminCreateIn(DTOBase, CredentialPolicy):
 class BrandIn(DTOBase):
     """Validate the white-label brand payload."""
 
-    name: str = Field(default="Minimals", min_length=1, max_length=64)
+    name: str = Field(default="Tantangan Bebras", min_length=1, max_length=64)
     tagline: str = Field(default="", max_length=120)
     description: str = Field(default="", max_length=300)
     site_url: str | None = Field(default=None, alias="siteUrl", max_length=512)
