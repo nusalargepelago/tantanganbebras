@@ -1,9 +1,21 @@
-"""Account services — user/role management and API keys."""
+"""Account services — user/role management, API keys, and preferences."""
 from __future__ import annotations
 
-from app.account.dto import RoleUpdateIn, UserCreateIn, UserUpdateIn
-from app.account.models import ApiKey, generate_api_key
-from app.account.repositories import AccountRepository, ApiKeyRepository
+import json
+from dataclasses import dataclass
+
+from app.account.dto import (
+    MenuPreferenceIn,
+    RoleUpdateIn,
+    UserCreateIn,
+    UserUpdateIn,
+)
+from app.account.models import ApiKey, UserPreference, generate_api_key
+from app.account.repositories import (
+    AccountRepository,
+    ApiKeyRepository,
+    UserPreferenceRepository,
+)
 from app.auth.models import MEMBER_ROLE, Role, User
 from app.auth.repositories import RoleRepository, UserRepository
 from app.infra.audit import log as audit_log
@@ -236,4 +248,63 @@ class ApiKeyService(ServiceBase[ApiKeyRepository]):
         return None
 
 
-__all__ = ["BUILTIN_ROLES", "AccountService", "ApiKeyService"]
+MENU_KEY = "menu"
+
+
+@dataclass(frozen=True)
+class MenuPreference:
+    order: list[str]
+    hidden: list[str]
+
+
+def _decode_menu(raw: str) -> MenuPreference:
+    try:
+        data = json.loads(raw) if raw else {}
+    except (TypeError, ValueError):
+        return MenuPreference(order=[], hidden=[])
+    if not isinstance(data, dict):
+        return MenuPreference(order=[], hidden=[])
+
+    order = data.get("order")
+    hidden = data.get("hidden")
+    return MenuPreference(
+        order=[key for key in order if isinstance(key, str)]
+        if isinstance(order, list)
+        else [],
+        hidden=[key for key in hidden if isinstance(key, str)]
+        if isinstance(hidden, list)
+        else [],
+    )
+
+
+class PreferenceService(ServiceBase[UserPreferenceRepository]):
+    """Per-user preferences — currently the navigation menu layout."""
+
+    repository_class = UserPreferenceRepository
+
+    def get_menu(self, user_id: str) -> MenuPreference:
+        row = self._repo.find_for_user(user_id, MENU_KEY)
+        return _decode_menu(row.value if row else "")
+
+    def save_menu(self, user_id: str, dto: MenuPreferenceIn) -> MenuPreference:
+        payload = json.dumps(
+            {"order": dto.order, "hidden": dto.hidden}, separators=(",", ":")
+        )
+        row = self._repo.find_for_user(user_id, MENU_KEY)
+        if row is None:
+            self._repo.add(
+                UserPreference(user_id=user_id, key=MENU_KEY, value=payload)
+            )
+        else:
+            row.value = payload
+        self._commit()
+        return MenuPreference(order=list(dto.order), hidden=list(dto.hidden))
+
+
+__all__ = [
+    "BUILTIN_ROLES",
+    "AccountService",
+    "ApiKeyService",
+    "MenuPreference",
+    "PreferenceService",
+]

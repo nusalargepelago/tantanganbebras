@@ -95,7 +95,7 @@ def create_app() -> Flask:
         if migrations_enabled():
             run_migrations(app)
 
-        from app.account.models import ApiKey  # noqa: F401
+        from app.account.models import ApiKey, UserPreference  # noqa: F401
         from app.auth.models import Role, User, user_roles  # noqa: F401
         from app.event.models import Event, EventAttempt  # noqa: F401
         from app.infra.audit import AuditLog  # noqa: F401
@@ -111,6 +111,7 @@ def create_app() -> Flask:
 
         from app.account import bp as account_bp
         from app.account.api_key_api import bp as account_api_key_bp
+        from app.account.preference_api import bp as account_preference_bp
         from app.auth import bp as auth_bp
         from app.dashboard import bp as dashboard_bp
         from app.event import bp as event_bp
@@ -138,6 +139,7 @@ def create_app() -> Flask:
         app.register_blueprint(auth_bp)
         app.register_blueprint(account_bp)
         app.register_blueprint(account_api_key_bp)
+        app.register_blueprint(account_preference_bp)
         app.register_blueprint(app_api_bp)
         app.register_blueprint(topic_bp)
         app.register_blueprint(question_bp)
@@ -164,5 +166,9 @@ def create_app() -> Flask:
         register_error_handlers(app)
 
     request_middleware(app)
+
+    from app.cli import setup as setup_command
+
+    app.cli.add_command(setup_command)
 
     return app

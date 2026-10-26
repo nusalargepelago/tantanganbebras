@@ -23,6 +23,7 @@ import { brand } from '@/shared/brand'
 import { useFocusMode } from './focus-mode'
 import { isNavActive, navFor, primaryNav } from './navigation'
 import { mobileMenuOpen } from './mobile-menu'
+import { useMenuStore } from './menuStore'
 import { useMediaQuery } from './useMediaQuery'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 import UserSettingsDialog from './UserSettingsDialog.vue'
@@ -30,7 +31,17 @@ import UserSettingsDialog from './UserSettingsDialog.vue'
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
+const menu = useMenuStore()
 const { t } = useI18n()
+
+watch(
+  () => auth.user?.id,
+  (userId) => {
+    if (userId) menu.fetchPreference()
+    else menu.reset()
+  },
+  { immediate: true },
+)
 
 const isFullscreen = computed(
   () => route.meta.fullscreen === true || route.query.fullscreen === '1',
@@ -48,8 +59,8 @@ const navFlags = computed(() => ({
   student: auth.isStudent,
   admin: auth.isAdmin,
 }))
-const visibleNav = computed(() => navFor(navFlags.value))
-const primaryTabs = computed(() => primaryNav(navFlags.value))
+const visibleNav = computed(() => navFor(navFlags.value, menu.items))
+const primaryTabs = computed(() => primaryNav(navFlags.value, menu.items))
 
 const sheetRowClass =
   'flex min-h-11 w-full items-center gap-3 rounded-6 px-3 text-p-sm transition'
@@ -149,7 +160,7 @@ async function onLogout() {
         <MobileNavItem
           v-for="item in primaryTabs"
           :key="item.key"
-          :label="t(item.labelKey)"
+          :label="t(item.mobileLabelKey ?? item.labelKey)"
           :icon="item.icon"
           :route="item.route"
           :active="isNavActive(item, route.path)"

@@ -53,8 +53,8 @@ const columns = {
   // Below md only name, status, and actions stay: the five-column layout did
   // not fit a 360px screen and pushed the page sideways.
   base: ['minmax(0,1fr)', '6.5rem', '2.5rem'],
-  md: ['minmax(0,1fr)', '5rem', '4rem', '7rem', '7rem', '5rem', '3rem'],
-  lg: ['minmax(0,1fr)', '5rem', '4rem', '7rem', '7rem', '5rem', '3rem'],
+  md: ['minmax(0,1fr)', '5rem', '4rem', '7rem', '7rem', '5rem', '5rem'],
+  lg: ['minmax(0,1fr)', '5rem', '4rem', '7rem', '7rem', '5rem', '5rem'],
 }
 
 function reload() {
@@ -158,8 +158,8 @@ onMounted(reload)
       :show-per-page="!empty"
       :placeholder="t('event.searchPlaceholder')"
     >
-      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1" />
-      <Select v-model="published" :options="publishedFilter" class="w-36 max-sm:flex-1" />
+      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
+      <Select v-model="published" :options="publishedFilter" class="w-36 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
     </ListToolbar>
 
     <div data-tour="admin-event-list">
@@ -194,7 +194,9 @@ onMounted(reload)
           <ListHeaderCell class="max-md:hidden">{{ t('event.deadline') }}</ListHeaderCell>
           <ListHeaderCell>{{ t('list.status') }}</ListHeaderCell>
           <ListHeaderCell class="max-md:hidden">{{ t('event.questions') }}</ListHeaderCell>
-          <ListHeaderCell>{{ t('list.actions') }}</ListHeaderCell>
+          <ListHeaderCell>
+            <span class="max-md:hidden">{{ t('list.actions') }}</span>
+          </ListHeaderCell>
         </ListHead>
         <ListRows :items="filteredItems" v-slot="{ item }">
           <ListRow :value="item.name" @click="openRow(item)">

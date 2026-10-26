@@ -119,4 +119,32 @@ class ApiKeyCreateIn(DTOBase):
         return v
 
 
-__all__ = ["ApiKeyCreateIn", "RoleCreateIn", "RoleUpdateIn", "UserCreateIn", "UserUpdateIn"]
+class MenuPreferenceIn(DTOBase):
+    """Validate a per-user menu preference payload."""
+
+    model_config = dict(DTOBase.model_config, extra="ignore")
+
+    order: list[str] = DTOBase.field(default_factory=list)
+    hidden: list[str] = DTOBase.field(default_factory=list)
+
+    @field_validator("order", "hidden")
+    @classmethod
+    def validate_keys(cls, keys: list[str]) -> list[str]:
+        if len(keys) > 100:
+            raise ValueError("too_many_menu_items")
+        normalized = [key.strip() for key in keys]
+        if any(not key or len(key) > 64 for key in normalized):
+            raise ValueError("invalid_menu_key")
+        if len(set(normalized)) != len(normalized):
+            raise ValueError("duplicate_menu_key")
+        return normalized
+
+
+__all__ = [
+    "ApiKeyCreateIn",
+    "MenuPreferenceIn",
+    "RoleCreateIn",
+    "RoleUpdateIn",
+    "UserCreateIn",
+    "UserUpdateIn",
+]

@@ -32,6 +32,7 @@ uv run pytest                  # test suite
 uv run ruff check .            # lint
 uv run python -m app.run       # serve (waitress, default :8000)
 uv run minimals                # sama — entry point script
+uv run python -m app.cli setup # wizard via terminal (cPanel/headless)
 
 # Frontend
 cd frontend && yarn install && yarn dev     # Vite dev :5173, proxy /api → :8000
@@ -219,6 +220,8 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | PATCH | /api/v1/todos/:id | Update todo (owner or admin) |
 | PUT | /api/v1/todos/:id | Update todo (owner or admin) |
 | DELETE | /api/v1/todos/:id | Delete todo (owner or admin) |
+| GET | /api/v1/account/menu-preferences | Menu order/visibility (session) |
+| PUT | /api/v1/account/menu-preferences | Save menu order/visibility (session) |
 | GET | /api/v1/app/ping | Liveness of the read API (public) |
 | GET | /api/v1/app/users | Cross-service read API (internal token or admin) |
 | GET | /api/v1/app/roles | Cross-service read API (internal token or admin) |
@@ -343,7 +346,9 @@ semua; `app/config.py` menambah path & static.
 | `SECRET_KEY` | — | **Wajib**, ≥32 chars, bukan placeholder (dicek, raise saat import) |
 | `DATABASE_URL` | `sqlite:///app.db` | Path relatif → `data/`. sqlite / mysql+pymysql / postgresql+psycopg |
 | `FLASK_DEBUG` | `false` | `true` → dev server, bukan waitress |
-| `PORT` | `8000` | |
+| `PORT` | `8000` | Bind port waitress; juga jadi akhiran nama cookie sesi |
+| `SESSION_COOKIE_NAME` | `session_{PORT}` | Cookie sesi. Cookie browser disimpan per host, bukan per port — akhiran `PORT` yang memisahkan dua instance di satu mesin; replika satu deployment (PORT sama) tetap berbagi |
+| `REMEMBER_COOKIE_NAME` | `remember_{PORT}` | Sama, untuk remember-me |
 | `FORCE_HTTPS` | `false` | Cookie secure, HSTS, SameSite=None |
 | `TRUSTED_PROXY` | `false` | Lihat §Security |
 | `CSRF_ENABLED` | `true` | |

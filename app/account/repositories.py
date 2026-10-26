@@ -1,7 +1,7 @@
-"""Account repositories — database access for users and API keys."""
+"""Account repositories — database access for users, API keys, and preferences."""
 from __future__ import annotations
 
-from app.account.models import ApiKey
+from app.account.models import ApiKey, UserPreference
 from app.auth.models import User
 from framework.base import RepositoryBase
 from framework.extensions import db
@@ -60,4 +60,13 @@ class ApiKeyRepository(RepositoryBase[ApiKey]):
         )
 
 
-__all__ = ["AccountRepository", "ApiKeyRepository"]
+class UserPreferenceRepository(RepositoryBase[UserPreference]):
+    """Database access layer for per-user preferences."""
+
+    model = UserPreference
+
+    def find_for_user(self, user_id: str, key: str) -> UserPreference | None:
+        return self.find_one(user_id=user_id, key=key)
+
+
+__all__ = ["AccountRepository", "ApiKeyRepository", "UserPreferenceRepository"]

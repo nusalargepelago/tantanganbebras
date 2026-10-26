@@ -48,4 +48,11 @@ class ApiKeyOut(PresenterBase):
         return cls.from_model(key, name=key.masked_name)
 
 
-__all__ = ["ApiKeyOut", "RoleOut", "UserAdminOut"]
+class MenuPreferenceOut(PresenterBase):
+    """Per-user menu order and visibility."""
+
+    order: list[str] = PresenterBase.field(default_factory=list)
+    hidden: list[str] = PresenterBase.field(default_factory=list)
+
+
+__all__ = ["ApiKeyOut", "MenuPreferenceOut", "RoleOut", "UserAdminOut"]

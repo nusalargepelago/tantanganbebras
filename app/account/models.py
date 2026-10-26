@@ -1,9 +1,17 @@
-"""Account domain models — ApiKey."""
+"""Account domain models — ApiKey, UserPreference."""
 from __future__ import annotations
 
 import secrets
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, func
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    ForeignKey,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from framework.extensions import db
@@ -63,4 +71,22 @@ class ApiKey(db.Model):
         return self.name[:2] + "****" + self.name[-2:]
 
 
-__all__ = ["ApiKey", "generate_api_key"]
+class UserPreference(db.Model):
+    __tablename__ = "user_preferences"
+    __table_args__ = (
+        UniqueConstraint("user_id", "key", name="uq_user_preferences_user_key"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    key: Mapped[str] = mapped_column(String(64), nullable=False)
+    value: Mapped[str] = mapped_column(
+        Text, nullable=False, default="", server_default=""
+    )
+
+    user = relationship("User", backref="user_preferences")
+
+
+__all__ = ["ApiKey", "UserPreference", "generate_api_key"]

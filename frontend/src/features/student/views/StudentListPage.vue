@@ -37,8 +37,8 @@ const categoryFilter = computed(() => categoryOptions(true))
 const statusFilter = computed(() => statusOptions(true))
 
 const columns = {
-  base: ['minmax(0,1fr)', '7rem', '6rem'],
-  md: ['minmax(0,1fr)', 'minmax(0,1fr)', '5rem', '5rem', '7rem'],
+  base: ['minmax(0,1fr)', '5.5rem', '2.5rem'],
+  md: ['minmax(0,1fr)', 'minmax(0,1fr)', '5rem', '5rem', '5rem'],
 }
 
 const { search, perPage, reload: refresh, goToPage } = useListControls({
@@ -179,8 +179,8 @@ onMounted(refresh)
       :show-per-page="!empty"
       :placeholder="t('student.searchPlaceholder')"
     >
-      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1" />
-      <Select v-model="status" :options="statusFilter" class="w-32 max-sm:flex-1" />
+      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
+      <Select v-model="status" :options="statusFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
       <div class="flex items-center gap-2">
         <span class="shrink-0 text-p-sm text-ink-gray-5">{{ t('list.deleted') }}</span>
         <Switch v-model="includeDisabled" />
@@ -217,7 +217,9 @@ onMounted(refresh)
           <ListHeaderCell class="max-md:hidden">{{ t('list.school') }}</ListHeaderCell>
           <ListHeaderCell>{{ t('list.category') }}</ListHeaderCell>
           <ListHeaderCell class="max-md:hidden">{{ t('list.status') }}</ListHeaderCell>
-          <ListHeaderCell>{{ t('list.actions') }}</ListHeaderCell>
+          <ListHeaderCell>
+            <span class="max-md:hidden">{{ t('list.actions') }}</span>
+          </ListHeaderCell>
         </ListHead>
         <ListRows :items="store.items" v-slot="{ item }">
           <ListRow :value="item.userId" @click="openRow(item)">

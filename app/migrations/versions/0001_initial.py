@@ -52,6 +52,14 @@ def upgrade() -> None:
         sa.Column("created_on", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
     )
     op.create_table(
+        "user_preferences",
+        sa.Column("id", sa.String(length=36), primary_key=True),
+        sa.Column("user_id", sa.String(length=36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column("key", sa.String(length=64), nullable=False),
+        sa.Column("value", sa.Text(), nullable=False, server_default=""),
+        sa.UniqueConstraint("user_id", "key", name="uq_user_preferences_user_key"),
+    )
+    op.create_table(
         "audit_logs",
         sa.Column("id", sa.String(length=36), primary_key=True),
         sa.Column("timestamp", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
@@ -85,6 +93,7 @@ def downgrade() -> None:
     op.drop_index("ix_users_email", table_name="users")
     op.drop_table("audit_logs")
     op.drop_table("settings")
+    op.drop_table("user_preferences")
     op.drop_table("api_keys")
     op.drop_table("user_roles")
     op.drop_table("users")

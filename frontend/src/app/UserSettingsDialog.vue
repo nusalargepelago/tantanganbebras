@@ -14,10 +14,15 @@ import {
   Select,
   SettingsRow,
   SettingsSidebar,
+  Switch,
+  Tree,
+  toast,
 } from 'frappe-ui'
+import type { DropInfo, MoveContext, TreeNode } from 'frappe-ui'
 
 import { useAuthStore } from '@/features/auth/store'
 import { openCatalog } from '@/app/tour/store'
+import { useMenuStore } from './menuStore'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 
 const open = defineModel<boolean>('open', { default: false })
@@ -27,6 +32,7 @@ const emit = defineEmits<{ logout: [] }>()
 
 const { t, locale } = useI18n()
 const auth = useAuthStore()
+const menu = useMenuStore()
 
 const user = computed(() => auth.user)
 const displayName = computed(() => user.value?.fullName || user.value?.email || '')
@@ -60,6 +66,36 @@ const memberSince = computed(() => {
     new Date(created),
   )
 })
+
+const menuBusy = computed(() => menu.saving || !menu.loaded)
+
+const menuNodes = computed<TreeNode[]>(() =>
+  menu.allItems.map((item) => ({
+    key: item.key,
+    label: t(item.labelKey),
+    icon: item.icon,
+  })),
+)
+
+function isHidden(key: unknown): boolean {
+  return typeof key === 'string' && menu.hidden.includes(key)
+}
+
+function canMove({ position }: MoveContext): boolean {
+  return position !== 'inside'
+}
+
+async function onDragEnd(info: DropInfo | null) {
+  if (!info || info.position === 'inside') return
+  const saved = await menu.move(info.oldIndex, info.newIndex)
+  if (!saved && menu.error) toast.error(menu.error)
+}
+
+async function onVisibility(key: unknown, visible: boolean) {
+  if (typeof key !== 'string') return
+  const saved = await menu.setVisible(key, visible)
+  if (!saved && menu.error) toast.error(menu.error)
+}
 </script>
 
 <template>
@@ -79,6 +115,12 @@ const memberSince = computed(() => {
             <span class="lucide-sliders-horizontal size-4 text-ink-gray-6" />
           </template>
           {{ t('settings.preferences.title') }}
+        </SettingsNavItem>
+        <SettingsNavItem value="menu">
+          <template #prefix>
+            <span class="lucide-list size-4 text-ink-gray-6" />
+          </template>
+          {{ t('settings.menu.title') }}
         </SettingsNavItem>
       </SettingsNavGroup>
     </SettingsSidebar>
@@ -194,6 +236,65 @@ const memberSince = computed(() => {
                 />
               </div>
             </div>
+          </div>
+        </SettingsBody>
+      </SettingsPanel>
+
+      <SettingsPanel value="menu">
+        <SettingsHeader class="settings-header" :title="t('settings.menu.title')">
+          <template #actions>
+            <Button
+              variant="ghost"
+              icon-left="lucide-x"
+              :aria-label="t('shared.close')"
+              class="sm:hidden"
+              @click="open = false"
+            />
+          </template>
+        </SettingsHeader>
+        <SettingsBody class="settings-body">
+          <p class="mt-6 text-p-sm leading-5 text-ink-gray-5">
+            {{ t('settings.menu.description') }}
+          </p>
+
+          <div class="mt-4 rounded-6 border border-outline-gray-1 p-1">
+            <Tree
+              :nodes="menuNodes"
+              node-key="key"
+              draggable
+              guides="none"
+              :disabled="menuBusy"
+              :move="canMove"
+              @drag-end="onDragEnd"
+            >
+              <template #item="{ node }">
+                <div class="flex w-full items-center gap-2.5 py-2">
+                  <span
+                    class="lucide-grip-vertical size-4 shrink-0 text-ink-gray-4"
+                    aria-hidden="true"
+                  />
+                  <span
+                    :class="node.icon"
+                    class="size-4 shrink-0 text-ink-gray-6"
+                    aria-hidden="true"
+                  />
+                  <span
+                    class="min-w-0 flex-1 truncate text-base leading-tighter"
+                    :class="isHidden(node.key) ? 'text-ink-gray-5' : 'text-ink-gray-8'"
+                  >
+                    {{ node.label }}
+                  </span>
+                  <Switch
+                    :model-value="!isHidden(node.key)"
+                    :disabled="menuBusy"
+                    :aria-label="t('settings.menu.show', { name: node.label })"
+                    @update:model-value="
+                      (visible: boolean) => onVisibility(node.key, visible)
+                    "
+                  />
+                </div>
+              </template>
+            </Tree>
           </div>
         </SettingsBody>
       </SettingsPanel>
