@@ -91,7 +91,7 @@ dan tanpa layanan tambahan.
 | **Backend** | Flask 3 · SQLAlchemy 2 · Pydantic 2 · Alembic · waitress |
 | **Frontend** | Vue 3 · Vite · Pinia · frappe-ui · Tailwind (TypeScript strict) |
 | **Database** | SQLite · MariaDB/MySQL · PostgreSQL |
-| **Deploy** | Docker (non-root) + Caddy (TLS) |
+| **Deploy** | Docker (non-root) + Caddy (TLS) · cPanel/Passenger |
 
 ## Menjalankan di lokal
 
@@ -150,6 +150,9 @@ cd frontend && yarn install && yarn build
    selama Caddy mengirim `X-Forwarded-Proto`.
 4. Jalankan `uv run python -m app.run`, atau set `MIGRATE_ON_BOOT=true` bila ingin
    migrasi berjalan otomatis saat start.
+
+Untuk shared hosting cPanel (Passenger, tanpa container), ikuti
+[`docs/deploy-cpanel.md`](docs/deploy-cpanel.md).
 
 Dengan Docker:
 

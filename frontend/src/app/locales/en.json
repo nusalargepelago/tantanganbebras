@@ -1124,6 +1124,12 @@
       "themeDescription": "Light, dark, or follow your system.",
       "language": "Language",
       "languageDescription": "Language used across the app."
+    },
+    "menu": {
+      "title": "Menu",
+      "description": "Drag to reorder. Turn an item off to hide it from the sidebar and bottom navigation.",
+      "show": "Show {name}",
+      "saveFailed": "Couldn't save the menu preference."
     }
   }
 }

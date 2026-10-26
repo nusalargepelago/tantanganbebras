@@ -11,6 +11,11 @@ if _load_dotenv_path.exists():
     load_dotenv(_load_dotenv_path)
 
 
+def _scoped_cookie_name(prefix: str, port: str, override: str | None) -> str:
+    """Scope a cookie name by bind port; cookies themselves are host-scoped."""
+    return override or f"{prefix}_{port}"
+
+
 def _engine_options(uri: str | None) -> dict:
     if not uri or uri.startswith("sqlite"):
         return {}
@@ -98,6 +103,17 @@ class BaseConfig:
     )
 
     # --- Cookie security -----------------------------------------------------
+    # A cookie belongs to a host, never to a host:port, so two instances of this
+    # app on one machine would otherwise share a single `session` cookie and
+    # overwrite each other's login. Naming it after the bind port keeps them
+    # apart while replicas of one deployment (same PORT) still share it.
+    _PORT = os.environ.get("PORT", "8000").strip() or "8000"
+    SESSION_COOKIE_NAME = _scoped_cookie_name(
+        "session", _PORT, os.environ.get("SESSION_COOKIE_NAME")
+    )
+    REMEMBER_COOKIE_NAME = _scoped_cookie_name(
+        "remember", _PORT, os.environ.get("REMEMBER_COOKIE_NAME")
+    )
     # SameSite=None only for a cross-site API (CORS_ORIGINS set) that can
     # actually carry it — the browser rejects None without Secure.
     SESSION_COOKIE_SECURE = FORCE_HTTPS

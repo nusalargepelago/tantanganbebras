@@ -1124,6 +1124,12 @@
       "themeDescription": "Terang, gelap, atau ikut sistem.",
       "language": "Bahasa",
       "languageDescription": "Bahasa yang dipakai di seluruh aplikasi."
+    },
+    "menu": {
+      "title": "Menu",
+      "description": "Seret untuk mengubah urutan. Matikan item untuk menyembunyikannya dari sidebar dan navigasi bawah.",
+      "show": "Tampilkan {name}",
+      "saveFailed": "Preferensi menu gagal disimpan."
     }
   }
 }
