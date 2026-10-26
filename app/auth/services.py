@@ -1,12 +1,11 @@
 """Auth service — business logic for the Auth domain."""
 from __future__ import annotations
 
-from werkzeug.security import check_password_hash, generate_password_hash
-
 from app.auth.dto import RegisterIn
 from app.auth.models import MEMBER_ROLE, User
 from app.auth.repositories import RoleRepository, UserRepository
 from app.infra.audit import log as audit_log
+from app.infra.passwords import hash_password, is_legacy_hash, verify_password
 from app.infra.registration import get_registration_mode, save_registration_mode
 from framework.base import ServiceBase
 from framework.exceptions import Conflict, DomainException, Forbidden
@@ -100,7 +99,7 @@ class AuthService(ServiceBase[UserRepository]):
             first_name=parts[0] if parts else "",
             last_name=parts[1] if len(parts) > 1 else "",
             full_name=full_name,
-            password=generate_password_hash(password),
+            password=hash_password(password),
             active=True,
             app_role=app_role,
         )
@@ -111,7 +110,7 @@ class AuthService(ServiceBase[UserRepository]):
 
     def authenticate(self, identifier: str, password: str) -> User | None:
         user = self._repo.find_by_identifier(identifier)
-        if user is None or not user.active or not check_password_hash(
+        if user is None or not user.active or not verify_password(
             user.password, password
         ):
             audit_log(
@@ -121,6 +120,8 @@ class AuthService(ServiceBase[UserRepository]):
             )
             self._commit()
             return None
+        if is_legacy_hash(user.password):
+            user.password = hash_password(password)
         audit_log(
             "login_success",
             user_id=user.id,

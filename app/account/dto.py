@@ -3,9 +3,51 @@ from __future__ import annotations
 
 from pydantic import field_validator, model_validator
 
+from app.infra.validation import EMAIL_PATTERN
 from framework.base import DTOBase
 
 VALID_APP_ROLES = ("user", "admin")
+
+
+class UserCreateIn(DTOBase):
+    """Validate an admin user-creation payload."""
+
+    email: str = DTOBase.field(..., max_length=255)
+    username: str | None = DTOBase.field(None, min_length=3, max_length=150)
+    password: str = DTOBase.field(..., min_length=6, max_length=255)
+    full_name: str = DTOBase.field(..., alias="fullName", max_length=255)
+    app_role: str = DTOBase.field("user", alias="appRole")
+    role_names: list[str] | None = DTOBase.field(None, alias="roleNames")
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def normalize_email(cls, value):
+        if not isinstance(value, str):
+            return value
+        value = value.strip().lower()
+        if not EMAIL_PATTERN.match(value):
+            raise ValueError("invalid_email")
+        return value
+
+    @field_validator("app_role")
+    @classmethod
+    def validate_app_role(cls, v: str) -> str:
+        if v not in VALID_APP_ROLES:
+            raise ValueError("invalid_app_role")
+        return v
+
+    @field_validator("full_name")
+    @classmethod
+    def check_full_name(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("required")
+        return v
+
+    @model_validator(mode="after")
+    def fill_username(self):
+        if not self.username:
+            self.username = self.email
+        return self
 
 
 class UserUpdateIn(DTOBase):
@@ -77,4 +119,4 @@ class ApiKeyCreateIn(DTOBase):
         return v
 
 
-__all__ = ["ApiKeyCreateIn", "RoleCreateIn", "RoleUpdateIn", "UserUpdateIn"]
+__all__ = ["ApiKeyCreateIn", "RoleCreateIn", "RoleUpdateIn", "UserCreateIn", "UserUpdateIn"]

@@ -1,12 +1,13 @@
 """Account services — user/role management and API keys."""
 from __future__ import annotations
 
-from app.account.dto import RoleUpdateIn, UserUpdateIn
+from app.account.dto import RoleUpdateIn, UserCreateIn, UserUpdateIn
 from app.account.models import ApiKey, generate_api_key
 from app.account.repositories import AccountRepository, ApiKeyRepository
 from app.auth.models import MEMBER_ROLE, Role, User
 from app.auth.repositories import RoleRepository, UserRepository
 from app.infra.audit import log as audit_log
+from app.infra.passwords import hash_password
 from framework.base import ServiceBase
 from framework.exceptions import Conflict, InvalidOperation, NotFound
 
@@ -40,6 +41,46 @@ class AccountService(ServiceBase[AccountRepository]):
         if user is None:
             raise NotFound("user_not_found")
         return user
+
+    def create_user(self, dto: UserCreateIn, *, actor_id: str) -> User:
+        if self._repo.find_user_by_email(dto.email) is not None:
+            raise Conflict("email_already_registered")
+        if dto.username and self._repo.find_user_by_username(dto.username) is not None:
+            raise Conflict("username_taken")
+
+        user = User(
+            username=dto.username or dto.email,
+            email=dto.email,
+            full_name=dto.full_name,
+            password=hash_password(dto.password),
+            active=True,
+            app_role=dto.app_role,
+        )
+        if dto.role_names:
+            roles = []
+            for name in dto.role_names:
+                role = self._roles.find_by_name(name)
+                if role is None:
+                    raise InvalidOperation("role_not_found")
+                roles.append(role)
+            user.roles = roles
+
+        self._repo.add(user)
+        self._flush()
+        audit_log(
+            "user_admin_created",
+            user_id=actor_id,
+            resource=f"users/{user.id}",
+            details={"email": user.email, "role": dto.app_role},
+        )
+        self._commit()
+        return user
+
+    def delete_user(self, user_id: str, *, actor_id: str) -> None:
+        user = self.get_user(user_id)
+        self._repo.delete(user)
+        audit_log("user_admin_deleted", user_id=actor_id, resource=f"users/{user_id}")
+        self._commit()
 
     def update_user(self, user_id: str, dto: UserUpdateIn, *, actor_id: str) -> User:
         user = self._repo.get_user(user_id)

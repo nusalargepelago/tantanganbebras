@@ -56,6 +56,7 @@ def app():
 
     application = create_app()
     application.config["TESTING"] = True
+    application.config["RATELIMIT_ENABLED"] = False
 
     with application.app_context():
         db.create_all()

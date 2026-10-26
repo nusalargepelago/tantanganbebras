@@ -4,7 +4,7 @@ from __future__ import annotations
 from flask import request
 from flask_login import current_user, login_required
 
-from app.account.dto import RoleCreateIn, RoleUpdateIn, UserUpdateIn
+from app.account.dto import RoleCreateIn, RoleUpdateIn, UserCreateIn, UserUpdateIn
 from app.account.presenters import RoleOut, UserAdminOut
 from app.account.services import AccountService
 from framework.api import (
@@ -52,6 +52,27 @@ def get_user(user_id: str):
 
     user = AccountService().get_user(user_id)
     return ok(UserAdminOut.from_user(user).to_dict())
+
+
+@bp.post("/users")
+@login_required
+def create_user():
+    if denied := require_role("admin"):
+        return denied
+
+    dto = UserCreateIn.validate(request.get_json(silent=True) or {})
+    user = AccountService().create_user(dto, actor_id=current_user.id)
+    return created(UserAdminOut.from_user(user).to_dict())
+
+
+@bp.delete("/users/<user_id>")
+@login_required
+def delete_user(user_id: str):
+    if denied := require_role("admin"):
+        return denied
+
+    AccountService().delete_user(user_id, actor_id=current_user.id)
+    return no_content()
 
 
 @bp.patch("/users/<user_id>")

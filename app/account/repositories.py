@@ -18,6 +18,9 @@ class AccountRepository(RepositoryBase[User]):
     def find_user_by_username(self, username: str) -> User | None:
         return self.find_one(username=username)
 
+    def find_user_by_email(self, email: str) -> User | None:
+        return self.find_one(email=email)
+
     def list_users(
         self, *, search: str | None = None, page: int = 1, per_page: int = 20
     ) -> tuple[list[User], int]:

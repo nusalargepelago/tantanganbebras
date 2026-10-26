@@ -38,6 +38,24 @@ def test_register_rejects_duplicate_username(client):
     assert response.get_json() == {"message": "username_taken"}
 
 
+def test_register_rejects_email_differing_only_by_case(client):
+    register(client)
+    client.get("/api/v1/auth/logout")
+
+    response = register(client, email="ALICE@example.com", username="someone_else")
+    assert response.status_code == 409
+    assert response.get_json() == {"message": "email_already_registered"}
+
+
+def test_register_rejects_username_differing_only_by_case(client):
+    register(client)
+    client.get("/api/v1/auth/logout")
+
+    response = register(client, email="other@example.com", username="ALICE")
+    assert response.status_code == 409
+    assert response.get_json() == {"message": "username_taken"}
+
+
 def test_register_rejects_invalid_email(client):
     response = register(client, email="not-an-email")
     assert response.status_code == 400
@@ -159,6 +177,58 @@ def test_login_accepts_email_as_identifier(client):
     )
     assert response.status_code == 200
     assert response.get_json()["username"] == "alice"
+
+
+def test_login_matches_stored_identifier_regardless_of_casing(client):
+    register(client, email="Mixed@Example.com", username="MixedUser")
+    client.get("/api/v1/auth/logout")
+
+    by_username = client.post(
+        "/api/v1/auth/login",
+        json={"identifier": "MIXEDUSER", "password": "Str0ng!Pass"},
+    )
+    assert by_username.status_code == 200
+    assert by_username.get_json()["username"] == "mixeduser"
+
+    client.get("/api/v1/auth/logout")
+    by_email = client.post(
+        "/api/v1/auth/login",
+        json={"identifier": "mixed@EXAMPLE.com", "password": "Str0ng!Pass"},
+    )
+    assert by_email.status_code == 200
+    assert by_email.get_json()["email"] == "mixed@example.com"
+
+
+def test_login_finds_stored_mixed_case_row(client, app):
+    from framework.extensions import db
+
+    register(client, email="stored@mixed.com", username="storedmixed")
+    client.get("/api/v1/auth/logout")
+
+    with app.app_context():
+        from app.auth.models import User
+
+        user = db.session.scalar(
+            db.select(User).where(User.username == "storedmixed")
+        )
+        assert user is not None
+        user.username = "StoredMixed"
+        user.email = "Stored@Mixed.com"
+        db.session.commit()
+
+    by_username = client.post(
+        "/api/v1/auth/login",
+        json={"identifier": "storedmixed", "password": "Str0ng!Pass"},
+    )
+    assert by_username.status_code == 200
+    assert by_username.get_json()["username"] == "StoredMixed"
+
+    client.get("/api/v1/auth/logout")
+    by_email = client.post(
+        "/api/v1/auth/login",
+        json={"identifier": "stored@mixed.com", "password": "Str0ng!Pass"},
+    )
+    assert by_email.status_code == 200
 
 
 def test_login_rejects_wrong_password(client):

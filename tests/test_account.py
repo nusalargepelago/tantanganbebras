@@ -213,3 +213,51 @@ def test_promoted_user_gains_admin_access(admin, app):
     assert promoted.status_code == 200
     assert promoted.get_json()["appRole"] == "admin"
     assert newcomer.get("/api/v1/account/users").status_code == 200
+
+
+def test_create_user(admin):
+    response = admin.post(
+        "/api/v1/account/users",
+        json={
+            "email": "creator@example.com",
+            "password": "S3cret!pass",
+            "fullName": "Course Creator",
+            "appRole": "user",
+        },
+    )
+    assert response.status_code == 201
+    body = response.get_json()
+    assert body["email"] == "creator@example.com"
+    assert body["username"] == "creator@example.com"
+    assert body["appRole"] == "user"
+
+
+def test_create_user_duplicate_email(admin):
+    admin.post(
+        "/api/v1/account/users",
+        json={"email": "dup@example.com", "password": "S3cret!pass", "fullName": "Dup"},
+    )
+    response = admin.post(
+        "/api/v1/account/users",
+        json={"email": "dup@example.com", "password": "S3cret!pass", "fullName": "Dup"},
+    )
+    assert response.status_code == 409
+    assert response.get_json() == {"message": "email_already_registered"}
+
+
+def test_create_user_requires_admin(member):
+    response = member.post(
+        "/api/v1/account/users",
+        json={"email": "x@example.com", "password": "S3cret!pass", "fullName": "X"},
+    )
+    assert response.status_code == 403
+
+
+def test_delete_user(admin):
+    created = admin.post(
+        "/api/v1/account/users",
+        json={"email": "gone@example.com", "password": "S3cret!pass", "fullName": "Gone"},
+    ).get_json()
+    response = admin.delete(f"/api/v1/account/users/{created['id']}")
+    assert response.status_code == 204
+    assert admin.get(f"/api/v1/account/users/{created['id']}").status_code == 404
