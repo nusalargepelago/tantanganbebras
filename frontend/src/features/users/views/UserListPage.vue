@@ -29,9 +29,9 @@ const { t } = useI18n()
 const empty = computed(() => !store.loading && store.items.length === 0)
 
 const columns = {
-  base: ['minmax(0,1fr)', '6rem', '6rem'],
-  md: ['minmax(0,1fr)', 'minmax(0,1fr)', '5rem', '6rem', '6rem'],
-  lg: ['minmax(0,1fr)', 'minmax(0,1fr)', '5rem', '5rem', '6rem', '6rem'],
+  base: ['minmax(0,1fr)', '6rem', '2.5rem'],
+  md: ['minmax(0,1fr)', 'minmax(0,1fr)', '5rem', '6rem', '5rem'],
+  lg: ['minmax(0,1fr)', 'minmax(0,1fr)', '5rem', '5rem', '6rem', '5rem'],
 }
 
 const { search, perPage, reload: refresh, goToPage } = useListControls({
@@ -126,7 +126,9 @@ onMounted(refresh)
           <ListHeaderCell>{{ t('users.role') }}</ListHeaderCell>
           <ListHeaderCell class="max-md:hidden">{{ t('list.status') }}</ListHeaderCell>
           <ListHeaderCell class="max-lg:hidden">{{ t('users.created') }}</ListHeaderCell>
-          <ListHeaderCell>{{ t('list.actions') }}</ListHeaderCell>
+          <ListHeaderCell>
+            <span class="max-md:hidden">{{ t('list.actions') }}</span>
+          </ListHeaderCell>
         </ListHead>
         <ListRows :items="store.items" v-slot="{ item }">
           <ListRow :value="item.id" @click="openRow(item)">
