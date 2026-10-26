@@ -97,22 +97,39 @@ def create_app() -> Flask:
 
         from app.account.models import ApiKey  # noqa: F401
         from app.auth.models import Role, User, user_roles  # noqa: F401
+        from app.event.models import Event, EventAttempt  # noqa: F401
         from app.infra.audit import AuditLog  # noqa: F401
         from app.infra.models import AppSetting  # noqa: F401
         from app.infra.roles import ensure_member_role
+        from app.practice.models import Practice  # noqa: F401
+        from app.question.models import Question  # noqa: F401
+        from app.student.models import Student  # noqa: F401
+        from app.todos.models import Todo  # noqa: F401
+        from app.topic.models import Topic  # noqa: F401
 
         ensure_member_role()
 
         from app.account import bp as account_bp
         from app.account.api_key_api import bp as account_api_key_bp
         from app.auth import bp as auth_bp
+        from app.dashboard import bp as dashboard_bp
+        from app.event import bp as event_bp
+        from app.event import event_student_bp
         from app.infra.api import bp as app_api_bp
+        from app.infra.backup import bp as backup_bp
         from app.infra.csrf import bp as csrf_bp
         from app.infra.health import bp as health_bp
         from app.infra.seo import bp as seo_bp
         from app.infra.seo import index_context
         from app.infra.setup import bp as setup_bp
         from app.infra.uploads import bp as uploads_bp
+        from app.practice import bp as practice_bp
+        from app.practice import staff_bp as practice_staff_bp
+        from app.question import bp as question_bp
+        from app.student import bp as student_bp
+        from app.student import student_auth_bp, student_dashboard_bp, student_import_bp
+        from app.todos import bp as todos_bp
+        from app.topic import bp as topic_bp
 
         app.register_blueprint(health_bp)
         app.register_blueprint(csrf_bp)
@@ -122,7 +139,20 @@ def create_app() -> Flask:
         app.register_blueprint(account_bp)
         app.register_blueprint(account_api_key_bp)
         app.register_blueprint(app_api_bp)
+        app.register_blueprint(topic_bp)
+        app.register_blueprint(question_bp)
+        app.register_blueprint(practice_bp)
+        app.register_blueprint(practice_staff_bp)
+        app.register_blueprint(event_bp)
+        app.register_blueprint(event_student_bp)
+        app.register_blueprint(student_bp)
+        app.register_blueprint(student_auth_bp)
+        app.register_blueprint(student_dashboard_bp)
+        app.register_blueprint(student_import_bp)
+        app.register_blueprint(dashboard_bp)
+        app.register_blueprint(todos_bp)
         app.register_blueprint(uploads_bp)
+        app.register_blueprint(backup_bp)
 
         register_spa(
             app,
