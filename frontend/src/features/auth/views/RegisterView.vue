@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Button, ErrorMessage, FormControl, toast } from 'frappe-ui'
+import { Button, ErrorMessage, FormControl, Spinner, toast } from 'frappe-ui'
 
 import { useAuthStore } from '../store'
 import { checkPassword, isPasswordValid, passwordRules } from '../validation'
-import { brand } from '@/shared/brand'
+import { brand, useBrandLogo } from '@/shared/brand'
 
 const router = useRouter()
 const auth = useAuthStore()
 const { t } = useI18n()
+
+const { logoSrc, onLogoError } = useBrandLogo()
 
 const fullName = ref('')
 const username = ref('')
@@ -19,6 +21,11 @@ const password = ref('')
 const submitting = ref(false)
 
 const errorMessage = computed(() => auth.error)
+const gateReady = computed(() => !!auth.user || auth.registrationMode !== null)
+
+onMounted(async () => {
+  await auth.fetchRegistrationMode()
+})
 
 const passwordChecks = computed(() => checkPassword(password.value))
 const passwordValid = computed(() => isPasswordValid(password.value))
@@ -53,10 +60,25 @@ async function onSubmit() {
   <div
     class="flex min-h-screen items-center justify-center bg-surface-base p-4 text-ink-gray-8"
   >
-    <div class="w-full max-w-sm rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-6">
+    <Spinner v-if="!gateReady" />
+    <div
+      v-else
+      class="w-full max-w-sm rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-6"
+    >
       <form class="space-y-4" @submit.prevent="onSubmit">
         <div class="flex flex-col items-center gap-1.5 text-center">
-          <div class="rounded-full bg-surface-gray-2 p-3 text-ink-gray-5">
+          <div
+            v-if="logoSrc"
+            class="size-12 overflow-hidden rounded-6 bg-surface-gray-2"
+          >
+            <img
+              :src="logoSrc"
+              alt=""
+              class="h-full w-full object-cover"
+              @error="onLogoError"
+            />
+          </div>
+          <div v-else class="rounded-full bg-surface-gray-2 p-3 text-ink-gray-5">
             <span class="lucide-package size-6" aria-hidden="true" />
           </div>
           <h1 class="text-2xl-semibold text-ink-gray-8">{{ t('auth.createAccount') }}</h1>

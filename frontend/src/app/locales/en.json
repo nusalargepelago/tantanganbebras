@@ -24,7 +24,9 @@
     "logout": "Log out",
     "settings": "Settings",
     "section": "Menu",
-    "open": "Open menu"
+    "open": "Open menu",
+    "more": "More",
+    "menu": "Menu"
   },
   "tour": {
     "menu": "Guide",
@@ -413,7 +415,8 @@
     "ok": "OK",
     "forbiddenTitle": "Access denied",
     "forbiddenMessage": "This page requires administrator privileges. Your account is registered as a regular user. Contact an administrator to get access.",
-    "close": "Close"
+    "close": "Close",
+    "noResults": "No results found"
   },
   "list": {
     "all": "All",
@@ -601,7 +604,15 @@
     "loadDashboard": "Failed to load dashboard",
     "welcomeBack": "Welcome back",
     "roles": "Roles",
-    "noRoles": "No roles assigned"
+    "noRoles": "No roles assigned",
+    "totalUsers": "Total users",
+    "registration": "Registration",
+    "registrationOpen": "Open",
+    "registrationClosed": "Closed",
+    "adminConsole": "Administration",
+    "adminConsoleHint": "Manage users, roles, and registration.",
+    "manageUsers": "Manage users",
+    "loadStatsFailed": "Could not load account stats"
   },
   "event": {
     "searchPlaceholder": "Search events…",
@@ -645,32 +656,6 @@
     "deleteEvent": "Failed to delete event",
     "purgeEvent": "Failed to purge event",
     "loadResults": "Failed to load results"
-  },
-  "users": {
-    "addUser": "Add User",
-    "searchPlaceholder": "Search users…",
-    "noData": "No users found.",
-    "role": "Role",
-    "created": "Created",
-    "deleteTitle": "Delete User",
-    "deleteMessage": "Delete \"{name}\"? This cannot be undone.",
-    "deleteFailed": "Failed to delete user",
-    "deletedToast": "User deleted",
-    "loadFailed": "Failed to load user",
-    "saveFailed": "Failed to save user",
-    "updatedToast": "User updated",
-    "createdToast": "User created",
-    "roleUser": "User",
-    "roleAdmin": "Admin",
-    "resetPassword": "Reset Password",
-    "resetMessage": "Enter a new password for this user.",
-    "resetToast": "Password reset",
-    "resetFieldLabel": "New password",
-    "resetFailed": "Failed to reset password",
-    "loadUsers": "Failed to load users",
-    "loadUser": "Failed to load user",
-    "createUser": "Failed to create user",
-    "updateUser": "Failed to update user"
   },
   "import": {
     "uploadTitle": "Upload XLSX",
@@ -982,8 +967,8 @@
       "description": "First-run setup: connect a database, set your brand, and create the administrator."
     },
     "Dashboard": {
-      "title": "Home",
-      "description": "Quick links to your practice, challenges, and account pages."
+      "title": "Dashboard",
+      "description": "Your dashboard: account overview, roles, and administration."
     },
     "AdminDashboard": {
       "title": "Dashboard",
@@ -1031,22 +1016,6 @@
     "StudentEdit": {
       "title": "Edit Student",
       "description": "Edit this student profile."
-    },
-    "UsersList": {
-      "title": "Users",
-      "description": "Manage user accounts and roles."
-    },
-    "UserNew": {
-      "title": "New User",
-      "description": "Create a new user account."
-    },
-    "UserDetail": {
-      "title": "User Detail",
-      "description": "View user details, roles, and access."
-    },
-    "UserEdit": {
-      "title": "Edit User",
-      "description": "Edit this user account."
     },
     "PracticeList": {
       "title": "Practice",
@@ -1103,12 +1072,17 @@
     "TodosList": {
       "title": "Todos",
       "description": "Keep track of your tasks and reminders."
+    },
+    "Users": {
+      "title": "Users",
+      "description": "User administration: roles, status, and groups."
     }
   },
   "settings": {
     "title": "Settings",
     "nav": {
-      "user": "User settings"
+      "user": "User settings",
+      "app": "Application"
     },
     "profile": {
       "title": "Profile",
@@ -1130,6 +1104,62 @@
       "description": "Drag to reorder. Turn an item off to hide it from the sidebar and bottom navigation.",
       "show": "Show {name}",
       "saveFailed": "Couldn't save the menu preference."
+    },
+    "brand": {
+      "title": "Brand",
+      "description": "App-wide logo shown in the sidebar, sign-in screens, and browser favicon.",
+      "logo": "Logo",
+      "logoDescription": "PNG, JPG, WebP, or GIF up to 5 MB. You'll crop it to a square before saving.",
+      "upload": "Upload logo",
+      "replace": "Replace logo",
+      "remove": "Remove",
+      "updated": "Logo updated.",
+      "removed": "Logo removed.",
+      "updateFailed": "Couldn't update the logo.",
+      "removeFailed": "Couldn't remove the logo.",
+      "invalidType": "Choose a PNG, JPG, WebP, or GIF image.",
+      "tooLarge": "Image must be 5 MB or smaller.",
+      "crop": {
+        "title": "Crop logo",
+        "hint": "Drag to reposition, then zoom in if needed.",
+        "zoom": "Zoom",
+        "apply": "Use image",
+        "cancel": "Cancel",
+        "loadFailed": "Couldn't load this image. Try another file.",
+        "stage": "Logo crop preview"
+      }
+    }
+  },
+  "account": {
+    "searchUsers": "Search users…",
+    "noUsers": "No users yet.",
+    "noUsersFound": "No users match your search.",
+    "columns": {
+      "user": "User",
+      "appRole": "App role",
+      "roles": "Groups",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "addUser": "Add user",
+    "editUser": "Edit user",
+    "fullName": "Full name",
+    "appRole": "App role",
+    "roleUser": "User",
+    "roleAdmin": "Admin",
+    "roleNames": "Groups",
+    "rolesPlaceholder": "Select groups…",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "isActive": "Active",
+    "saveChanges": "Save changes",
+    "createUser": "Create user",
+    "userUpdated": "User updated.",
+    "userCreated": "User created.",
+    "errors": {
+      "loadUsersFailed": "Couldn't load users.",
+      "updateUserFailed": "Couldn't update the user.",
+      "createUserFailed": "Couldn't create the user."
     }
   }
 }

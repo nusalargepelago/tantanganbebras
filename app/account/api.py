@@ -43,17 +43,6 @@ def list_users():
     )
 
 
-@bp.get("/users/<user_id>")
-@login_required
-def get_user(user_id: str):
-    if current_user.id != user_id:
-        if denied := require_role("admin"):
-            return denied
-
-    user = AccountService().get_user(user_id)
-    return ok(UserAdminOut.from_user(user).to_dict())
-
-
 @bp.post("/users")
 @login_required
 def create_user():
@@ -63,6 +52,17 @@ def create_user():
     dto = UserCreateIn.validate(request.get_json(silent=True) or {})
     user = AccountService().create_user(dto, actor_id=current_user.id)
     return created(UserAdminOut.from_user(user).to_dict())
+
+
+@bp.get("/users/<user_id>")
+@login_required
+def get_user(user_id: str):
+    if current_user.id != user_id:
+        if denied := require_role("admin"):
+            return denied
+
+    user = AccountService().get_user(user_id)
+    return ok(UserAdminOut.from_user(user).to_dict())
 
 
 @bp.delete("/users/<user_id>")

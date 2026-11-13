@@ -7,6 +7,7 @@ import {
   ErrorMessage,
   FormControl,
   Select,
+  Spinner,
   toast,
   type SelectOptionValue,
 } from 'frappe-ui'
@@ -25,6 +26,7 @@ const { t, locale } = useI18n()
 
 const step = ref(1)
 const done = ref<SetupResult | null>(null)
+const gateReady = computed(() => setup.status !== null || setup.statusFailed)
 
 const engine = ref<string | number>('sqlite')
 const path = ref('')
@@ -199,7 +201,11 @@ onMounted(async () => {
 
 <template>
   <div class="flex min-h-screen items-center justify-center bg-surface-base p-4 text-ink-gray-8">
-    <div class="w-full max-w-md rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-6">
+    <Spinner v-if="!gateReady" />
+    <div
+      v-else
+      class="w-full max-w-md rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-6"
+    >
       <div v-if="done" class="space-y-4 text-center">
         <div class="flex justify-center">
           <div class="rounded-full bg-surface-gray-2 p-3 text-ink-green-6">

@@ -5,8 +5,8 @@ import { useI18n } from 'vue-i18n'
 import { Button, PageHeader, PageHeaderMobile } from 'frappe-ui'
 
 import { breadcrumbMap } from '@/app/breadcrumbs'
-import { openMobileMenu } from '@/app/mobile-menu'
-import { useMediaQuery } from '@/app/useMediaQuery'
+import { openMobileMenu } from '@/shared/shell/mobile-menu'
+import { useMediaQuery } from '@/shared/composables/useMediaQuery'
 
 import PageBreadcrumbs from './PageBreadcrumbs.vue'
 

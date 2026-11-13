@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   Avatar,
@@ -22,6 +22,9 @@ import type { DropInfo, MoveContext, TreeNode } from 'frappe-ui'
 
 import { useAuthStore } from '@/features/auth/store'
 import { openCatalog } from '@/app/tour/store'
+import { api, getErrorMessage } from '@/shared/api'
+import { brand, setBrandLogo, useBrandLogo } from '@/shared/brand'
+import LogoCropper from './LogoCropper.vue'
 import { useMenuStore } from './menuStore'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 
@@ -36,6 +39,9 @@ const menu = useMenuStore()
 
 const user = computed(() => auth.user)
 const displayName = computed(() => user.value?.fullName || user.value?.email || '')
+const isAdmin = computed(() => user.value?.appRole === 'admin')
+
+const { logoSrc, onLogoError } = useBrandLogo()
 
 const languageOptions = [
   { label: 'English', value: 'en' },
@@ -96,6 +102,112 @@ async function onVisibility(key: unknown, visible: boolean) {
   const saved = await menu.setVisible(key, visible)
   if (!saved && menu.error) toast.error(menu.error)
 }
+
+const ALLOWED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif']
+const ALLOWED_LOGO_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'gif']
+const MAX_LOGO_BYTES = 5 * 1024 * 1024
+
+const logoInput = ref<HTMLInputElement | null>(null)
+const pendingLogoFile = shallowRef<File | null>(null)
+const uploadingLogo = ref(false)
+const removingLogo = ref(false)
+const logoBusy = computed(() => uploadingLogo.value || removingLogo.value)
+
+function pickLogo() {
+  if (logoBusy.value || pendingLogoFile.value) return
+  logoInput.value?.click()
+}
+
+function isSupportedLogo(file: File): boolean {
+  if (ALLOWED_LOGO_TYPES.includes(file.type)) return true
+  if (file.type) return false
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+  return ALLOWED_LOGO_EXTS.includes(ext)
+}
+
+function onLogoSelected(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file || logoBusy.value || pendingLogoFile.value) return
+
+  if (!isSupportedLogo(file)) {
+    toast.error(t('settings.brand.invalidType'))
+    return
+  }
+  if (file.size > MAX_LOGO_BYTES) {
+    toast.error(t('settings.brand.tooLarge'))
+    return
+  }
+
+  pendingLogoFile.value = file
+}
+
+function onCropCancel() {
+  if (uploadingLogo.value) return
+  pendingLogoFile.value = null
+}
+
+function onCropError() {
+  toast.error(t('settings.brand.updateFailed'))
+}
+
+async function onCropApply(blob: Blob) {
+  if (uploadingLogo.value) return
+  if (blob.size > MAX_LOGO_BYTES) {
+    toast.error(t('settings.brand.tooLarge'))
+    return
+  }
+
+  uploadingLogo.value = true
+  try {
+    await uploadLogo(new File([blob], 'logo.png', { type: 'image/png' }))
+    pendingLogoFile.value = null
+  } catch (e: any) {
+    toast.error(getErrorMessage(e, t('settings.brand.updateFailed')))
+  } finally {
+    uploadingLogo.value = false
+  }
+}
+
+async function uploadLogo(file: File) {
+  const body = new FormData()
+  body.append('file', file)
+  const { data } = await api.post('/uploads', body)
+  const url = typeof data?.url === 'string' ? data.url : ''
+  if (!url) throw new Error('upload_failed')
+  await saveLogo(url)
+}
+
+async function saveLogo(url: string) {
+  try {
+    await api.put('/brand/logo', { logoUrl: url })
+    setBrandLogo(url)
+    toast.success(t('settings.brand.updated'))
+  } catch (e) {
+    const name = url.split('/').pop()
+    if (name) void api.delete(`/uploads/${name}`).catch(() => {})
+    throw e
+  }
+}
+
+async function removeLogo() {
+  if (logoBusy.value || pendingLogoFile.value) return
+  removingLogo.value = true
+  try {
+    await api.put('/brand/logo', { logoUrl: '' })
+    setBrandLogo('')
+    toast.success(t('settings.brand.removed'))
+  } catch (e: any) {
+    toast.error(getErrorMessage(e, t('settings.brand.removeFailed')))
+  } finally {
+    removingLogo.value = false
+  }
+}
+
+watch([open, activeTab], ([isOpen, tab]) => {
+  if (!isOpen || tab !== 'brand') pendingLogoFile.value = null
+})
 </script>
 
 <template>
@@ -123,6 +235,15 @@ async function onVisibility(key: unknown, visible: boolean) {
           {{ t('settings.menu.title') }}
         </SettingsNavItem>
       </SettingsNavGroup>
+
+      <SettingsNavGroup v-if="isAdmin" :label="t('settings.nav.app')">
+        <SettingsNavItem value="brand">
+          <template #prefix>
+            <span class="lucide-image size-4 text-ink-gray-6" />
+          </template>
+          {{ t('settings.brand.title') }}
+        </SettingsNavItem>
+      </SettingsNavGroup>
     </SettingsSidebar>
 
     <SettingsContent class="settings-content">
@@ -132,7 +253,7 @@ async function onVisibility(key: unknown, visible: boolean) {
             <Button
               variant="ghost"
               icon-left="lucide-x"
-              :aria-label="t('shared.close')"
+              :label="t('shared.close')"
               class="sm:hidden"
               @click="open = false"
             />
@@ -196,7 +317,7 @@ async function onVisibility(key: unknown, visible: boolean) {
             <Button
               variant="ghost"
               icon-left="lucide-x"
-              :aria-label="t('shared.close')"
+              :label="t('shared.close')"
               class="sm:hidden"
               @click="open = false"
             />
@@ -246,7 +367,7 @@ async function onVisibility(key: unknown, visible: boolean) {
             <Button
               variant="ghost"
               icon-left="lucide-x"
-              :aria-label="t('shared.close')"
+              :label="t('shared.close')"
               class="sm:hidden"
               @click="open = false"
             />
@@ -296,6 +417,97 @@ async function onVisibility(key: unknown, visible: boolean) {
               </template>
             </Tree>
           </div>
+        </SettingsBody>
+      </SettingsPanel>
+
+      <SettingsPanel value="brand">
+        <SettingsHeader class="settings-header" :title="t('settings.brand.title')">
+          <template #actions>
+            <Button
+              variant="ghost"
+              icon-left="lucide-x"
+              :label="t('shared.close')"
+              class="sm:hidden"
+              @click="open = false"
+            />
+          </template>
+        </SettingsHeader>
+        <SettingsBody class="settings-body">
+          <p class="mt-6 text-p-sm leading-5 text-ink-gray-5">
+            {{ t('settings.brand.description') }}
+          </p>
+
+          <template v-if="!pendingLogoFile">
+            <div class="mt-6 flex items-center gap-4">
+              <div
+                class="size-14 shrink-0 overflow-hidden rounded-6 border border-outline-gray-1 bg-surface-gray-2"
+              >
+                <img
+                  v-if="logoSrc"
+                  :src="logoSrc"
+                  alt=""
+                  class="h-full w-full object-cover"
+                  @error="onLogoError"
+                />
+                <div
+                  v-else
+                  class="flex h-full w-full items-center justify-center text-ink-gray-5"
+                >
+                  <span class="lucide-image size-5" aria-hidden="true" />
+                </div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="text-base-medium leading-tighter text-ink-gray-8">
+                  {{ t('settings.brand.logo') }}
+                </div>
+                <p class="mt-1 text-p-sm leading-5 text-ink-gray-5">
+                  {{ t('settings.brand.logoDescription') }}
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              <Button
+                variant="solid"
+                theme="gray"
+                icon-left="lucide-upload"
+                :label="
+                  brand.logoUrl
+                    ? t('settings.brand.replace')
+                    : t('settings.brand.upload')
+                "
+                :loading="uploadingLogo"
+                :disabled="removingLogo"
+                @click="pickLogo"
+              />
+              <Button
+                v-if="brand.logoUrl"
+                variant="subtle"
+                theme="red"
+                icon-left="lucide-trash-2"
+                :label="t('settings.brand.remove')"
+                :loading="removingLogo"
+                :disabled="uploadingLogo"
+                @click="removeLogo"
+              />
+            </div>
+          </template>
+          <LogoCropper
+            v-else
+            :file="pendingLogoFile"
+            :busy="uploadingLogo"
+            @cancel="onCropCancel"
+            @apply="onCropApply"
+            @error="onCropError"
+          />
+
+          <input
+            ref="logoInput"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif,.png,.jpg,.jpeg,.webp,.gif"
+            class="hidden"
+            @change="onLogoSelected"
+          />
         </SettingsBody>
       </SettingsPanel>
     </SettingsContent>

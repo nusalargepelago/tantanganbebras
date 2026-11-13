@@ -169,8 +169,8 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function fetchRegistrationMode() {
-    if (registrationMode.value !== null) return
+  async function fetchRegistrationMode(force = false) {
+    if (registrationMode.value !== null && !force) return
     try {
       const { data } = await api.get('/auth/registration')
       registrationMode.value = data.mode === 'closed' ? 'closed' : 'open'

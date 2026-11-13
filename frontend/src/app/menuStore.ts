@@ -3,10 +3,13 @@ import { defineStore } from 'pinia'
 
 import { i18n } from '@/app/i18n'
 import { api, getErrorMessage } from '@/shared/api'
+import { useAuthStore } from '@/features/auth/store'
 import {
   orderedNavItems,
   visibleNavItems,
   type MenuPreference,
+  type NavItem,
+  type NavRoleFlags,
 } from './navigation'
 
 const ENDPOINT = '/account/menu-preferences'
@@ -27,8 +30,21 @@ export const useMenuStore = defineStore('menu', () => {
   let confirmed: MenuPreference = { order: [], hidden: [] }
   let generation = 0
 
-  const allItems = computed(() => orderedNavItems(order.value))
-  const items = computed(() => visibleNavItems(order.value, hidden.value))
+  const auth = useAuthStore()
+  const flags = computed<NavRoleFlags>(() => ({
+    staff: auth.isStaff,
+    student: auth.isStudent,
+    admin: auth.isAdmin,
+  }))
+  const visibleForRole = (items: NavItem[]) =>
+    items.filter(
+      (item) => !item.roles || item.roles.some((role) => flags.value[role]),
+    )
+
+  const allItems = computed(() => visibleForRole(orderedNavItems(order.value)))
+  const items = computed(() =>
+    visibleForRole(visibleNavItems(order.value, hidden.value)),
+  )
 
   function apply(preference: MenuPreference) {
     order.value = [...preference.order]

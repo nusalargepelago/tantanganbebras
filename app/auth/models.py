@@ -69,6 +69,14 @@ class User(db.Model, UserMixin):
         return str(self.id)
 
     def has_role(self, name: str) -> bool:
+        """Gate untuk tabel ``roles`` — True kalau user punya role ``name``.
+
+        Exact match ``Role.name`` lewat relasi ``user_roles``. Ini pasangan
+        ``require_role()`` (``framework.auth``) untuk dimensi peran
+        fungsional — sedangkan ``require_role()`` hanya membaca ``app_role``.
+        Mengembalikan bool, bukan response tuple: view yang menentukan
+        status error (mis. 403).
+        """
         return any(r.name == name for r in self.roles)
 
 

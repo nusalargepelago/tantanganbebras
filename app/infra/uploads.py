@@ -17,6 +17,7 @@ bp = BlueprintFactory("uploads", __name__, url_prefix="/api/v1/uploads")
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "gif"}
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
+UPLOAD_URL_PREFIX = "/uploads/"
 
 
 def _valid_name(name: str) -> bool:
@@ -30,6 +31,18 @@ def _valid_name(name: str) -> bool:
     except ValueError:
         return False
     return True
+
+
+def upload_name_from_url(url: str) -> str | None:
+    """Stored file name for a servable upload URL, else ``None``.
+
+    Only our own ``/uploads/<uuid>.<ext>`` shape is accepted, which also
+    makes the name safe to join onto ``UPLOAD_FOLDER``.
+    """
+    if not url.startswith(UPLOAD_URL_PREFIX):
+        return None
+    name = url.removeprefix(UPLOAD_URL_PREFIX)
+    return name if _valid_name(name) else None
 
 
 @bp.post("")
@@ -60,7 +73,7 @@ def upload_image():
     name = f"{uuid7()}.{ext}"
     (folder / name).write_bytes(data)
 
-    return created({"url": f"/uploads/{name}"})
+    return created({"url": f"{UPLOAD_URL_PREFIX}{name}"})
 
 
 @bp.delete("/<string:name>")
@@ -79,4 +92,4 @@ def delete_image(name: str):
     return no_content()
 
 
-__all__ = ["bp"]
+__all__ = ["bp", "upload_name_from_url"]

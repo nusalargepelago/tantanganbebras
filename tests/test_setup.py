@@ -316,6 +316,7 @@ def test_setup_seeds_brand(client, app, tmp_path, restore_engine):
             "tagline": "Work less",
             "description": "Acme helps you work less.",
             "siteUrl": "https://acme.test",
+            "logoUrl": "",
         }
 
 

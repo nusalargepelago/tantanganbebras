@@ -24,7 +24,9 @@
     "logout": "Keluar",
     "settings": "Pengaturan",
     "section": "Menu",
-    "open": "Buka menu"
+    "open": "Buka menu",
+    "more": "Lainnya",
+    "menu": "Menu"
   },
   "tour": {
     "menu": "Panduan",
@@ -413,7 +415,8 @@
     "ok": "OK",
     "forbiddenTitle": "Akses Ditolak",
     "forbiddenMessage": "Halaman ini memerlukan hak akses administrator. Akun Anda terdaftar sebagai pengguna biasa. Hubungi administrator untuk mendapatkan akses.",
-    "close": "Tutup"
+    "close": "Tutup",
+    "noResults": "Tidak ada hasil ditemukan"
   },
   "list": {
     "all": "Semua",
@@ -601,7 +604,15 @@
     "loadDashboard": "Gagal memuat dasbor",
     "welcomeBack": "Selamat datang kembali",
     "roles": "Peran",
-    "noRoles": "Belum ada peran"
+    "noRoles": "Belum ada peran",
+    "totalUsers": "Total pengguna",
+    "registration": "Registrasi",
+    "registrationOpen": "Terbuka",
+    "registrationClosed": "Tertutup",
+    "adminConsole": "Administrasi",
+    "adminConsoleHint": "Kelola pengguna, peran, dan registrasi.",
+    "manageUsers": "Kelola pengguna",
+    "loadStatsFailed": "Gagal memuat statistik akun"
   },
   "event": {
     "searchPlaceholder": "Cari event…",
@@ -645,32 +656,6 @@
     "deleteEvent": "Gagal menghapus event",
     "purgeEvent": "Gagal menghapus permanen event",
     "loadResults": "Gagal memuat hasil"
-  },
-  "users": {
-    "addUser": "Tambah Pengguna",
-    "searchPlaceholder": "Cari pengguna…",
-    "noData": "Tidak ada pengguna.",
-    "role": "Peran",
-    "created": "Dibuat",
-    "deleteTitle": "Hapus Pengguna",
-    "deleteMessage": "Hapus \"{name}\"? Tindakan ini tidak bisa dibatalkan.",
-    "deleteFailed": "Gagal menghapus pengguna",
-    "deletedToast": "Pengguna dihapus",
-    "loadFailed": "Gagal memuat pengguna",
-    "saveFailed": "Gagal menyimpan pengguna",
-    "updatedToast": "Pengguna diperbarui",
-    "createdToast": "Pengguna dibuat",
-    "roleUser": "Pengguna",
-    "roleAdmin": "Admin",
-    "resetPassword": "Atur Ulang Kata Sandi",
-    "resetMessage": "Masukkan kata sandi baru untuk pengguna ini.",
-    "resetToast": "Kata sandi diatur ulang",
-    "resetFieldLabel": "Kata sandi baru",
-    "resetFailed": "Gagal mengatur ulang kata sandi",
-    "loadUsers": "Gagal memuat daftar pengguna",
-    "loadUser": "Gagal memuat pengguna",
-    "createUser": "Gagal membuat pengguna",
-    "updateUser": "Gagal memperbarui pengguna"
   },
   "import": {
     "uploadTitle": "Unggah XLSX",
@@ -982,8 +967,8 @@
       "description": "Setup awal: hubungkan basis data, atur brand, dan buat administrator."
     },
     "Dashboard": {
-      "title": "Beranda",
-      "description": "Tautan cepat ke halaman latihan, tantangan, dan akun Anda."
+      "title": "Dasbor",
+      "description": "Dasbor Anda: ringkasan akun, peran, dan administrasi."
     },
     "AdminDashboard": {
       "title": "Dasbor",
@@ -1031,22 +1016,6 @@
     "StudentEdit": {
       "title": "Edit Siswa",
       "description": "Ubah profil siswa ini."
-    },
-    "UsersList": {
-      "title": "Pengguna",
-      "description": "Kelola akun dan peran pengguna."
-    },
-    "UserNew": {
-      "title": "Pengguna Baru",
-      "description": "Buat akun pengguna baru."
-    },
-    "UserDetail": {
-      "title": "Detail Pengguna",
-      "description": "Lihat detail, peran, dan akses pengguna."
-    },
-    "UserEdit": {
-      "title": "Edit Pengguna",
-      "description": "Ubah akun pengguna ini."
     },
     "PracticeList": {
       "title": "Latihan",
@@ -1103,12 +1072,17 @@
     "TodosList": {
       "title": "Tugas",
       "description": "Catat tugas dan pengingat Anda."
+    },
+    "Users": {
+      "title": "Pengguna",
+      "description": "Administrasi pengguna: peran, status, dan grup."
     }
   },
   "settings": {
     "title": "Pengaturan",
     "nav": {
-      "user": "Pengaturan pengguna"
+      "user": "Pengaturan pengguna",
+      "app": "Aplikasi"
     },
     "profile": {
       "title": "Profil",
@@ -1130,6 +1104,62 @@
       "description": "Seret untuk mengubah urutan. Matikan item untuk menyembunyikannya dari sidebar dan navigasi bawah.",
       "show": "Tampilkan {name}",
       "saveFailed": "Preferensi menu gagal disimpan."
+    },
+    "brand": {
+      "title": "Brand",
+      "description": "Logo untuk seluruh aplikasi, tampil di sidebar, halaman masuk, dan favicon browser.",
+      "logo": "Logo",
+      "logoDescription": "PNG, JPG, WebP, atau GIF maksimal 5 MB. Anda akan memotongnya menjadi persegi sebelum disimpan.",
+      "upload": "Unggah logo",
+      "replace": "Ganti logo",
+      "remove": "Hapus",
+      "updated": "Logo diperbarui.",
+      "removed": "Logo dihapus.",
+      "updateFailed": "Logo gagal diperbarui.",
+      "removeFailed": "Logo gagal dihapus.",
+      "invalidType": "Pilih gambar PNG, JPG, WebP, atau GIF.",
+      "tooLarge": "Ukuran gambar maksimal 5 MB.",
+      "crop": {
+        "title": "Potong logo",
+        "hint": "Geser untuk mengatur posisi, lalu perbesar bila perlu.",
+        "zoom": "Perbesaran",
+        "apply": "Gunakan gambar",
+        "cancel": "Batal",
+        "loadFailed": "Gambar tidak bisa dimuat. Coba file lain.",
+        "stage": "Pratinjau potongan logo"
+      }
+    }
+  },
+  "account": {
+    "searchUsers": "Cari pengguna…",
+    "noUsers": "Belum ada pengguna.",
+    "noUsersFound": "Tidak ada pengguna yang cocok.",
+    "columns": {
+      "user": "Pengguna",
+      "appRole": "Peran app",
+      "roles": "Grup",
+      "status": "Status",
+      "actions": "Aksi"
+    },
+    "addUser": "Tambah pengguna",
+    "editUser": "Edit pengguna",
+    "fullName": "Nama lengkap",
+    "appRole": "Peran app",
+    "roleUser": "Pengguna",
+    "roleAdmin": "Admin",
+    "roleNames": "Grup",
+    "rolesPlaceholder": "Pilih grup…",
+    "statusActive": "Aktif",
+    "statusInactive": "Nonaktif",
+    "isActive": "Aktif",
+    "saveChanges": "Simpan perubahan",
+    "createUser": "Buat pengguna",
+    "userUpdated": "Pengguna diperbarui.",
+    "userCreated": "Pengguna ditambahkan.",
+    "errors": {
+      "loadUsersFailed": "Gagal memuat pengguna.",
+      "updateUserFailed": "Gagal memperbarui pengguna.",
+      "createUserFailed": "Gagal menambah pengguna."
     }
   }
 }

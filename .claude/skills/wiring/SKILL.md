@@ -268,6 +268,89 @@ async function add() {
 
 ---
 
+## 7a. List pages — pola kanonik (`ListState`)
+
+Halaman list **tanpa card wrapper**. Rantai state didelegasikan ke
+`shared/components/ListState.vue`, bukan ditulis ad-hoc per view:
+
+```vue
+<template>
+  <PageHeader>…</PageHeader>
+  <Spinner v-if="!gateReady" />
+  <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
+    <ListToolbar
+      v-model:search="search"
+      v-model:per-page="perPage"
+      :show-per-page="!empty"
+      :placeholder="t('things.search')"
+    />
+
+    <div>
+      <ListState
+        :loading="store.loading"
+        :error="store.error"
+        :empty="empty"
+        icon="lucide-package"
+        :empty-message="t('things.noResults')"
+      >
+        <template #action>
+          <Button
+            variant="outline"
+            theme="gray"
+            icon-left="lucide-plus"
+            :label="t('things.new')"
+            @click="openCreate"
+          />
+        </template>
+
+        <List :row-height="32" :columns="columns" class="list-row-px-3">
+          <!-- ListHead / ListRows / ListRow … -->
+        </List>
+      </ListState>
+
+      <ListFoot
+        v-if="!empty"
+        :total="store.total"
+        :page="store.page"
+        :per-page="store.perPage"
+        @update:page="goToPage"
+      />
+    </div>
+  </div>
+</template>
+```
+
+`List` dan `ListFoot` wajib dibungkus **satu `<div>` polos** — bukan anak
+langsung dari container `space-y-4` — supaya pagination nempel ke baris
+terakhir (`ListFoot` `mt-1`) dan keduanya terlihat satu blok. Kalau
+`ListFoot` jadi anak container, `space-y-4` memberi jarak yang terasa
+sebagai ruang kosong.
+
+Chain di dalam `ListState` (jangan ditulis ulang per view):
+
+| State | Render |
+|---|---|
+| `loading` | `<Spinner />` di `<div class="flex justify-center py-10">` — **tanpa card** |
+| `error` | `<ErrorMessage>` |
+| `empty` | icon `size-8 text-ink-gray-4` centered **tanpa border**, pesan `shared.noResults` (override via prop `emptyMessage`), slot `#action` opsional |
+| else | default slot (`<List>`) |
+
+Aturan:
+
+- Prop `icon` harus **literal string** (`icon="lucide-truck"`) — di-bind via
+  `:class`, jadi `` `lucide-${x}` `` tidak ter-emit JIT. Idem untuk
+  interpolation apa pun: tulis lengkap, jangan rakit.
+- Gate view tetap `gateReady` dari state store: `<Spinner v-if="!gateReady" />`
+  lalu konten list di `<div v-else>` — **gate wajib `v-else`**, jangan dua
+  `v-if` independen, jangan spinner selamanya (fail-safe di `finally`).
+- `empty` = computed view (`!store.loading && store.items.length === 0`).
+- `ListFoot` di luar `ListState`, di-guard `v-if="!empty"`.
+- Store list: `items` / `total` / `page` / `perPage` / `loading` / `error`
+  + `list({ search, page, perPage })`. Pagination lewat `useListControls`.
+- Loading pertama vs refetch: `ListState` tidak membedakan; kalau perlu
+  skeleton hanya saat initial load, gate view yang menentukan (jangan pecah
+  chain-nya).
+
 ## 8. Ketersediaan komponen
 
 Pinned `frappe-ui@1.0.0-rc.2` (`frontend/package.json`).
@@ -318,6 +401,7 @@ bukan bug kode.
 - Kode kanonik: `frontend/src/shared/api/{client,errors}.ts`,
   `frontend/src/features/{auth,setup}/store.ts`,
   `frontend/src/router/{index,guard,meta.d.ts}.ts`,
-  `frontend/src/app/AppShell.vue`.
+  `frontend/src/app/AppShell.vue`,
+  `frontend/src/shared/components/{ListState,ListHead,ListToolbar,ListFoot}.vue`.
 - Backend presenter (bentuk payload camelCase): `app/*/presenters.py`.
 - Skill lain: `.claude/skills/polish/SKILL.md`.

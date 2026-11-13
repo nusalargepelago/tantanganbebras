@@ -52,19 +52,6 @@ export const breadcrumbMap: Record<string, Crumb> = {
     label: 'crumb.editStudent',
     parent: { label: 'crumb.students', route: { name: 'StudentList' } },
   },
-  UsersList: { label: 'crumb.users' },
-  UserNew: {
-    label: 'crumb.newUser',
-    parent: { label: 'crumb.users', route: { name: 'UsersList' } },
-  },
-  UserDetail: {
-    label: 'crumb.user',
-    parent: { label: 'crumb.users', route: { name: 'UsersList' } },
-  },
-  UserEdit: {
-    label: 'crumb.editUser',
-    parent: { label: 'crumb.users', route: { name: 'UsersList' } },
-  },
   PracticeList: { label: 'crumb.practice' },
   PracticeRunner: {
     label: 'crumb.practice',
@@ -101,8 +88,7 @@ export const breadcrumbMap: Record<string, Crumb> = {
     label: 'crumb.result',
     parent: { label: 'crumb.events', route: { name: 'EventStudentList' } },
   },
-  AdminDashboard: { label: 'crumb.dashboard' },
-  StudentDashboard: { label: 'crumb.dashboard' },
   TodosList: { label: 'crumb.todos' },
+  Users: { label: 'crumb.users' },
   Backup: { label: 'crumb.backup' },
 }

@@ -14,9 +14,8 @@ export interface NavItem {
   mobileLabelKey?: string
   icon: string
   route: RouteDestination
-  match: string[]
   roles?: NavRole[]
-  primary?: boolean
+  mobile?: boolean
 }
 
 export interface MenuPreference {
@@ -24,136 +23,79 @@ export interface MenuPreference {
   hidden: string[]
 }
 
-const NESTED_NAMESPACES: Record<string, string[]> = {
-  '/student': ['/student/dashboard', '/student/event', '/student/practice'],
-}
-
 export const NAV_ITEMS: NavItem[] = [
   {
-    key: 'home',
+    key: 'Dashboard',
     labelKey: 'nav.home',
+    mobileLabelKey: 'nav.home',
     icon: 'lucide-house',
     route: { name: 'Dashboard' },
-    match: ['/'],
-    primary: true,
   },
   {
-    key: 'adminDashboard',
-    labelKey: 'nav.dashboard',
-    icon: 'lucide-layout-dashboard',
-    route: { name: 'AdminDashboard' },
-    match: ['/dashboard'],
-    roles: ['staff'],
-    primary: true,
-  },
-  {
-    key: 'studentDashboard',
-    labelKey: 'nav.dashboard',
-    icon: 'lucide-layout-dashboard',
-    route: { name: 'StudentDashboard' },
-    match: ['/student/dashboard'],
-    roles: ['student'],
-    primary: true,
-  },
-  {
-    key: 'practice',
+    key: 'PracticeList',
     labelKey: 'nav.practice',
     icon: 'lucide-clipboard-list',
     route: { name: 'PracticeList' },
-    match: ['/student/practice'],
     roles: ['student'],
-    primary: true,
   },
   {
-    key: 'events',
+    key: 'EventStudentList',
     labelKey: 'nav.events',
     icon: 'lucide-calendar',
     route: { name: 'EventStudentList' },
-    match: ['/student/event'],
     roles: ['student'],
   },
   {
-    key: 'questionBank',
+    key: 'QuestionList',
     labelKey: 'nav.questionBank',
     icon: 'lucide-library',
     route: { name: 'QuestionList' },
-    match: ['/question'],
     roles: ['staff'],
-    primary: true,
   },
   {
-    key: 'event',
+    key: 'EventList',
     labelKey: 'nav.event',
     icon: 'lucide-calendar',
     route: { name: 'EventList' },
-    match: ['/event', '/student/event'],
     roles: ['staff'],
   },
   {
-    key: 'students',
+    key: 'StudentList',
     labelKey: 'nav.students',
     icon: 'lucide-users',
     route: { name: 'StudentList' },
-    match: ['/student'],
     roles: ['staff'],
   },
   {
-    key: 'practiceReview',
+    key: 'PracticeAdminList',
     labelKey: 'nav.practiceReview',
     icon: 'lucide-clipboard-check',
     route: { name: 'PracticeAdminList' },
-    match: ['/practice'],
     roles: ['staff'],
   },
   {
-    key: 'todos',
+    key: 'TodosList',
     labelKey: 'nav.todo',
     icon: 'lucide-list-todo',
     route: { name: 'TodosList' },
-    match: ['/todos'],
     roles: ['staff'],
   },
   {
-    key: 'users',
+    key: 'Users',
     labelKey: 'nav.users',
     icon: 'lucide-user-cog',
-    route: { name: 'UsersList' },
-    match: ['/users'],
+    route: { name: 'Users' },
     roles: ['admin'],
   },
   {
-    key: 'backup',
+    key: 'Backup',
     labelKey: 'nav.backup',
     icon: 'lucide-database',
     route: { name: 'Backup' },
-    match: ['/backup'],
     roles: ['admin'],
   },
 ]
 
-function matchesPrefix(prefix: string, path: string): boolean {
-  if (prefix === '/') return path === '/'
-  return (
-    path === prefix || path.startsWith(`${prefix}/`) || path.startsWith(`${prefix}-`)
-  )
-}
-
-function inNestedNamespace(prefix: string, path: string): boolean {
-  return (NESTED_NAMESPACES[prefix] ?? []).some(
-    (ns) => path === ns || path.startsWith(`${ns}/`),
-  )
-}
-
-export function isNavActive(item: NavItem, path: string): boolean {
-  return item.match.some(
-    (prefix) => matchesPrefix(prefix, path) && !inNestedNamespace(prefix, path),
-  )
-}
-
-/**
- * Apply the saved order, then append whatever the user has not seen yet so new
- * releases keep showing up in their menu.
- */
 export function orderedNavItems(order: string[]): NavItem[] {
   const remaining = new Map(NAV_ITEMS.map((item) => [item.key, item]))
   const ordered: NavItem[] = []
@@ -177,25 +119,8 @@ export function visibleNavItems(order: string[], hidden: string[]): NavItem[] {
   return orderedNavItems(order).filter((item) => !hiddenKeys.has(item.key))
 }
 
-export function navFor(flags: NavRoleFlags, items: NavItem[] = NAV_ITEMS): NavItem[] {
-  return items.filter(
-    (item) => !item.roles || item.roles.some((role) => flags[role]),
-  )
-}
+export const MAX_MOBILE_NAV_ITEMS = 3
 
-/**
- * The tabs that fit the mobile bottom bar: Home, Dashboard, one primary section
- * (the avatar tab makes four). An admin who also owns a student profile resolves
- * both staff and student primaries, so the duplicate Dashboard label collapses and
- * the list is capped — everything cut here stays reachable in the menu sheet.
- */
-export function primaryNav(flags: NavRoleFlags, items: NavItem[] = NAV_ITEMS): NavItem[] {
-  const seen = new Set<string>()
-  const primary = navFor(flags, items).filter((item) => {
-    if (!item.primary || seen.has(item.labelKey)) return false
-    seen.add(item.labelKey)
-    return true
-  })
-  return primary.slice(0, 3)
+export function mobileNavItems(items: NavItem[]): NavItem[] {
+  return items.filter((item) => item.mobile !== false).slice(0, MAX_MOBILE_NAV_ITEMS)
 }
-

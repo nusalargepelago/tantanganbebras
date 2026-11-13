@@ -23,7 +23,7 @@ export async function authGuard(to: any) {
   if (to.meta.requiresStaff && auth.isStudent && !auth.isAdmin) {
     return '/'
   }
-  if (to.meta.requiresAdmin && !auth.isAdmin) {
+  if (to.meta.requiresAdmin && auth.user?.appRole !== 'admin') {
     return '/'
   }
   if (to.meta.guestOnly) {

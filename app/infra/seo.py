@@ -17,11 +17,14 @@ bp = Blueprint("seo", __name__)
 
 limiter.exempt(bp)
 
+LOGO_KEY = "logoUrl"
+
 DEFAULT_BRAND: dict[str, str] = {
     "name": "Tantangan Bebras",
     "tagline": "",
     "description": "",
     "siteUrl": "",
+    LOGO_KEY: "",
 }
 
 BRAND_KEYS = tuple(DEFAULT_BRAND)
@@ -138,6 +141,16 @@ def _canonical(brand: dict[str, str] | None = None) -> str:
     return brand.get("siteUrl", "").rstrip("/")
 
 
+def _absolute_upload(url: str, canonical: str) -> str:
+    """Absolute URL for a root-relative upload path under the site origin."""
+    if not (url and canonical):
+        return ""
+    parts = urlsplit(canonical)
+    if not parts.scheme or not parts.netloc:
+        return ""
+    return f"{parts.scheme}://{parts.netloc}{url}"
+
+
 def _indexable() -> bool:
     return bool(current_app.config.get("SEO_INDEXABLE", True))
 
@@ -151,12 +164,17 @@ def index_context() -> dict:
     """
     brand = get_brand()
     description = brand.get("description") or brand.get("tagline") or ""
+    canonical = _canonical(brand)
+    logo = brand.get(LOGO_KEY) or ""
     seo = {
         "title": brand["name"],
         "lang": _request_lang(),
         "description": description,
         "robots": "index, follow" if _indexable() else "noindex, nofollow",
-        "canonical": _canonical(brand),
+        "canonical": canonical,
+        "icon": logo,
+        # Open Graph needs an absolute URL; skip the image without a site URL.
+        "image": _absolute_upload(logo, canonical),
     }
     return {"brand": brand, "seo": seo, "appLang": get_app_lang()}
 
@@ -189,6 +207,7 @@ __all__ = [
     "APP_LANG_KEY",
     "BRAND_KEYS",
     "DEFAULT_BRAND",
+    "LOGO_KEY",
     "SUPPORTED_LANGS",
     "bp",
     "get_app_lang",

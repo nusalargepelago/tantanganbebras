@@ -5,7 +5,7 @@ description: >-
   1.0.0-rc.2). Pakai saat bikin, styling, atau me-review UI frontend — view
   baru, komponen, dialog/toast/form/selection — biar tidak drift dari design
   system. Berisi token cheat-sheet (tipografi, radius, focus, warna), pola
-  pemakaian komponen kanonik, dan drift checklist.
+  pemakaian komponen kanonik (termasuk list pages), dan drift checklist.
 ---
 
 # Polish — Kanon Cosmetics & Presentasi
@@ -276,6 +276,37 @@ shared components + host `<Toaster>` + `<Dialogs/>`. Wajib untuk `toast.*` dan
 
 ---
 
+## 2a. List pages — presentasi (kanonik)
+
+Halaman list di repo ini (`shared/components/List*` + `useListControls`) punya
+geometri tetap. Yang dilanggar di sini yang paling cepat terlihat "kurang rapi":
+
+- **Satu wrapper `<div>` polos** untuk `List` + `ListFoot`. Jangan biarkan
+  `space-y-4` container memisahkan baris terakhir dari pagination — foot harus
+  `mt-1` nempel ke list dan keduanya terlihat satu blok (header
+  `rounded-t-6`, foot `rounded-b-6`).
+- **`class="list-row-px-3"` wajib di `<List>`** — satu nilai mengalir ke
+  header & semua baris lewat `--list-row-padding-x`; baris & header tidak bisa
+  drift. Jangan `px-3` langsung di header/row.
+- **Sel vertikal `items-center`**, bukan `items-baseline` — teks dengan ukuran
+  berbeda (`text-base-medium` vs `text-p-sm`) terlihat melayang kalau di-baseline.
+- **Nama + pelengkap** (kode/email) dalam satu flex `gap-2`: nama
+  `text-base-medium text-ink-gray-8`, pelengkap `<code class="shrink-0 text-p-xs text-ink-gray-5">`
+  atau `text-p-sm text-ink-gray-5`. Truncate keduanya.
+- **Aksi baris = satu ghost icon-only `<Button>`** (`variant="ghost" theme="gray"`,
+  `:label` wajib untuk a11y, icon `lucide-pencil` / `lucide-more-horizontal`).
+  Badge status dan tombol aksi bisa satu sel (pola labba) atau dipisah kolom —
+  pilih satu per page, jangan campur.
+- **Badge**: `variant="subtle"` — aktif `green`, nonaktif `gray`; `appRole` admin
+  `blue`, user `gray`.
+- **Grid `columns`**: `base` harus menampung **semua sel yang tampil** di mobile
+  (sel yang `max-md:hidden` tidak dihitung). Jumlah track = jumlah sel visible.
+  `md` menyertakan sel yang tampil mulai breakpoint `md`.
+- **`list-row-px-3` + row-height 32** untuk list padat admin; jangan icon-size
+  lebih besar dari `size-8` di sel baris.
+- Chain `loading → error → empty → List` dan gate `v-else` = kontrak data —
+  lihat skill **`wiring`** §7a. Polish hanya memegang tampilannya.
+
 ## 3. Drift checklist (❌ → ✅)
 
 | ❌ Anti-pattern | ✅ Kanon |
@@ -299,6 +330,11 @@ shared components + host `<Toaster>` + `<Dialogs/>`. Wajib untuk `toast.*` dan
 | `triggerClass` / `popoverClass` (class-injection) | slot + hook `data-slot="…"` |
 | warna arbitrer `text-[#...]` padahal ada token | ramp (`text-ink-*`, `bg-surface-*`, `border-outline-*`) |
 | `` `lucide-${x}` `` (template literal) | literal string atau whitelist |
+| `ListFoot` terpisah dari `List` oleh `space-y-4` (pagination mengambang, ada ruang kosong) | bungkus `List` + `ListFoot` di **satu `<div>` polos**; foot `mt-1` |
+| `items-baseline` di sel list (teks melayang) | `items-center` |
+| sel `max-md:hidden` tapi `columns.base` masih menghitungnya (grid pecah di mobile) | jumlah track `base` = jumlah sel visible |
+| `px-3` manual di `ListHead`/`ListRow` | `list-row-px-3` di `<List>` |
+| loading list dengan card wrapper | `ListState` — Spinner `flex justify-center py-10` tanpa card |
 | `Card` / `ListView` / `Input` / `Autocomplete` (tidak ada di rc.2) | komponen yang memang ada — cek `types.ts` |
 
 ---
@@ -320,5 +356,6 @@ shared components + host `<Toaster>` + `<Dialogs/>`. Wajib untuk `toast.*` dan
 - Kontrak komponen: `frontend/node_modules/frappe-ui/src/components/<Name>/types.ts`
 - Kode acuan repo: `frontend/src/features/auth/views/LoginView.vue` (form +
   layout), `frontend/src/features/dashboard/views/DashboardView.vue` (panel +
-  badge), `frontend/src/app/AppShell.vue` (shell, sidebar, dropdown menu).
+  badge), `frontend/src/app/AppShell.vue` (shell, sidebar, dropdown menu),
+  `frontend/src/features/account/views/UsersView.vue` + `frontend/src/shared/components/ListState.vue` (list kanonik).
 - Skill lain: `.claude/skills/wiring/SKILL.md`.

@@ -4,27 +4,26 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import {
   Avatar,
-  BottomSheet,
   DesktopShell,
-  MobileNav,
   MobileNavItem,
   MobileShell,
-  Sidebar,
-  SidebarCollapseToggle,
   SidebarHeader,
-  SidebarItem,
-  SidebarSection,
 } from 'frappe-ui'
 
 import { useAuthStore } from '@/features/auth/store'
 import { openCatalog } from '@/app/tour/store'
 import ForbiddenDialog from '@/shared/components/ForbiddenDialog.vue'
-import { brand } from '@/shared/brand'
+import {
+  MobileBottomNav,
+  MobileMenuSheet,
+  ShellSidebar,
+  type ShellNavItem,
+} from '@/shared/shell'
+import { useMediaQuery } from '@/shared/composables/useMediaQuery'
+import { brand, useBrandLogo } from '@/shared/brand'
 import { useFocusMode } from './focus-mode'
-import { isNavActive, navFor, primaryNav } from './navigation'
-import { mobileMenuOpen } from './mobile-menu'
+import { mobileNavItems } from './navigation'
 import { useMenuStore } from './menuStore'
-import { useMediaQuery } from './useMediaQuery'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 import UserSettingsDialog from './UserSettingsDialog.vue'
 
@@ -51,40 +50,10 @@ const isDesktop = useMediaQuery('(min-width: 640px)')
 
 const displayName = computed(() => auth.user?.fullName || auth.user?.email || '')
 
+const { logoSrc, onLogoError } = useBrandLogo()
+
 const sidebarCollapsed = ref(false)
 const { active: focusMode } = useFocusMode()
-
-const navFlags = computed(() => ({
-  staff: auth.isStaff,
-  student: auth.isStudent,
-  admin: auth.isAdmin,
-}))
-const visibleNav = computed(() => navFor(navFlags.value, menu.items))
-const primaryTabs = computed(() => primaryNav(navFlags.value, menu.items))
-
-const sheetRowClass =
-  'flex min-h-11 w-full items-center gap-3 rounded-6 px-3 text-p-sm transition'
-const sheetRowActive = 'bg-surface-elevation-3 text-ink-gray-8 shadow-sm'
-const sheetRowIdle = 'text-ink-gray-6 hover:bg-surface-gray-2'
-
-// An imported ref is not assignable in compiled templates, so the sheet binds
-// through a writable computed instead.
-const sheetOpen = computed({
-  get: () => mobileMenuOpen.value,
-  set: (value: boolean) => {
-    mobileMenuOpen.value = value
-  },
-})
-
-function closeSheet() {
-  mobileMenuOpen.value = false
-}
-
-// The sheet unmounts above the breakpoint; drop the flag so it does not pop
-// back open when the viewport returns to mobile.
-watch(isDesktop, (desktop) => {
-  if (desktop) closeSheet()
-})
 
 const settingsOpen = ref(false)
 const settingsTab = ref('profile')
@@ -113,6 +82,27 @@ const headerMenu = computed(() => [
   { label: t('menu.logout'), icon: 'lucide-log-out', onClick: onLogout },
 ])
 
+// The shell components take resolved rows: labels are translated here and the
+// active state follows the route name (nav keys mirror route names).
+const menuItems = computed<ShellNavItem[]>(() =>
+  menu.items.map((item) => ({
+    key: item.key,
+    label: t(item.labelKey),
+    icon: item.icon,
+    route: item.route,
+    active: String(route.name) === item.key,
+  })),
+)
+const tabItems = computed<ShellNavItem[]>(() =>
+  mobileNavItems(menu.items).map((item) => ({
+    key: item.key,
+    label: t(item.mobileLabelKey ?? item.labelKey),
+    icon: item.icon,
+    route: item.route,
+    active: String(route.name) === item.key,
+  })),
+)
+
 async function onLogout() {
   await auth.logout()
   await router.replace('/login')
@@ -124,29 +114,37 @@ async function onLogout() {
 
   <DesktopShell v-else-if="isDesktop" :scroll="route.meta.scroll !== false">
     <template #sidebar>
-      <Sidebar v-if="!focusMode" v-model:collapsed="sidebarCollapsed" class="border-r">
-        <SidebarHeader
-          data-tour="student-guide-menu"
-          :title="brand.name"
-          :subtitle="displayName"
-          :menu-items="headerMenu"
-        />
-        <div class="flex-1 overflow-y-auto space-y-0.5 px-2 pb-2">
-          <SidebarSection :label="t('menu.section')">
-            <SidebarItem
-              v-for="item in visibleNav"
-              :key="item.key"
-              :label="t(item.labelKey)"
-              :icon="item.icon"
-              :route="item.route"
-              :active="isNavActive(item, route.path)"
-            />
-          </SidebarSection>
-        </div>
-        <div class="px-2 pb-2">
-          <SidebarCollapseToggle />
-        </div>
-      </Sidebar>
+      <ShellSidebar
+        v-if="!focusMode"
+        v-model:collapsed="sidebarCollapsed"
+        :items="menuItems"
+        :section-label="t('menu.section')"
+      >
+        <template #header>
+          <SidebarHeader
+            data-tour="student-guide-menu"
+            :title="brand.name"
+            :subtitle="displayName"
+            :menu-items="headerMenu"
+          >
+            <template #prefix>
+              <img
+                v-if="logoSrc"
+                :src="logoSrc"
+                alt="Logo"
+                class="h-full w-full object-cover"
+                @error="onLogoError"
+              />
+              <div
+                v-else
+                class="flex h-full w-full items-center justify-center bg-surface-gray-4 text-ink-gray-7"
+              >
+                {{ brand.name.charAt(0).toUpperCase() }}
+              </div>
+            </template>
+          </SidebarHeader>
+        </template>
+      </ShellSidebar>
     </template>
 
     <router-view />
@@ -156,15 +154,7 @@ async function onLogout() {
     <router-view />
 
     <template #nav>
-      <MobileNav v-if="!focusMode">
-        <MobileNavItem
-          v-for="item in primaryTabs"
-          :key="item.key"
-          :label="t(item.mobileLabelKey ?? item.labelKey)"
-          :icon="item.icon"
-          :route="item.route"
-          :active="isNavActive(item, route.path)"
-        />
+      <MobileBottomNav v-if="!focusMode" :items="tabItems">
         <!-- Wrapped so the tour can spotlight the avatar: MobileNavItem renders
              two root nodes, so a data-tour attr on it would not fall through. -->
         <div data-tour="student-guide-menu">
@@ -177,36 +167,17 @@ async function onLogout() {
               <Avatar
                 :label="displayName"
                 size="md"
+                shape="circle"
                 :class="active ? 'ring-2 ring-outline-gray-4' : ''"
               />
             </template>
           </MobileNavItem>
         </div>
-      </MobileNav>
+      </MobileBottomNav>
     </template>
   </MobileShell>
 
-  <BottomSheet
-    v-if="!isDesktop"
-    v-model:open="sheetOpen"
-    :title="t('menu.section')"
-  >
-    <nav class="space-y-0.5 px-3 pb-6" :aria-label="t('menu.section')">
-      <RouterLink
-        v-for="item in visibleNav"
-        :key="`sheet-${item.key}`"
-        :to="item.route"
-        :class="[
-          sheetRowClass,
-          isNavActive(item, route.path) ? sheetRowActive : sheetRowIdle,
-        ]"
-        @click="closeSheet"
-      >
-        <span :class="[item.icon, 'size-5 shrink-0']" aria-hidden="true" />
-        <span class="min-w-0 flex-1 truncate">{{ t(item.labelKey) }}</span>
-      </RouterLink>
-    </nav>
-  </BottomSheet>
+  <MobileMenuSheet :items="menuItems" :title="t('menu.menu')" @logout="onLogout" />
 
   <UserSettingsDialog
     v-model:open="settingsOpen"
@@ -215,15 +186,3 @@ async function onLogout() {
   />
   <ForbiddenDialog />
 </template>
-
-<style scoped>
-/*
- * MobileNav is a grid of equal columns, but MobileNavItem's button variant
- * sizes to its content while the link variant stretches. The avatar tab was
- * therefore ~37px wide inside a ~98px column, so the four tabs were not evenly
- * spaced. Stretching every item keeps the columns identical.
- */
-:deep([data-slot='mobile-nav-item']) {
-  width: 100%;
-}
-</style>
