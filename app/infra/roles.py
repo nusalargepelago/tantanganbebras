@@ -1,6 +1,8 @@
 """Role seeding — ensures the Member role exists."""
 from __future__ import annotations
 
+from sqlalchemy import select
+
 from app.auth.models import MEMBER_ROLE, Role
 from framework.extensions import db
 
@@ -19,14 +21,12 @@ def ensure_member_role() -> None:
     if not _roles_table_exists():
         return
 
-    existing = {r.name for r in db.session.query(Role).all()}
+    existing = set(db.session.scalars(select(Role.name)).all())
     if MEMBER_ROLE not in existing:
         db.session.add(Role(name=MEMBER_ROLE))
         db.session.commit()
 
 
 __all__ = [
-    "MEMBER_ROLE",
-    "Role",
     "ensure_member_role",
 ]

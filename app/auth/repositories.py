@@ -1,7 +1,7 @@
 """User repository — database access for the User domain."""
 from __future__ import annotations
 
-from sqlalchemy import or_
+from sqlalchemy import or_, select
 
 from app.auth.models import Role, User
 from framework.base import RepositoryBase
@@ -21,9 +21,9 @@ class UserRepository(RepositoryBase[User]):
 
     def find_by_identifier(self, identifier: str) -> User | None:
         return (
-            db.session.query(User)
-            .filter(or_(User.email == identifier, User.username == identifier))
-            .first()
+            db.session.execute(
+                select(User).where(or_(User.email == identifier, User.username == identifier))
+            ).scalars().unique().first()
         )
 
 

@@ -16,7 +16,7 @@ from framework.api import (
     paginate,
     paginated_response,
 )
-from framework.auth.helpers import require_role
+from framework.auth.helpers import require_owner_or_role, require_role
 
 bp = BlueprintFactory("account", __name__, url_prefix="/api/v1/account")
 
@@ -57,9 +57,8 @@ def create_user():
 @bp.get("/users/<user_id>")
 @login_required
 def get_user(user_id: str):
-    if current_user.id != user_id:
-        if denied := require_role("admin"):
-            return denied
+    if denied := require_owner_or_role(user_id, "admin"):
+        return denied
 
     user = AccountService().get_user(user_id)
     return ok(UserAdminOut.from_user(user).to_dict())
