@@ -7,8 +7,8 @@ import { i18n } from '@/app/i18n'
 export interface SetupStatus {
   setupRequired: boolean
   reason: 'no_schema' | 'no_users' | null
-  activeEngine: string
-  activeUrl: string
+  activeEngine?: string
+  activeUrl?: string
 }
 
 export interface DbConfig {
@@ -88,7 +88,7 @@ export const useSetupStore = defineStore('setup', () => {
   function markComplete(): void {
     status.value = status.value
       ? { ...status.value, setupRequired: false, reason: null }
-      : { setupRequired: false, reason: null, activeEngine: '', activeUrl: '' }
+      : { setupRequired: false, reason: null }
   }
 
   return { status, error, statusFailed, fetchStatus, testDb, run, markComplete }

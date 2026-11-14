@@ -6,6 +6,7 @@ import { Badge, Button, ErrorMessage, Spinner } from 'frappe-ui'
 
 import { useAccountStore } from '@/features/account/store'
 import { useAuthStore } from '@/features/auth/store'
+import { getErrorMessage } from '@/shared/api'
 
 const auth = useAuthStore()
 const account = useAccountStore()
@@ -24,7 +25,8 @@ onMounted(async () => {
       auth.fetchRegistrationMode(true),
     ])
     userTotal.value = total
-    if (total === null) statsError.value = t('dash.loadStatsFailed')
+  } catch (e) {
+    statsError.value = getErrorMessage(e, t('dash.loadStatsFailed'))
   } finally {
     statsReady.value = true
   }
@@ -74,6 +76,7 @@ onMounted(async () => {
         </div>
         <Button
           variant="solid"
+          theme="gray"
           icon-left="lucide-users"
           :label="t('dash.manageUsers')"
           @click="router.push({ name: 'Users' })"

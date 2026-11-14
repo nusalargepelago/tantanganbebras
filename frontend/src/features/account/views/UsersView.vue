@@ -62,10 +62,7 @@ function openCreate() {
   editOpen.value = true
 }
 
-onMounted(async () => {
-  if (!auth.checked) await auth.fetchMe()
-  refresh()
-})
+onMounted(() => refresh())
 </script>
 
 <template>
@@ -73,6 +70,7 @@ onMounted(async () => {
     <template #default>
       <Button
         variant="solid"
+        theme="gray"
         icon-left="lucide-user-plus"
         :label="t('account.addUser')"
         @click="openCreate"
@@ -134,14 +132,14 @@ onMounted(async () => {
               </ListCell>
               <ListCell>
                 <Badge
-                  :label="item.appRole ?? 'â€”'"
+                  :label="item.appRole ?? '–'"
                   :theme="item.appRole === 'admin' ? 'blue' : 'gray'"
                   variant="subtle"
                 />
               </ListCell>
               <ListCell class="max-md:hidden">
                 <span class="truncate text-p-sm text-ink-gray-5">
-                  {{ item.roles.length ? item.roles.join(', ') : 'â€”' }}
+                  {{ item.roles.length ? item.roles.join(', ') : '–' }}
                 </span>
               </ListCell>
               <ListCell>

@@ -24,7 +24,7 @@ const user = computed(() => auth.user)
     <div class="rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-5">
       <div class="text-base-medium text-ink-gray-8">{{ t('dash.roles') }}</div>
       <div class="mt-3 flex flex-wrap gap-2">
-        <Badge v-if="user?.appRole" :label="user.appRole" />
+        <Badge v-if="user?.appRole" :label="user.appRole" theme="blue" />
         <Badge v-for="role in user?.roles ?? []" :key="role" :label="role" />
         <p
           v-if="!user?.appRole && !user?.roles?.length"

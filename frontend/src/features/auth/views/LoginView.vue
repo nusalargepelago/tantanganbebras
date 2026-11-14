@@ -5,14 +5,13 @@ import { useI18n } from 'vue-i18n'
 import { Button, ErrorMessage, FormControl, Spinner, toast } from 'frappe-ui'
 
 import { useAuthStore } from '../store'
-import { brand, useBrandLogo } from '@/shared/brand'
+import BrandLogo from '@/shared/components/BrandLogo.vue'
+import { brand } from '@/shared/brand'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 const { t } = useI18n()
-
-const { logoSrc, onLogoError } = useBrandLogo()
 
 const identifier = ref('')
 const password = ref('')
@@ -58,20 +57,11 @@ async function onSubmit() {
     >
       <form class="space-y-4" @submit.prevent="onSubmit">
         <div class="flex flex-col items-center gap-1.5 text-center">
-          <div
-            v-if="logoSrc"
-            class="size-12 overflow-hidden rounded-6 bg-surface-gray-2"
-          >
-            <img
-              :src="logoSrc"
-              alt=""
-              class="h-full w-full object-cover"
-              @error="onLogoError"
-            />
-          </div>
-          <div v-else class="rounded-full bg-surface-gray-2 p-3 text-ink-gray-5">
-            <span class="lucide-package size-6" aria-hidden="true" />
-          </div>
+          <BrandLogo size="md">
+            <div class="flex h-full w-full items-center justify-center text-ink-gray-5">
+              <span class="lucide-package size-6" aria-hidden="true" />
+            </div>
+          </BrandLogo>
           <h1 class="text-2xl-semibold text-ink-gray-8">{{ t('auth.signIn') }}</h1>
           <p class="text-p-sm text-ink-gray-5">{{ brand.name }}</p>
         </div>

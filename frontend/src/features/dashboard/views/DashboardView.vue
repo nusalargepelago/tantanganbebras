@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { Spinner } from 'frappe-ui'
 
 import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
@@ -11,10 +11,6 @@ const auth = useAuthStore()
 
 const gateReady = computed(() => auth.checked)
 const isAdmin = computed(() => auth.user?.appRole === 'admin')
-
-onMounted(async () => {
-  if (!auth.checked) await auth.fetchMe()
-})
 </script>
 
 <template>

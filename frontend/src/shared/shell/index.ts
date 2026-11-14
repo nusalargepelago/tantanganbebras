@@ -1,5 +1,5 @@
 export type { ShellNavItem } from './types'
-export { mobileMenuOpen, openMobileMenu, closeMobileMenu } from './mobile-menu'
+export { mobileMenuOpen, openMobileMenu } from './mobile-menu'
 export { default as AppPageHeader } from './AppPageHeader.vue'
 export { default as ShellSidebar } from './ShellSidebar.vue'
 export { default as MobileBottomNav } from './MobileBottomNav.vue'

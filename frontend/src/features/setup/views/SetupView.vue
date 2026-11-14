@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   Alert,
@@ -12,12 +12,10 @@ import {
   type SelectOptionValue,
 } from 'frappe-ui'
 
-import {
-  checkPassword,
-  isPasswordValid,
-  passwordRules,
-} from '@/features/auth/validation'
+import { isPasswordValid } from '@/features/auth/validation'
+import PasswordRules from '@/shared/components/PasswordRules.vue'
 import { brand } from '@/shared/brand'
+import { languageOptions } from '@/app/i18n'
 
 import { useSetupStore, type SetupResult } from '../store'
 
@@ -57,11 +55,6 @@ const engineOptions = [
   { label: 'PostgreSQL', value: 'postgresql' },
 ]
 
-const langOptions = [
-  { label: 'English', value: 'en' },
-  { label: 'Bahasa Indonesia', value: 'id' },
-]
-
 const stepLabel = computed(
   () =>
     [
@@ -73,7 +66,6 @@ const stepLabel = computed(
 
 const isSqlite = computed(() => engine.value === 'sqlite')
 
-const passwordChecks = computed(() => checkPassword(adminPassword.value))
 const passwordValid = computed(() => isPasswordValid(adminPassword.value))
 
 const brandDisabled = computed(() => !brandName.value.trim())
@@ -97,7 +89,8 @@ const reasonText = computed(() => {
   return ''
 })
 
-function prettyUrl(raw: string): string {
+function prettyUrl(raw?: string): string {
+  if (!raw) return ''
   try {
     return decodeURIComponent(raw)
   } catch {
@@ -105,9 +98,7 @@ function prettyUrl(raw: string): string {
   }
 }
 
-const activeUrl = computed(() =>
-  setup.status ? prettyUrl(setup.status.activeUrl) : '',
-)
+const activeUrl = computed(() => prettyUrl(setup.status?.activeUrl))
 
 const activeEngineLabel = computed(
   () =>
@@ -193,10 +184,6 @@ function goToLogin() {
   // brand, so window.brand (and every title/label) updates in one shot.
   window.location.replace('/login')
 }
-
-onMounted(async () => {
-  if (!setup.status) await setup.fetchStatus()
-})
 </script>
 
 <template>
@@ -239,7 +226,7 @@ onMounted(async () => {
         </div>
 
         <Alert
-          v-if="step === 1 && setup.status"
+          v-if="step === 1 && activeEngineLabel"
           class="mt-4 [overflow-wrap:anywhere]"
           :title="t('setup.activeAlert', { engine: activeEngineLabel })"
           :description="alertDescription || undefined"
@@ -347,7 +334,7 @@ onMounted(async () => {
           <Select
             :model-value="lang"
             :label="t('setup.language')"
-            :options="langOptions"
+            :options="languageOptions"
             @update:model-value="onLang"
           />
 
@@ -400,21 +387,7 @@ onMounted(async () => {
             required
           />
 
-          <ul v-if="adminPassword.length" class="space-y-1">
-            <li
-              v-for="rule in passwordRules"
-              :key="rule.key"
-              class="flex items-center gap-1.5 text-p-xs"
-              :class="passwordChecks[rule.key] ? 'text-ink-green-6' : 'text-ink-gray-5'"
-            >
-              <span
-                :class="passwordChecks[rule.key] ? 'lucide-check' : 'lucide-minus'"
-                class="size-3"
-                aria-hidden="true"
-              />
-              {{ t(rule.label) }}
-            </li>
-          </ul>
+          <PasswordRules :password="adminPassword" />
 
           <div class="flex gap-2">
             <Button
