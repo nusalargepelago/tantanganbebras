@@ -9,15 +9,17 @@ import {
   ErrorMessage,
   FormControl,
   Select,
+  Spinner,
   Skeleton,
   toast,
   type DialogAction,
 } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { categoryLabel, categoryOptions } from '@/shared/labels'
 import ListFoot from '@/shared/components/ListFoot.vue'
 import ListHead from '@/shared/components/ListHead.vue'
+import ListState from '@/shared/components/ListState.vue'
 import { List, ListCell, ListHeaderCell, ListRow, ListRows } from 'frappe-ui/list'
 
 import { useAuthStore } from '@/features/auth/store'
@@ -33,6 +35,7 @@ const settingsOpen = ref(false)
 const minDraft = ref<number | string>(10)
 const savingSettings = ref(false)
 const empty = computed(() => !store.loading && store.adminItems.length === 0)
+const gateReady = ref(false)
 
 const columns = {
   base: ['minmax(0,1fr)', '5rem', '6rem'],
@@ -43,7 +46,7 @@ const columns = {
 const categoryFilter = computed(() => categoryOptions(true))
 
 function reload() {
-  store.listAdmin({
+  return store.listAdmin({
     category: category.value || undefined,
     page: store.adminPage,
     perPage: store.adminPerPage,
@@ -115,7 +118,10 @@ watch(category, () => {
   reload()
 })
 
-onMounted(reload)
+onMounted(async () => {
+  await reload()
+  gateReady.value = true
+})
 </script>
 
 <template>
@@ -154,22 +160,24 @@ onMounted(reload)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
     <div class="flex items-center gap-2">
       <Select v-model="category" :options="categoryFilter" class="w-36" />
     </div>
 
     <div data-tour="admin-practice-list">
-      <div v-if="store.loading" class="space-y-2">
-        <Skeleton v-for="i in 6" :key="i" class="h-9" />
-      </div>
-
-      <div v-else-if="empty" class="flex flex-col items-center gap-2 py-10 text-center">
-        <span class="lucide-clipboard-list size-8 text-ink-gray-4" aria-hidden="true" />
-        <p class="text-p-sm text-ink-gray-5">{{ t('practice.noData') }}</p>
-      </div>
-
-      <List v-else :row-height="40" :columns="columns" class="list-row-px-3">
+      <ListState
+        :loading="store.loading"
+        :error="store.error"
+        :empty="empty"
+        icon="lucide-clipboard-list"
+        :empty-message="t('practice.noData')"
+      >
+        <List :row-height="40" :columns="columns" class="list-row-px-3">
         <ListHead>
           <ListHeaderCell>{{ t('list.student') }}</ListHeaderCell>
           <ListHeaderCell class="max-md:hidden">{{ t('list.school') }}</ListHeaderCell>
@@ -216,6 +224,7 @@ onMounted(reload)
           </ListRow>
         </ListRows>
       </List>
+      </ListState>
       <ListFoot
         v-if="!empty"
         :total="store.adminTotal"
@@ -224,8 +233,6 @@ onMounted(reload)
         @update:page="goToPage"
       />
     </div>
-
-    <ErrorMessage v-if="store.error" :message="store.error" />
 
     <Dialog v-model:open="settingsOpen" :title="t('practice.settingsTitle')" size="sm" :actions="settingsActions">
       <div v-if="store.settingsLoading" class="space-y-3">

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Badge, Button, ErrorMessage, Skeleton, dialog, toast } from 'frappe-ui'
+import { Badge, Button, ErrorMessage, Spinner, Skeleton, dialog, toast } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useStudentStore } from '../store'
 import { categoryLabel, statusLabel } from '@/shared/labels'
 
@@ -15,9 +15,11 @@ const { t } = useI18n()
 
 const userId = computed(() => route.params.userId as string)
 const student = computed(() => store.current)
+const gateReady = ref(false)
 
 async function load() {
   await store.get(userId.value)
+  gateReady.value = true
 }
 
 async function onActivate() {
@@ -99,7 +101,11 @@ onMounted(load)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <Skeleton v-if="store.currentLoading" class="h-40" />
     <ErrorMessage v-else-if="store.error" :message="store.error" />
 

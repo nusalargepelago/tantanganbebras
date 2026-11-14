@@ -604,15 +604,7 @@
     "loadDashboard": "Failed to load dashboard",
     "welcomeBack": "Welcome back",
     "roles": "Roles",
-    "noRoles": "No roles assigned",
-    "totalUsers": "Total users",
-    "registration": "Registration",
-    "registrationOpen": "Open",
-    "registrationClosed": "Closed",
-    "adminConsole": "Administration",
-    "adminConsoleHint": "Manage users, roles, and registration.",
-    "manageUsers": "Manage users",
-    "loadStatsFailed": "Could not load account stats"
+    "noRoles": "No roles assigned"
   },
   "event": {
     "searchPlaceholder": "Search events…",
@@ -969,14 +961,6 @@
     "Dashboard": {
       "title": "Dashboard",
       "description": "Your dashboard: account overview, roles, and administration."
-    },
-    "AdminDashboard": {
-      "title": "Dashboard",
-      "description": "Overview of events, students, and platform statistics."
-    },
-    "StudentDashboard": {
-      "title": "My Dashboard",
-      "description": "Your practice and challenge activity at a glance."
     },
     "QuestionList": {
       "title": "Questions",

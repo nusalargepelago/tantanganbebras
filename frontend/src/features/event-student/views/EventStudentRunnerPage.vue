@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Button, ErrorMessage, Skeleton } from 'frappe-ui'
+import { Button, ErrorMessage, Spinner } from 'frappe-ui'
 
 import QuizRunnerShell, {
   type RunnerQuestion,
@@ -15,6 +15,7 @@ const router = useRouter()
 const store = useEventStudentStore()
 const { t } = useI18n()
 const notFound = ref(false)
+const gateReady = ref(false)
 
 const attemptName = computed(() => route.params.name as string)
 const active = computed(() => store.active)
@@ -55,8 +56,10 @@ onMounted(async () => {
   const result = await store.start(attemptName.value)
   if (!result) {
     notFound.value = true
+    gateReady.value = true
     return
   }
+  gateReady.value = true
   if (result.eventStudent.finishedAt) {
     await router.replace({
       name: 'EventStudentResult',
@@ -68,39 +71,37 @@ onMounted(async () => {
 
 <template>
   <div class="mx-auto w-full max-w-3xl px-5 py-6">
-    <div v-if="!active && !notFound" class="space-y-3">
-      <Skeleton class="h-10" />
-      <Skeleton class="h-64" />
+    <div v-if="!gateReady" class="flex justify-center py-10">
+      <Spinner />
     </div>
 
-    <div
-      v-else-if="notFound || !active"
-      class="flex flex-col items-center gap-3 rounded-6 border border-outline-gray-1 py-12 text-center"
-    >
-      <ErrorMessage v-if="store.error" :message="store.error" />
-      <span v-else class="lucide-calendar-x size-8 text-ink-gray-4" aria-hidden="true" />
-      <p v-if="!store.error" class="text-p-sm text-ink-gray-5">
-        {{ t('runner.attemptNotFound') }}
-      </p>
-      <Button
-        variant="outline"
-        theme="gray"
-        :label="t('runner.backToEvents')"
-        :route="{ name: 'EventStudentList' }"
-      />
-    </div>
+    <template v-else>
+      <div v-if="notFound || !active" class="flex flex-col items-center gap-3 rounded-6 border border-outline-gray-1 py-12 text-center">
+        <ErrorMessage v-if="store.error" :message="store.error" />
+        <span v-else class="lucide-calendar-x size-8 text-ink-gray-4" aria-hidden="true" />
+        <p v-if="!store.error" class="text-p-sm text-ink-gray-5">
+          {{ t('runner.attemptNotFound') }}
+        </p>
+        <Button
+          variant="outline"
+          theme="gray"
+          :label="t('runner.backToEvents')"
+          :route="{ name: 'EventStudentList' }"
+        />
+      </div>
 
-    <div v-else class="h-[calc(100vh-8rem)] overflow-hidden rounded-6 border border-outline-gray-1">
-      <QuizRunnerShell
-        :title="active.event.eventName"
-        :questions="runnerQuestions"
-        :saved-answers="savedAnswers"
-        :duration-min="durationMin"
-        :started-at="startedAt"
-        :submit-fn="submitFn"
-        :redirect-after-submit="redirectAfterSubmit"
-        @answer="onAnswer"
-      />
-    </div>
+      <div v-else class="h-[calc(100vh-8rem)] overflow-hidden rounded-6 border border-outline-gray-1">
+        <QuizRunnerShell
+          :title="active.event.eventName"
+          :questions="runnerQuestions"
+          :saved-answers="savedAnswers"
+          :duration-min="durationMin"
+          :started-at="startedAt"
+          :submit-fn="submitFn"
+          :redirect-after-submit="redirectAfterSubmit"
+          @answer="onAnswer"
+        />
+      </div>
+    </template>
   </div>
 </template>

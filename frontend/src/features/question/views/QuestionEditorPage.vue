@@ -2,9 +2,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Button, dialog, toast } from 'frappe-ui'
+import { Button, Spinner, dialog, toast } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useQuestionStore } from '../store'
 import { categoryLabel, difficultyLabel, statusLabel } from '@/shared/labels'
 import { stripTags } from '@/shared/richText'
@@ -27,6 +27,7 @@ const topicModalName = ref<string | null>(null)
 
 const outlineOpen = ref(false)
 const settingsOpen = ref(false)
+const gateReady = ref(false)
 
 function closeDrawers() {
   outlineOpen.value = false
@@ -47,7 +48,11 @@ function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') closeDrawers()
 }
 
-onMounted(() => window.addEventListener('keydown', onKeydown))
+onMounted(async () => {
+  window.addEventListener('keydown', onKeydown)
+  await Promise.all([store.list({ perPage: 200 }), store.listTopics()])
+  gateReady.value = true
+})
 onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
 const settings = computed(() => {
@@ -176,7 +181,12 @@ watch(selected, async (name) => {
       </template>
     </AppPageHeader>
 
+    <div v-if="!gateReady" class="flex justify-center py-10">
+      <Spinner />
+    </div>
+
     <div
+      v-else
       class="grid h-[calc(100vh-8rem)] grid-cols-1 overflow-hidden lg:grid-cols-[300px_minmax(0,1fr)_320px]"
     >
       <aside

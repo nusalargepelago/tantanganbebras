@@ -10,12 +10,13 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Spinner,
   Textarea,
   toast,
 } from 'frappe-ui'
 import { Editor, EditorContent, EditorFixedMenu, RichTextKit, articleToolbar } from 'frappe-ui/editor'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { uploadMedia } from '@/shared/editorUpload'
 import { optionToolbar } from '@/shared/editorToolbar'
 import { hasRichContent } from '@/shared/richText'
@@ -79,6 +80,7 @@ const touched = ref(false)
 const snapshot = ref('')
 const submitting = ref(false)
 const loadError = ref('')
+const gateReady = ref(false)
 
 const CODE_PREFIX: Record<string, string> = { cub: 'CUB', scout: 'SCOUT', rover: 'ROVER' }
 let codegenToken = 0
@@ -280,6 +282,7 @@ onMounted(async () => {
     await generateCode()
     snapshotForm()
   }
+  gateReady.value = true
 })
 </script>
 
@@ -320,7 +323,11 @@ onMounted(async () => {
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <ErrorMessage v-if="loadError" :message="loadError" />
 
     <section class="space-y-4 rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-5" data-tour="admin-question-detail">

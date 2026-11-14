@@ -9,12 +9,13 @@ import {
   ErrorMessage,
   FormControl,
   Select,
+  Spinner,
   Textarea,
   TextInput,
   toast,
 } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { categoryLabel, categoryOptions } from '@/shared/labels'
 import { useQuestionStore } from '@/features/question/store'
 import { useEventStore } from '../store'
@@ -40,7 +41,7 @@ const form = reactive({
 })
 const selectedQuestions = ref<string[]>([])
 const snapshot = ref('')
-const ready = ref(false)
+const gateReady = ref(false)
 const submitting = ref(false)
 const loadError = ref('')
 
@@ -81,6 +82,7 @@ async function load() {
     const event = await store.get(eventName.value)
     if (!event) {
       loadError.value = store.error || t('event.loadFailed')
+      gateReady.value = true
       return
     }
     form.eventName = event.eventName
@@ -97,7 +99,7 @@ async function load() {
     form.eventDeadline = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 16)
   }
   snapshot.value = JSON.stringify(formState())
-  ready.value = true
+  gateReady.value = true
 }
 
 function payload() {
@@ -131,7 +133,7 @@ async function onSubmit() {
 watch(
   () => form.category,
   () => {
-    if (!ready.value) return
+    if (!gateReady.value) return
     selectedQuestions.value = selectedQuestions.value.filter((name) =>
       availableQuestions.value.some((q) => q.name === name),
     )
@@ -183,7 +185,11 @@ onMounted(load)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <ErrorMessage v-if="loadError" :message="loadError" />
 
     <section class="space-y-4 rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-5" data-tour="admin-event-details">

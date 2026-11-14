@@ -6,17 +6,17 @@ import {
   Badge,
   Button,
   Dropdown,
-  ErrorMessage,
   Select,
-  Skeleton,
+  Spinner,
   Switch,
   dialog,
   toast,
 } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import ListFoot from '@/shared/components/ListFoot.vue'
 import ListHead from '@/shared/components/ListHead.vue'
+import ListState from '@/shared/components/ListState.vue'
 import ListToolbar from '@/shared/components/ListToolbar.vue'
 import {
   List,
@@ -48,6 +48,7 @@ const status = ref('')
 const includeDisabled = ref(false)
 
 const empty = computed(() => !store.loading && store.items.length === 0)
+const gateReady = ref(false)
 
 const categoryFilter = computed(() => categoryOptions(true))
 const difficultyFilter = computed(() => difficultyOptions(true))
@@ -64,7 +65,7 @@ const { search, perPage, reload: refresh, goToPage } = useListControls({
     store.page = page
   },
   fetch: (query) => {
-    store.list({
+    return store.list({
       q: query.search || undefined,
       category: category.value || undefined,
       difficultyLevel: difficulty.value || undefined,
@@ -150,9 +151,10 @@ async function onPurge(item: Question) {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
   store.fetchOptionList()
-  refresh()
+  await refresh()
+  gateReady.value = true
 })
 </script>
 
@@ -191,7 +193,11 @@ onMounted(() => {
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
     <ListToolbar
       v-model:search="search"
       v-model:per-page="perPage"
@@ -208,33 +214,28 @@ onMounted(() => {
     </ListToolbar>
 
     <div>
-      <div v-if="store.loading" class="space-y-2">
-        <Skeleton v-for="i in 6" :key="i" class="h-9" />
-      </div>
-
-      <div
-        v-else-if="empty"
-        class="flex flex-col items-center gap-2 py-10 text-center"
+      <ListState
+        :loading="store.loading"
+        :error="store.error"
+        :empty="empty"
+        icon="lucide-file-question"
+        :empty-message="
+          search || category || difficulty || status
+            ? t('question.noMatch')
+            : t('question.noData')
+        "
       >
-        <span class="lucide-file-question size-8 text-ink-gray-4" aria-hidden="true" />
-        <p class="text-p-sm text-ink-gray-5">
-          {{
-            search || category || difficulty || status
-              ? t('question.noMatch')
-              : t('question.noData')
-          }}
-        </p>
-        <Button
-          v-if="!search && !category && !difficulty && !status"
-          variant="outline"
-          theme="gray"
-          icon-left="lucide-plus"
-          :label="t('question.addQuestion')"
-          :route="{ name: 'QuestionNew' }"
-        />
-      </div>
-
-      <List v-else :row-height="40" :columns="columns" class="list-row-px-3">
+        <template #action>
+          <Button
+            v-if="!search && !category && !difficulty && !status"
+            variant="outline"
+            theme="gray"
+            icon-left="lucide-plus"
+            :label="t('question.addQuestion')"
+            :route="{ name: 'QuestionNew' }"
+          />
+        </template>
+        <List :row-height="40" :columns="columns" class="list-row-px-3">
         <ListHead>
           <ListHeaderCell>{{ t('list.code') }}</ListHeaderCell>
           <ListHeaderCell class="max-md:hidden">{{ t('list.type') }}</ListHeaderCell>
@@ -292,6 +293,7 @@ onMounted(() => {
           </ListRow>
         </ListRows>
       </List>
+      </ListState>
       <ListFoot
         v-if="!empty"
         :total="store.total"
@@ -300,7 +302,5 @@ onMounted(() => {
         @update:page="goToPage"
       />
     </div>
-
-    <ErrorMessage v-if="store.error" :message="store.error" />
   </div>
 </template>

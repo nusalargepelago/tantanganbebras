@@ -2,9 +2,9 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Badge, Button, ErrorMessage, Skeleton, toast } from 'frappe-ui'
+import { Badge, Button, ErrorMessage, Spinner, Skeleton, toast } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { categoryLabel } from '@/shared/labels'
 import { hasRichContent } from '@/shared/richText'
 import { sanitizeHtml } from '@/shared/sanitize'
@@ -22,6 +22,7 @@ const data = computed(() => store.detail)
 const practice = computed(() => data.value?.practice ?? null)
 const student = computed(() => data.value?.student ?? null)
 const testing = ref(false)
+const gateReady = ref(false)
 
 async function onTest() {
   if (testing.value) return
@@ -72,7 +73,10 @@ const statusBadge = computed(() => {
     : { label: t('list.inProgress'), theme: 'amber' as const }
 })
 
-onMounted(() => store.fetchAdminDetail(name.value))
+onMounted(async () => {
+  await store.fetchAdminDetail(name.value)
+  gateReady.value = true
+})
 </script>
 
 <template>
@@ -98,7 +102,11 @@ onMounted(() => store.fetchAdminDetail(name.value))
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <Skeleton v-if="store.detailLoading" class="h-40" />
     <ErrorMessage v-else-if="store.error" :message="store.error" />
 

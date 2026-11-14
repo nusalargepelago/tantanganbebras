@@ -25,7 +25,7 @@ const store = useAccountStore()
 const auth = useAuthStore()
 const { t } = useI18n()
 
-const gateReady = computed(() => auth.checked)
+const gateReady = ref(false)
 
 const empty = computed(
   () => !store.loading && store.items.length === 0,
@@ -41,7 +41,7 @@ const { search, perPage, reload: refresh, goToPage } = useListControls({
     store.page = page
   },
   fetch: (query) => {
-    store.fetchUsers({
+    return store.fetchUsers({
       search: query.search,
       page: store.page,
       perPage: query.perPage,
@@ -64,7 +64,8 @@ function openCreate() {
 
 onMounted(async () => {
   if (!auth.checked) await auth.fetchMe()
-  refresh()
+  await refresh()
+  gateReady.value = true
 })
 </script>
 
@@ -89,7 +90,9 @@ onMounted(async () => {
     </template>
   </AppPageHeader>
 
-  <Spinner v-if="!gateReady" />
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
 
   <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
     <ListToolbar

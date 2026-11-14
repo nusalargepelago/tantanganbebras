@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Button, ErrorMessage, Skeleton } from 'frappe-ui'
+import { Button, ErrorMessage, Spinner } from 'frappe-ui'
 
 import QuizRunnerShell, {
   type RunnerQuestion,
@@ -12,6 +12,7 @@ import { usePracticeStore } from '../store'
 const store = usePracticeStore()
 const { t } = useI18n()
 const notFound = ref(false)
+const gateReady = ref(false)
 
 const active = computed(() => store.active)
 const practice = computed(() => active.value?.practice ?? null)
@@ -52,44 +53,43 @@ async function submitFn(answers: { id: string; answer: string }[]): Promise<bool
 onMounted(async () => {
   const result = await store.start()
   if (!result) notFound.value = true
+  gateReady.value = true
 })
 </script>
 
 <template>
   <div class="mx-auto w-full max-w-3xl px-5 py-6">
-    <div v-if="store.loading || (!active && !notFound)" class="space-y-3">
-      <Skeleton class="h-10" />
-      <Skeleton class="h-64" />
+    <div v-if="!gateReady" class="flex justify-center py-10">
+      <Spinner />
     </div>
 
-    <div
-      v-else-if="notFound || !active"
-      class="flex flex-col items-center gap-3 rounded-6 border border-outline-gray-1 py-12 text-center"
-    >
-      <ErrorMessage v-if="store.error" :message="store.error" />
-      <span v-else class="lucide-clipboard-x size-8 text-ink-gray-4" aria-hidden="true" />
-      <p v-if="!store.error" class="text-p-sm text-ink-gray-5">
-        {{ t('runner.noPracticeInProgress') }}
-      </p>
-      <Button
-        variant="outline"
-        theme="gray"
-        :label="t('practice.backToList')"
-        :route="{ name: 'PracticeList' }"
-      />
-    </div>
+    <template v-else>
+      <div v-if="notFound || !active" class="flex flex-col items-center gap-3 rounded-6 border border-outline-gray-1 py-12 text-center">
+        <ErrorMessage v-if="store.error" :message="store.error" />
+        <span v-else class="lucide-clipboard-x size-8 text-ink-gray-4" aria-hidden="true" />
+        <p v-if="!store.error" class="text-p-sm text-ink-gray-5">
+          {{ t('runner.noPracticeInProgress') }}
+        </p>
+        <Button
+          variant="outline"
+          theme="gray"
+          :label="t('practice.backToList')"
+          :route="{ name: 'PracticeList' }"
+        />
+      </div>
 
-    <div v-else class="h-[calc(100vh-8rem)] overflow-hidden rounded-6 border border-outline-gray-1">
-      <QuizRunnerShell
-        title="Practice"
-        :questions="runnerQuestions"
-        :saved-answers="savedAnswers"
-        :duration-min="durationMin"
-        :started-at="startedAt"
-        :submit-fn="submitFn"
-        :redirect-after-submit="redirectAfterSubmit"
-        @answer="onAnswer"
-      />
-    </div>
+      <div v-else class="h-[calc(100vh-8rem)] overflow-hidden rounded-6 border border-outline-gray-1">
+        <QuizRunnerShell
+          title="Practice"
+          :questions="runnerQuestions"
+          :saved-answers="savedAnswers"
+          :duration-min="durationMin"
+          :started-at="startedAt"
+          :submit-fn="submitFn"
+          :redirect-after-submit="redirectAfterSubmit"
+          @answer="onAnswer"
+        />
+      </div>
+    </template>
   </div>
 </template>

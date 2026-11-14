@@ -283,9 +283,14 @@ def test_import_row_errors(admin):
 def test_import_does_not_convert_staff_user(admin):
     admin.post(
         "/api/v1/account/users",
-        json={"email": "staff@example.com", "password": "S3cret!pass", "fullName": "Staff User"},
+        json={
+            "email": "staff@example.com",
+            "username": "staffuser",
+            "password": "S3cret!pass",
+            "fullName": "Staff User",
+        },
     )
-    rows = [["Staff", "User", "staff@example.com", "staff@example.com", "Siswa1234", "cub"]]
+    rows = [["Staff", "User", "staff@example.com", "staffuser", "Siswa1234", "cub"]]
     buffer = build_xlsx(rows)
     response = admin.post(
         "/api/v1/student/import",

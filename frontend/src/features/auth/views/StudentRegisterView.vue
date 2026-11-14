@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Alert, Button, ErrorMessage, FormControl, Select } from 'frappe-ui'
+import { Alert, Button, ErrorMessage, FormControl, Select, Spinner } from 'frappe-ui'
 
 import { useAuthStore } from '../store'
 import { categoryOptions } from '@/shared/labels'
@@ -25,6 +25,11 @@ const form = reactive({
   country: 'Indonesia',
 })
 const submitting = ref(false)
+const gateReady = computed(() => !!auth.user || auth.registrationMode !== null)
+
+onMounted(async () => {
+  await auth.fetchRegistrationMode()
+})
 
 const disabled = computed(
   () =>
@@ -57,7 +62,11 @@ async function onSubmit() {
 
 <template>
   <div class="flex min-h-screen items-center justify-center bg-surface-base p-4 text-ink-gray-8">
-    <div class="w-full max-w-md rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-6">
+    <Spinner v-if="!gateReady" />
+    <div
+      v-else
+      class="w-full max-w-md rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-6"
+    >
       <form class="space-y-4" @submit.prevent="onSubmit">
         <div class="flex flex-col items-center gap-1.5 text-center">
           <h1 class="text-2xl-semibold text-ink-gray-8">{{ t('auth.studentRegister.title') }}</h1>

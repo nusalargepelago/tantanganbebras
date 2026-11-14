@@ -6,16 +6,16 @@ import {
   Badge,
   Button,
   Dropdown,
-  ErrorMessage,
   Select,
-  Skeleton,
+  Spinner,
   toast,
 } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { categoryLabel, categoryOptions } from '@/shared/labels'
 import ListFoot from '@/shared/components/ListFoot.vue'
 import ListHead from '@/shared/components/ListHead.vue'
+import ListState from '@/shared/components/ListState.vue'
 import ListToolbar from '@/shared/components/ListToolbar.vue'
 import { List, ListCell, ListHeaderCell, ListRow, ListRows } from 'frappe-ui/list'
 
@@ -34,6 +34,7 @@ const perPage = ref(20)
 const category = ref('')
 const published = ref('')
 const empty = computed(() => !store.loading && store.items.length === 0)
+const gateReady = ref(false)
 const canStart = computed(() => !!auth.student)
 
 const filteredItems = computed(() => {
@@ -58,7 +59,7 @@ const columns = {
 }
 
 function reload() {
-  store.list({
+  return store.list({
     category: category.value || undefined,
     published: published.value === '' ? undefined : published.value === 'true',
     page: store.page,
@@ -113,7 +114,10 @@ async function onPlay(item: AdminEvent) {
   await router.push({ name: 'EventStudentRunner', params: { name: attempt.name } })
 }
 
-onMounted(reload)
+onMounted(async () => {
+  await reload()
+  gateReady.value = true
+})
 </script>
 
 <template>
@@ -151,7 +155,11 @@ onMounted(reload)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
     <ListToolbar
       v-model:search="search"
       v-model:per-page="perPage"
@@ -163,30 +171,24 @@ onMounted(reload)
     </ListToolbar>
 
     <div data-tour="admin-event-list">
-      <div v-if="store.loading" class="space-y-2">
-        <Skeleton v-for="i in 6" :key="i" class="h-9" />
-      </div>
-
-      <div v-else-if="empty" class="flex flex-col items-center gap-2 py-10 text-center">
-        <span class="lucide-calendar-x size-8 text-ink-gray-4" aria-hidden="true" />
-        <p class="text-p-sm text-ink-gray-5">
-          {{
-            category || published || search
-              ? t('event.noMatch')
-              : t('event.noData')
-          }}
-        </p>
-        <Button
-          v-if="!category && !published && !search"
-          variant="outline"
-          theme="gray"
-          icon-left="lucide-plus"
-          :label="t('event.createEvent')"
-          :route="{ name: 'EventNew' }"
-        />
-      </div>
-
-      <List v-else :row-height="40" :columns="columns" class="list-row-px-3">
+      <ListState
+        :loading="store.loading"
+        :error="store.error"
+        :empty="empty"
+        icon="lucide-calendar-x"
+        :empty-message="category || published || search ? t('event.noMatch') : t('event.noData')"
+      >
+        <template #action>
+          <Button
+            v-if="!category && !published && !search"
+            variant="outline"
+            theme="gray"
+            icon-left="lucide-plus"
+            :label="t('event.createEvent')"
+            :route="{ name: 'EventNew' }"
+          />
+        </template>
+        <List :row-height="40" :columns="columns" class="list-row-px-3">
         <ListHead>
           <ListHeaderCell>{{ t('list.name') }}</ListHeaderCell>
           <ListHeaderCell class="max-md:hidden">{{ t('list.category') }}</ListHeaderCell>
@@ -236,6 +238,7 @@ onMounted(reload)
           </ListRow>
         </ListRows>
       </List>
+      </ListState>
       <ListFoot
         v-if="!empty"
         :total="store.total"
@@ -244,7 +247,5 @@ onMounted(reload)
         @update:page="goToPage"
       />
     </div>
-
-    <ErrorMessage v-if="store.error" :message="store.error" />
   </div>
 </template>

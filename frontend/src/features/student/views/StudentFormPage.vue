@@ -8,10 +8,11 @@ import {
   ErrorMessage,
   FormControl,
   Select,
+  Spinner,
   toast,
 } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useStudentStore } from '../store'
 import { categoryOptions, statusOptions } from '@/shared/labels'
 
@@ -41,6 +42,7 @@ const form = reactive({
 const snapshot = ref('')
 const submitting = ref(false)
 const loadError = ref('')
+const gateReady = ref(false)
 
 const isDirty = computed(() => JSON.stringify(form) !== snapshot.value)
 const canSave = computed(() => isDirty.value && !submitting.value)
@@ -56,26 +58,31 @@ const disabled = computed(
 )
 
 async function load() {
-  if (userId.value) {
-    const student = await store.get(userId.value)
-    if (!student) {
-      loadError.value = store.error || t('student.loadFailed')
-      return
-    }
-    Object.assign(form, {
-      firstName: student.firstName,
-      lastName: student.lastName,
-      email: student.email,
-      username: student.username,
-      password: '',
-      category: student.category,
-      school: student.school ?? '',
-      city: student.city ?? '',
-      country: student.country ?? 'Indonesia',
-      status: student.status,
-    })
+  if (!isEdit.value) {
+    gateReady.value = true
+    snapshot.value = JSON.stringify(form)
+    return
   }
+  const student = await store.get(userId.value!)
+  if (!student) {
+    loadError.value = store.error || t('student.loadFailed')
+    gateReady.value = true
+    return
+  }
+  Object.assign(form, {
+    firstName: student.firstName,
+    lastName: student.lastName,
+    email: student.email,
+    username: student.username,
+    password: '',
+    category: student.category,
+    school: student.school ?? '',
+    city: student.city ?? '',
+    country: student.country ?? 'Indonesia',
+    status: student.status,
+  })
   snapshot.value = JSON.stringify(form)
+  gateReady.value = true
 }
 
 async function onSubmit() {
@@ -165,7 +172,11 @@ onMounted(load)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <ErrorMessage v-if="loadError" :message="loadError" />
 
     <section class="space-y-4 rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-5">

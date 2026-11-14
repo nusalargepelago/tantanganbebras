@@ -10,13 +10,13 @@ export const TOURS: TourDefinition[] = [
     steps: [
       {
         id: 'dashboard',
-        route: { name: 'StudentDashboard' },
+        route: { name: 'Dashboard' },
         target: 'student-dashboard-stats',
         placement: 'bottom',
       },
       {
         id: 'actions',
-        match: 'StudentDashboard',
+        match: 'Dashboard',
         target: 'student-dashboard-actions',
         placement: 'top',
         advanceOnRoute: true,
@@ -149,28 +149,28 @@ export const TOURS: TourDefinition[] = [
     starter: true,
     icon: 'lucide-layout-dashboard',
     steps: [
-      { id: 'welcome', route: { name: 'AdminDashboard' } },
+      { id: 'welcome', route: { name: 'Dashboard' } },
       {
         id: 'stats',
-        match: 'AdminDashboard',
+        match: 'Dashboard',
         target: 'admin-stats',
         placement: 'bottom',
       },
       {
         id: 'totals',
-        match: 'AdminDashboard',
+        match: 'Dashboard',
         target: 'admin-totals',
         placement: 'bottom',
       },
       {
         id: 'charts',
-        match: 'AdminDashboard',
+        match: 'Dashboard',
         target: 'admin-charts',
         placement: 'top',
       },
       {
         id: 'recent',
-        match: 'AdminDashboard',
+        match: 'Dashboard',
         target: 'admin-recent',
         placement: 'bottom',
       },

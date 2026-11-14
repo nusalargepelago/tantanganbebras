@@ -15,7 +15,6 @@ from app.auth.models import MEMBER_ROLE, Role, User
 from app.auth.repositories import RoleRepository, UserRepository
 from app.auth.services import AuthService
 from app.infra.audit import log as audit_log
-from app.infra.passwords import hash_password
 from framework.base import ServiceBase
 from framework.exceptions import Conflict, InvalidOperation, NotFound
 

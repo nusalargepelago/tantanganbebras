@@ -17,8 +17,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Spinner v-if="!gateReady" />
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
 
-  <AdminDashboardView v-else-if="isAdmin" />
-  <StudentDashboardView v-else />
+  <template v-else>
+    <AdminDashboardView v-if="isAdmin" />
+    <StudentDashboardView v-else />
+  </template>
 </template>

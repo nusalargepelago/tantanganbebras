@@ -414,7 +414,7 @@ Vue 3 + Vite + Pinia + frappe-ui (`1.0.2`), TypeScript strict.
 ```
 src/
   app/       AppShell (komposisi shared/shell), i18n.ts + locales/{en,id}.json, navigation, menuStore
-  features/  <feature>/{routes.ts, store.ts, views/*.vue} — auth, setup, dashboard
+  features/  <feature>/{routes.ts, store.ts, views/*.vue} — auth, setup, account, dashboard, question, topic, practice, event, student, todos, backup
   shared/    shell/{AppPageHeader, ShellSidebar, MobileBottomNav, MobileMenuSheet} — shell reusable;
              api/{client.ts, errors.ts, index.ts} — SATU-SATUNYA axios instance
   router/    index.ts + guard.ts + meta.d.ts
@@ -424,7 +424,7 @@ src/
   `PageHeaderMobile` + tombol menu mobile), `ShellSidebar`, `MobileBottomNav`,
   `MobileMenuSheet` (menu sidebar — dari tombol menu `AppPageHeader`).
   `AppShell.vue` hanya komposisi: nav dari
-  `app/navigation.ts` (menu preferences) di-map jadi `ShellNavItem` (label
+  `app/navigation.ts` (role + menu preferences) di-map jadi `ShellNavItem` (label
   sudah di-resolve `t()`, `active` = nama route) lalu di-pass ke komponen.
   Header sidebar (brand/logo/menu avatar) lewat slot `#header`; tab avatar di
   bottom nav lewat slot default — klik langsung buka `UserSettingsDialog`
@@ -465,7 +465,8 @@ src/
 - **Async readiness gate di View**: template utama dirender hanya setelah
   fetch backend selesai, cegah flash UI default. Pola kanonik per View:
   `const gateReady = computed(...)` dari state store yang sudah ada
-  (tanpa ubah store/API), `onMounted` fetch jika belum terisi, lalu
+  (tanpa ubah store/API) atau `gateReady` lokal (`ref(false)`), `onMounted`
+  fetch lalu `gateReady.value = true` di akhir (termasuk gagal), lalu
   `<Spinner v-if="!gateReady" />` + `<div v-else>...</div>`.
   Contoh: Dashboard `auth.checked`; Setup
   `setup.status !== null || setup.statusFailed`; Login

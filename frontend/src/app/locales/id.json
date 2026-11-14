@@ -604,15 +604,7 @@
     "loadDashboard": "Gagal memuat dasbor",
     "welcomeBack": "Selamat datang kembali",
     "roles": "Peran",
-    "noRoles": "Belum ada peran",
-    "totalUsers": "Total pengguna",
-    "registration": "Registrasi",
-    "registrationOpen": "Terbuka",
-    "registrationClosed": "Tertutup",
-    "adminConsole": "Administrasi",
-    "adminConsoleHint": "Kelola pengguna, peran, dan registrasi.",
-    "manageUsers": "Kelola pengguna",
-    "loadStatsFailed": "Gagal memuat statistik akun"
+    "noRoles": "Belum ada peran"
   },
   "event": {
     "searchPlaceholder": "Cari event…",
@@ -969,14 +961,6 @@
     "Dashboard": {
       "title": "Dasbor",
       "description": "Dasbor Anda: ringkasan akun, peran, dan administrasi."
-    },
-    "AdminDashboard": {
-      "title": "Dasbor",
-      "description": "Ringkasan event, siswa, dan statistik platform."
-    },
-    "StudentDashboard": {
-      "title": "Dasbor Saya",
-      "description": "Aktivitas latihan dan tantangan Anda dalam sekilas."
     },
     "QuestionList": {
       "title": "Soal",
