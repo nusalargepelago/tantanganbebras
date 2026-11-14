@@ -142,7 +142,7 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | GET | /api/v1/auth/me | Current user (session) |
 | GET | /api/v1/auth/registration | Registration mode open/closed (public) |
 | PUT | /api/v1/auth/registration | Set registration mode (admin) |
-| GET | /api/v1/setup/status | First-run setup status (public) |
+| GET | /api/v1/setup/status | First-run setup status (public; engine/URL only for loopback clients) |
 | POST | /api/v1/setup/db-test | Test DB connection (loopback client only) |
 | POST | /api/v1/setup | Run first-run setup (loopback client only) |
 | GET | /api/v1/csrf | Fetch CSRF token (public) |

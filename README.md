@@ -129,8 +129,10 @@ Baca sebelum eksposur internet:
 - `POST /api/v1/auth/register` terbuka (mode default `open`) dan langsung
   login. Tutup via `PUT /api/v1/auth/registration` (admin) untuk deployment
   invite-only
-- `/api/v1/setup/status` dan `/health` publik — mengekspos engine aktif,
-  database URL ter-mask, dan metrik agregat
+- `/api/v1/setup/status` dan `/health` publik. Status setup hanya mengekspos
+  `setupRequired` + `reason` (bocoran terbatas: instance belum dikonfigurasi);
+  detail engine/URL database ter-mask hanya untuk klien loopback. `/health`
+  mengekspos metrik agregat
 - API key hanya mengautentikasi request read; mutasi tetap butuh CSRF session
 - Rate limit per IP efektif, hanya route API; set `RATE_LIMIT_STORAGE_URL`
   (mis. `redis://…`) untuk multi-worker
