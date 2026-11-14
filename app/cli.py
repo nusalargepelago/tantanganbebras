@@ -86,7 +86,7 @@ def _prompt_brand() -> BrandIn:
 
 def _run_setup() -> None:
     service = SetupService()
-    status = service.status()
+    status = service.status(include_details=True)
     if not status["setupRequired"]:
         click.echo(f"Setup is already complete — database {status['activeUrl']}")
         return
