@@ -484,6 +484,23 @@ Ini gotcha paling sering terlewat.
     `<title>` di `frontend/index.html` hanya fallback dev. SPA membaca
     `window.brand`; `seo` tidak pernah jadi window global.
 
+## Forking (sibling worktrees)
+
+Fork (`tantanganbebras` / `labba` / `tenancy`) adalah worktree terpisah dari
+repo ini — perubahan master mengalir ke fork saat mereka merge `master`.
+
+- Aturan generik merge master→fork + peta resolusi konflik + security
+  invariants: **`docs/forking.md`**. Skeleton `FORK.md` per fork:
+  `docs/FORK.template.md`.
+- **Stash protocol** untuk fork yang sengaja belum commit WIP sebelum merge:
+  `git stash push --include-untracked` sebelum `git merge master`, lalu
+  `git stash pop` SETELAH verifikasi hijau — konflik pop diselesaikan aditif
+  (master wins skeleton). Unmerged index entries (merge half-done) **tidak
+  bisa di-stash** — heal dulu. Jangan `stash drop` sebelum suite hijau.
+- Jangan pernah commit/pull/restore dari worktree fork lewat repo ini, dan
+  jangan hapus file hanya karena fork tampak tidak memakainya — fork-compat
+  gerbang untuk deletions.
+
 ## Deployment
 
 `Dockerfile` (python:3.11-slim, non-root `appuser`, `/app/data` volume) +
