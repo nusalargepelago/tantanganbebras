@@ -135,6 +135,43 @@ config default yang generik):
    master menyerapnya — jangan hapus di fork sebelum upstream ada.
 3. Setelah upstream merge, fork hapus copy fork-owned pada merge berikutnya.
 
+### 7.1 Aturan komposisi fork (upstream primitives)
+
+Tujuan akhir: **fork tinggal komposisi** — resolve konflik tidak pernah keluar
+dari pola master, dan file master **byte-identical** di semua fork.
+
+Aturan keras:
+
+- **Fork tidak pernah mengedit file master.** Kalau kebutuhan fork tidak
+  terpenuhi pola komposisi, fork menambah file fork-owned baru — bukan
+  memodifikasi file upstream.
+- Pertama coba pola komposisi: props opsional, named slot, file fork-owned
+  yang meng-import primitive master. Contoh kanonik: view fork merender
+  `AdminSchoolsDashboardView` (fork-owned) dari `DashboardView` alih-alih
+  menulis ulang view dashboard master.
+- Kalau pola komposisi tidak cukup → **PR upstream primitif** (§7), bukan
+  edit file master di fork. Master harus backwards-compatible: primitive baru
+  bersifat aditif (prop opsional / slot baru), tidak pernah breaking.
+- Ekstensi di file **fork-owned** itu bebas; ekstensi di file **master** itu
+  PR upstream.
+
+Primitif yang sudah upstream (jangan fork-owned lagi):
+
+| Primitive | Tujuan |
+|---|---|
+| `shared/components/PanelCard.vue` | Section/panel `rounded-6 border … p-5` + `title?` + slot `#actions` |
+| `shared/components/StatTile.vue` | Metric tile label + value (`—` untuk nullish); slot default override value |
+| `shared/components/ListRowOpenButton.vue` + `shared/listRow.ts` | Tombol full-row-open transparan + konstanta surface kelas baris list |
+| `shared/composables/useCountdown.ts` | Countdown ticking ke deadline absolut (`timeLeft/expired/running/format`) |
+| `shared/shell/AppPageHeader.vue` | Prop `title?` (override breadcrumb/judul mobile), slot `leading` / `actions` / `mobile-actions` / `suffix`, fallback judul mobile via `breadcrumbMap` |
+
+Checklist PR untuk kontribusi primitif master:
+
+- [ ] Bisa dipakai minimal dua fork berbeda (atau fork + master) tanpa `v-if` fork-spesifik di dalamnya.
+- [ ] Aditif: prop baru semua opsional dengan default aman; slot baru tidak mengubah layout tanpa konten.
+- [ ] Typecheck + build hijau di master; minimal satu pemakai real (master atau fork) sebagai dogfood.
+- [ ] Dokumentasi: docstring di komponen menjelaskan kontrak prop/slot.
+
 `docs/FORK.template.md` adalah kerangka `FORK.md` yang dipakai tiap fork.
 
 ## 8. Checklist verifikasi & format laporan
