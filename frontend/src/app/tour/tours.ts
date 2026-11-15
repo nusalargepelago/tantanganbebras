@@ -267,6 +267,95 @@ export const TOURS: TourDefinition[] = [
     ],
   },
   {
+    id: 'teacher-home',
+    roles: ['teacher'],
+    starter: true,
+    icon: 'lucide-presentation',
+    steps: [
+      {
+        id: 'welcome',
+        route: { name: 'Dashboard' },
+        target: 'teacher-hero',
+        placement: 'bottom',
+      },
+      {
+        id: 'actions',
+        match: 'Dashboard',
+        target: 'teacher-actions',
+        placement: 'top',
+      },
+    ],
+  },
+  {
+    id: 'teacher-students',
+    roles: ['teacher'],
+    icon: 'lucide-users',
+    steps: [
+      {
+        id: 'list',
+        route: { name: 'StudentList' },
+        target: 'student-list',
+        placement: 'bottom',
+      },
+      {
+        id: 'add',
+        match: 'StudentList',
+        target: 'student-add',
+        placement: 'bottom',
+      },
+      {
+        id: 'import',
+        match: 'StudentList',
+        target: 'student-import',
+        placement: 'top',
+      },
+      {
+        id: 'row',
+        match: 'StudentList',
+        target: 'student-list',
+        placement: 'top',
+      },
+    ],
+  },
+  {
+    id: 'teacher-practice',
+    roles: ['teacher'],
+    icon: 'lucide-clipboard-check',
+    steps: [
+      {
+        id: 'list',
+        route: { name: 'PracticeAdminList' },
+        target: 'admin-practice-list',
+        placement: 'bottom',
+      },
+      {
+        id: 'row',
+        match: 'PracticeAdminList',
+        target: 'admin-practice-list',
+        placement: 'top',
+        advanceOnRoute: true,
+      },
+      {
+        id: 'before',
+        match: 'PracticeAdminDetail',
+        target: 'admin-practice-before',
+        placement: 'bottom',
+      },
+      {
+        id: 'after',
+        match: 'PracticeAdminDetail',
+        target: 'admin-practice-after',
+        placement: 'top',
+      },
+      {
+        id: 'answers',
+        match: 'PracticeAdminDetail',
+        target: 'admin-practice-answers',
+        placement: 'top',
+      },
+    ],
+  },
+  {
     id: 'admin-practice',
     roles: ['staff'],
     icon: 'lucide-clipboard-check',

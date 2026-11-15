@@ -62,6 +62,7 @@ const navInset = ref(0)
 const role = computed<TourRole | null>(() => {
   if (auth.isAdmin) return 'staff'
   if (auth.isStudent) return 'student'
+  if (auth.isTeacher) return 'teacher'
   if (auth.isStaff) return 'staff'
   return null
 })

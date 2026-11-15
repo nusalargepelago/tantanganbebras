@@ -1,4 +1,4 @@
-export type TourRole = 'student' | 'staff'
+export type TourRole = 'student' | 'staff' | 'teacher'
 
 export type TourPlacement = 'top' | 'bottom' | 'left' | 'right' | 'center'
 

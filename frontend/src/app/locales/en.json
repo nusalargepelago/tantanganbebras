@@ -259,6 +259,68 @@
           "body": "Each question shows the student's answer and whether it was correct."
         }
       }
+    },
+    "teacher-home": {
+      "title": "Teacher quick tour",
+      "description": "A two-step tour of your home screen and its shortcuts.",
+      "steps": {
+        "welcome": {
+          "title": "Welcome to your home",
+          "body": "This screen greets you and shows the shortcuts below. Everything you manage here is limited to your own school."
+        },
+        "actions": {
+          "title": "Your two shortcuts",
+          "body": "\"Manage students\" opens the student list for your school. \"Student practices\" opens the practice sheets your students submitted — for review only."
+        }
+      }
+    },
+    "teacher-students": {
+      "title": "Manage your students",
+      "description": "Browse, add, and import students — scoped to your school.",
+      "steps": {
+        "list": {
+          "title": "Students of your school",
+          "body": "Only students from your school are listed. Search by name or email, or filter by category and status."
+        },
+        "add": {
+          "title": "Add a student",
+          "body": "Create a student account one by one. New accounts start as Inactive — activate them from the student's detail page."
+        },
+        "import": {
+          "title": "Import from XLSX",
+          "body": "Download the template, fill in your class list, and upload the file. The school and status columns are ignored — every imported row starts Inactive in your school."
+        },
+        "row": {
+          "title": "Open a student",
+          "body": "Click any row to see the full profile — you can edit, deactivate, or activate the account from there."
+        }
+      }
+    },
+    "teacher-practice": {
+      "title": "Review practice sheets",
+      "description": "Inspect how your students answered — before and after the shuffle.",
+      "steps": {
+        "list": {
+          "title": "Practice sheets of your school",
+          "body": "Every practice sheet from your school, newest first. Filter by category if you need to."
+        },
+        "row": {
+          "title": "Open a sheet",
+          "body": "Click any row to open it. You will see the questions before and after shuffling, plus the submitted answers."
+        },
+        "before": {
+          "title": "Before shuffle",
+          "body": "This is the original question set selected for the student."
+        },
+        "after": {
+          "title": "After shuffle",
+          "body": "The shuffled order is what the student actually answered. Options may also be reordered."
+        },
+        "answers": {
+          "title": "Submitted answers",
+          "body": "Each question shows the student's answer and whether it was correct."
+        }
+      }
     }
   },
   "error": {

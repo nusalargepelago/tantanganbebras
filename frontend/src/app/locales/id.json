@@ -259,6 +259,68 @@
           "body": "Setiap soal menampilkan jawaban siswa dan benar/salahnya."
         }
       }
+    },
+    "teacher-home": {
+      "title": "Tur cepat guru",
+      "description": "Tur dua langkah untuk layar beranda dan jalan pintasnya.",
+      "steps": {
+        "welcome": {
+          "title": "Selamat datang di beranda",
+          "body": "Layar ini menyapa kamu dan menampilkan jalan pintas di bawah. Semua yang kamu kelola di sini dibatasi pada sekolahmu sendiri."
+        },
+        "actions": {
+          "title": "Dua jalan pintas kamu",
+          "body": "\"Kelola siswa\" membuka daftar siswa sekolahmu. \"Latihan siswa\" membuka lembar latihan yang dikerjakan siswa — hanya untuk ditinjau."
+        }
+      }
+    },
+    "teacher-students": {
+      "title": "Kelola siswa",
+      "description": "Telusuri, tambah, dan impor siswa — terbatas pada sekolahmu.",
+      "steps": {
+        "list": {
+          "title": "Siswa sekolahmu",
+          "body": "Hanya siswa dari sekolahmu yang tercantum. Cari nama atau email, atau filter berdasarkan kategori dan status."
+        },
+        "add": {
+          "title": "Tambah siswa",
+          "body": "Buat akun siswa satu per satu. Akun baru dimulai Inactive — aktifkan lewat halaman detail siswa."
+        },
+        "import": {
+          "title": "Impor dari XLSX",
+          "body": "Unduh template, isi daftar kelasmu, lalu unggah filenya. Kolom sekolah dan status diabaikan — setiap baris impor dimulai Inactive di sekolahmu."
+        },
+        "row": {
+          "title": "Buka siswa",
+          "body": "Klik baris mana pun untuk melihat profil lengkap — dari sana kamu bisa mengubah, menonaktifkan, atau mengaktifkan akun."
+        }
+      }
+    },
+    "teacher-practice": {
+      "title": "Tinjau lembar latihan",
+      "description": "Periksa cara siswa menjawab — sebelum dan sesudah pengacakan.",
+      "steps": {
+        "list": {
+          "title": "Lembar latihan sekolahmu",
+          "body": "Semua lembar latihan dari sekolahmu, terbaru di atas. Filter berdasarkan kategori bila perlu."
+        },
+        "row": {
+          "title": "Buka lembar",
+          "body": "Klik baris mana pun untuk membukanya. Kamu akan melihat soal sebelum dan sesudah pengacakan, plus jawaban siswa."
+        },
+        "before": {
+          "title": "Sebelum diacak",
+          "body": "Ini kumpulan soal asli yang dipilih untuk siswa."
+        },
+        "after": {
+          "title": "Sesudah diacak",
+          "body": "Urutan acak inilah yang benar-benar dijawab siswa. Opsinya juga bisa diacak."
+        },
+        "answers": {
+          "title": "Jawaban siswa",
+          "body": "Setiap soal menampilkan jawaban siswa dan apakah benar."
+        }
+      }
     }
   },
   "error": {

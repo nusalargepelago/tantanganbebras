@@ -158,12 +158,14 @@ onMounted(async () => {
         icon-left="lucide-upload"
         :label="t('student.import')"
         :route="{ name: 'StudentImport' }"
+        data-tour="student-import"
       />
       <Button
         variant="solid"
         icon-left="lucide-plus"
         :label="t('student.addStudent')"
         :route="{ name: 'StudentNew' }"
+        data-tour="student-add"
       />
     </template>
     <template #mobile-actions>
@@ -172,12 +174,14 @@ onMounted(async () => {
         icon="lucide-upload"
         :label="t('student.import')"
         :route="{ name: 'StudentImport' }"
+        data-tour="student-import"
       />
       <Button
         variant="ghost"
         icon="lucide-plus"
         :label="t('student.addStudent')"
         :route="{ name: 'StudentNew' }"
+        data-tour="student-add"
       />
     </template>
   </AppPageHeader>
@@ -201,7 +205,7 @@ onMounted(async () => {
       </div>
     </ListToolbar>
 
-    <div>
+    <div data-tour="student-list">
       <ListState
         :loading="store.loading"
         :error="store.error"

@@ -16,6 +16,7 @@ const firstName = computed(() => (auth.user?.fullName ?? '').trim().split(/\s+/)
   <AppPageHeader :title="t('nav.dashboard')" />
   <div class="p-6">
     <div
+      data-tour="teacher-hero"
       class="flex flex-col items-center gap-3 rounded-6 border border-outline-gray-1 bg-surface-elevation-2 px-6 py-12 text-center"
     >
       <div class="rounded-full bg-surface-gray-2 p-3 text-ink-gray-5">
@@ -27,7 +28,7 @@ const firstName = computed(() => (auth.user?.fullName ?? '').trim().split(/\s+/)
       <p class="max-w-md text-p-base text-ink-gray-5">
         {{ t('teacher.welcomeBody') }}
       </p>
-      <div class="flex flex-wrap items-center justify-center gap-2">
+      <div data-tour="teacher-actions" class="flex flex-wrap items-center justify-center gap-2">
         <Button
           variant="solid"
           icon-left="lucide-users"
