@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Badge, Button, ErrorMessage, Skeleton } from 'frappe-ui'
+import { Badge, Button, ErrorMessage, Spinner, Skeleton } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useAuthStore } from '@/features/auth/store'
 import { categoryLabel } from '@/shared/labels'
 import { useDashboardStore } from '../store'
@@ -25,7 +25,15 @@ const stats = computed(() => {
   ]
 })
 
-onMounted(store.fetchStudent)
+const gateReady = ref(false)
+
+onMounted(async () => {
+  try {
+    await store.fetchStudent()
+  } finally {
+    gateReady.value = true
+  }
+})
 </script>
 
 <template>
@@ -48,7 +56,11 @@ onMounted(store.fetchStudent)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
     <ErrorMessage v-if="store.error" :message="store.error" />
 
     <Skeleton v-if="store.loading" class="h-40" />

@@ -2,9 +2,9 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Badge, Button, ErrorMessage, Skeleton, dialog, toast } from 'frappe-ui'
+import { Badge, Button, ErrorMessage, Spinner, Skeleton, dialog, toast } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useQuestionStore } from '../store'
 import { OPTION_LETTERS } from '@/shared/questionOptions'
 import { hasRichContent } from '@/shared/richText'
@@ -18,6 +18,7 @@ const { t } = useI18n()
 
 const name = computed(() => route.params.name as string)
 const question = computed(() => store.current)
+const gateReady = ref(false)
 
 const pgOptions = computed(() => {
   const q = question.value
@@ -31,6 +32,7 @@ const pgOptions = computed(() => {
 
 async function load() {
   await store.get(name.value)
+  gateReady.value = true
 }
 
 function onDelete() {
@@ -84,7 +86,11 @@ onMounted(load)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <Skeleton v-if="store.currentLoading" class="h-40" />
     <ErrorMessage v-else-if="store.error" :message="store.error" />
 

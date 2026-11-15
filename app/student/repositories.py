@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from app.auth.models import User
+from app.school.models import School
 from app.student.models import Student
 from framework.base import RepositoryBase
 from framework.extensions import db
@@ -20,6 +21,14 @@ class StudentRepository(RepositoryBase[Student]):
             return []
         return db.session.query(Student).filter(Student.user_id.in_(user_ids)).all()
 
+    def ids_in_school(self, school_id: str) -> list[str]:
+        rows = (
+            db.session.query(Student.user_id)
+            .filter(Student.school_id == school_id)
+            .all()
+        )
+        return [row[0] for row in rows]
+
     def list_students(
         self,
         *,
@@ -29,10 +38,17 @@ class StudentRepository(RepositoryBase[Student]):
         include_disabled: bool = False,
         page: int = 1,
         per_page: int = 20,
+        school_id: str | None = None,
     ) -> tuple[list[Student], int]:
-        query = db.session.query(Student).join(User, User.id == Student.user_id)
+        query = (
+            db.session.query(Student)
+            .join(User, User.id == Student.user_id)
+            .outerjoin(School, School.id == Student.school_id)
+        )
         if not include_disabled:
             query = query.filter(Student.disabled.is_(False))
+        if school_id:
+            query = query.filter(Student.school_id == school_id)
         if category:
             query = query.filter(Student.category == category)
         if status:
@@ -45,7 +61,7 @@ class StudentRepository(RepositoryBase[Student]):
                     User.email.ilike(like),
                     User.first_name.ilike(like),
                     User.last_name.ilike(like),
-                    Student.school.ilike(like),
+                    School.name.ilike(like),
                 )
             )
         total = query.count()

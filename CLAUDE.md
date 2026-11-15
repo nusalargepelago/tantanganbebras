@@ -15,7 +15,7 @@ dengan Vue 3 SPA (frappe-ui) yang di-serve oleh Flask sendiri.
 | Path | Role |
 |---|---|
 | `framework/` | Shared, service-agnostic: base classes, API utils, exceptions, extensions, infra, logging, RBAC helpers |
-| `app/` | Service ini: `auth` + `account` domain, `infra` cross-domain, migrations, config, entry point |
+| `app/` | Service ini: `auth` + `account` + `onboarding` domain, `infra` cross-domain, migrations, config, entry point |
 | `frontend/` | Vue 3 + Vite + Pinia + frappe-ui SPA. Build output → `app/static/frontend/` |
 | `tests/` | pytest, 1 file per concern + `conftest.py` |
 | `frappe-ui/` | Checkout sibling dari upstream (git-ignored, `.git` sendiri). **Bukan** dependency yang di-resolve build — `frontend/` ambil `frappe-ui@1.0.2` dari npm. Referensi baca saja. **Jangan diedit.** |
@@ -142,14 +142,14 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | GET | /api/v1/auth/me | Current user (session) |
 | GET | /api/v1/auth/registration | Registration mode open/closed (public) |
 | PUT | /api/v1/auth/registration | Set registration mode (admin) |
-| GET | /api/v1/setup/status | First-run setup status (public) |
+| GET | /api/v1/setup/status | First-run setup status (public; engine/URL only for loopback clients) |
 | POST | /api/v1/setup/db-test | Test DB connection (loopback client only) |
 | POST | /api/v1/setup | Run first-run setup (loopback client only) |
 | GET | /api/v1/csrf | Fetch CSRF token (public) |
 | GET | /api/v1/account/users | List users (admin) |
 | GET | /api/v1/account/users/:id | Fetch one user (owner or admin) |
 | PATCH | /api/v1/account/users/:id | Update user (admin) |
-| POST | /api/v1/account/users | Create user (admin) |
+| POST | /api/v1/account/users | Create user with chosen appRole (admin) |
 | DELETE | /api/v1/account/users/:id | Delete user (admin) |
 | GET | /api/v1/account/roles | List roles (admin) |
 | POST | /api/v1/account/roles | Create role (admin) |
@@ -173,28 +173,34 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | POST | /api/v1/question/:name/restore | Restore question (staff) |
 | DELETE | /api/v1/question/:name/purge | Purge question (staff) |
 | GET | /api/v1/student/auth/login | Student login branding (public) |
-| POST | /api/v1/student/auth/register | Student self-register (public, rate-limited) |
 | POST | /api/v1/student/auth/login | Student login (public, rate-limited) |
+| GET | /api/v1/onboarding/status | Classification status — student/teacher/none (session) |
+| POST | /api/v1/onboarding/student | Classify as student (session, Inactive until admin activates) |
+| POST | /api/v1/onboarding/teacher | Classify as teacher (session, assigns Teacher role) |
+| GET | /api/v1/school | List canonical schools, incl. disabled for admin (session) |
+| POST | /api/v1/school | Create school (session, wajib `cityId`; duplikat ditolak 409; rename/(de)aktifkan admin-only) |
+| PATCH | /api/v1/school/:id | Rename / move city / (de)activate school (admin, audited) |
+| GET | /api/v1/city | List Indonesian kabupaten/kota master (session) |
 | POST | /api/v1/student/auth/logout | Student logout (session) |
 | GET | /api/v1/student/auth/me | Current student session |
-| GET | /api/v1/student | List students (staff, paginated) |
-| POST | /api/v1/student | Create student (staff) |
-| GET | /api/v1/student/:userId | Fetch one student (staff) |
-| PATCH | /api/v1/student/:userId | Update student (staff) |
+| GET | /api/v1/student | List students (staff; teachers school-scoped, paginated) |
+| POST | /api/v1/student | Create student (staff; teachers school-scoped, forced Inactive) |
+| GET | /api/v1/student/:userId | Fetch one student (staff; teachers school-scoped) |
+| PATCH | /api/v1/student/:userId | Update student (staff; teachers school-scoped, no status/school change) |
 | DELETE | /api/v1/student/:userId | Soft-delete student (staff) |
 | POST | /api/v1/student/:userId/restore | Restore student (staff) |
-| POST | /api/v1/student/:userId/activate | Activate student (staff) |
+| POST | /api/v1/student/:userId/activate | Activate student (staff; teachers school-scoped) |
 | DELETE | /api/v1/student/:userId/purge | Purge student (staff) |
-| POST | /api/v1/student/import | Import students from XLSX (staff) |
-| GET | /api/v1/student/import-template | Download XLSX import template (staff) |
+| POST | /api/v1/student/import | Import students from XLSX (staff; teachers school-scoped, forced Inactive) |
+| GET | /api/v1/student/import-template | Download XLSX import template (staff; teachers: no school column) |
 | POST | /api/v1/student/practice/create | Create a 10-question practice sheet (student) |
 | GET | /api/v1/student/practice/start | Resume the active practice (student) |
 | POST | /api/v1/student/practice/answer-temp | Autosave one answer (student) |
 | POST | /api/v1/student/practice/store | Submit & score a practice (student) |
 | GET | /api/v1/student/practice/mine | List my practices (student) |
 | GET | /api/v1/student/practice/:name | Practice result detail (owner) |
-| GET | /api/v1/practice/:name | Practice review w/ shuffle (staff) |
-| GET | /api/v1/practice | List all practices (staff, paginated) |
+| GET | /api/v1/practice/:name | Practice review w/ shuffle (staff; teachers own-school only) |
+| GET | /api/v1/practice | List all practices (staff; teachers own-school only, paginated) |
 | GET | /api/v1/practice/settings | Practice settings — min questions (staff) |
 | PUT | /api/v1/practice/settings | Update min questions (admin, audited) |
 | GET | /api/v1/event | List events (staff, paginated) |
@@ -229,6 +235,7 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | DELETE | /api/v1/uploads/:name | Delete uploaded image (admin, idempotent 204) |
 | GET | /api/v1/backup/export | Download full SQL backup (admin, audited) |
 | POST | /api/v1/backup/import | Restore SQL backup, overwrite (admin, 2/min, audited) |
+| PUT | /api/v1/brand/logo | Set or clear the brand logo (admin, stored upload only) |
 | GET | /robots.txt | Crawler instructions, brand-driven (public) |
 | GET | /sitemap.xml | Canonical site URL for crawlers (public) |
 | GET | /health | Health check (public) |
@@ -293,20 +300,84 @@ ditolak 403 `registration_disabled` + audit `register_failure`. `GET
 /api/v1/auth/registration` publik — dipakai FE untuk menyembunyikan link
 "Create one" dan me-redirect `/register` ke `/login`.
 
-Dua konsep role, jangan dicampur:
+**Classification gate (onboarding)** — setelah `POST /api/v1/auth/register`
+(role `Member` + `app_role=user`), setiap user **wajib** memilih peran sekali
+seumur akun lewat route `/onboarding` di FE; `GET /api/v1/onboarding/status`
+(`student`/`teacher`/`none`). `POST /api/v1/onboarding/student` (wajib
+`firstName/lastName/category` + `schoolId`) membuat baris
+`students` status `Inactive` — admin mengaktifkan. `POST /api/v1/onboarding/teacher`
+(wajib `firstName/lastName/schoolId`) membuat baris `teachers` + role `Teacher`.
+**Kota/kabupaten & negara mengikuti sekolah** — tidak ada input `cityId` di
+semua form (kolom `city_id` hanya ada di `schools`; student/teacher membaca
+lewat relationship; `country` selalu `"Indonesia"`); `cityId` yang tetap
+dikirim client diabaikan (DTO extra=ignore). Klasifikasi
+**permanen** (409 `classification_already_set` kalau ulang) dan
+admin (`app_role=admin`) tidak bisa diklasifikasi (403
+`classification_not_applicable`). Guru/siswa diblokir dari semua domain staff —
+`require_staff()` (`app/infra/roles.py`) menolak akun dengan baris
+`students`/`teachers` (bukan `app_role`). Flow `/student/auth/register`
+sudah dihapus; semua registrasi lewat `/api/v1/auth/register` + klasifikasi.
 
-- **`User.app_role`** — kolom string, nilainya `"user"` atau `"admin"`. Ini yang
-  dicek `require_role("admin")`. Sangat sederhana, hard-coded.
-- **`Role` + `user_roles`** — tabel role relasional (seeded `Member`).
-  Untuk display/label dan FUTURE permission granularity.
+**Tambah sekolah dari onboarding.** Dropdown sekolah di form onboarding
+menampilkan baris *+ Tambah sekolah* (baris custom creatable) **hanya ketika
+daftar hasil kosong** — master kosong, atau ketikan user tidak cocok dengan
+sekolah manapun (predicate sama dengan filter bawaan: substring label/value,
+case-insensitive). Baris itu membuka dialog *Tambah Sekolah* (nama pra-isi dari
+ketikan + wajib kota). Master sekolah bisa saja sudah berisi sekolah lain tanpa
+sekolah milik user, dan user perlu bisa menambahkannya langsung dari picker.
+`POST /api/v1/school` membolehkan siapa pun yang login create,
+dengan satu-satunya aturan: nama unik (normalized — case/spasi-insensitive,
+termasuk duplikat nonaktif), kalau bentrok → `409 school_already_exists`.
+Insert tetap satu jalan (`SchoolService.create_school`, dup-check → `_commit`).
+Admin tetap satu-satunya yang dapat rename/(de)aktifkan (`PATCH
+/api/v1/school/:id`) lewat `/schools`; admin juga bisa create kapan pun.
 
-`require_role(*roles)` / `require_owner_or_role(owner_id, *roles)` dari
-`framework.auth` — return `None` kalau boleh, atau response tuple yang langsung
-di-`return` dari view:
+**Teacher student management (school-scoped).** Guru — `has_role('Teacher')`
+**dan** punya baris `teachers` — dapat mengelola siswa **di sekolahnya sendiri**
+lewat `require_student_manager()` + scope `school_id` dari `teacher_school_id()`
+(`app/infra/roles.py`): create (selalu Inactive + sekolah guru), import XLSX
+(kolom `school`/`status` dari file diabaikan; template guru tanpa kolom `school`),
+list/get/update/activate — semua di-scope `school_id`; siswa sekolah lain →
+404 (`student_not_found`); PATCH `status`/`schoolId` (berbeda) → 422
+(`status_change_not_allowed` / `school_change_not_allowed`). Guru juga dapat
+`GET /api/v1/practice` dan `GET /api/v1/practice/:name` (own-school only) — practices
+settings tetap staff/admin-only. Delete/restore/purge tetap staff-only.
+`require_student_manager()` harus dipanggil **sebelum** `student_manager_scope()`;
+admin/staff (tanpa baris siswa/guru) tetap unscoped.
+
+### Definisi ketat: `app_role` vs `roles`
+
+Dua konsep dengan **dimensi akses berbeda** — jangan pernah dicampur atau
+dianggap setara:
+
+| | `User.app_role` | `Role` + `user_roles` (tabel `roles`) |
+|---|---|---|
+| Dimensi | **Tier akses (pangkat)** — biner, menentukan pintu/manajemen mana yang boleh | **Peran fungsional DI DALAM sebuah tier** — many-to-many; himpunan roles boleh berbeda antar app_role |
+| Nilai | Hanya `"user"` atau `"admin"` — `VALID_APP_ROLES` di `app/account/dto.py`. `admin` = **tier tertinggi** (manajemen sistem), `user` = tier dasar | Nama bebas (unique, ≤64 char), seeded `Member` + `Teacher` (`MEMBER_ROLE`/`TEACHER_ROLE`). Contoh: `app_role="user"` + role `Owner` = owner di tier `user` |
+| Assignment | Kolom langsung di `users` | `PATCH /api/v1/account/users/:id` dengan `roleNames: [...]` → relasi `user_roles` |
+| Gate | **`require_role()` / `require_owner_or_role()`** (`framework/auth/helpers.py`) — baca `app_role` **saja**, return `None` / response tuple | **`User.has_role(name)`** (`app/auth/models.py`) — baca tabel `roles` via `user_roles`, return bool |
+
+Aturan keras:
+
+- Menambah/mengubah baris tabel `roles` **bukan** menambah tier. Nilai
+  `app_role` baru hanya lewat `VALID_APP_ROLES` + keputusan eksplisit.
+- **Belum ada validasi pasangan** `(app_role, role)` di code — `roleNames`
+  bebas di-assign ke app_role mana pun.
+- `BUILTIN_ROLES` (`Member`, `Teacher`) dilindungi dari hapus; role lain CRUD via
+  `/api/v1/account/roles` (admin).
+
+Dua gate, dua kontrak — jangan tertukar:
 
 ```python
+# gate app_role (tier) — framework.auth; args = nilai app_role.
+# return None kalau boleh, atau response tuple untuk langsung di-return view:
 if denied := require_role("admin"):
     return denied
+
+# gate roles (peran fungsional) — exact match Role.name, return bool;
+# view yang menentukan response error (mis. 403):
+if not current_user.has_role("Owner"):
+    return error("forbidden", 403)  # framework.api.response
 ```
 
 ## CSRF
@@ -326,8 +397,10 @@ if denied := require_role("admin"):
 - `MIGRATE_ON_BOOT=true` → `upgrade()` jalan sebelum server start.
 - Command manual: `uv run flask --app app.create_app:create_app db upgrade`
 - **Alpha: fix di titik masalah, jangan numpuk history.** Schema salah →
-  edit `0001_initial.py` langsung, bukan tambah revision baru. Hanya tambah
-  revision kalau user minta.
+  edit `0001_initial.py` langsung, bukan tambah revision baru.
+- **Fitur baru (bukan alpha) pakai revision baru** ber-tanggal
+  `YYYYMMDD_N_<domain>.py` (mis. `20261114_7_teacher.py`), dipecah per domain,
+  `down_revision` = head terakhir. `0001_initial.py` hanya diubah oleh master.
 - Index di `0001_initial.py` harus **selaras dengan `index=True` di model** —
   test path (`db.create_all()`) dan production path (`flask db upgrade`)
   harus menghasilkan skema identik. Kalau model berubah, index di migrasi
@@ -393,11 +466,23 @@ Vue 3 + Vite + Pinia + frappe-ui (`1.0.2`), TypeScript strict.
 
 ```
 src/
-  app/       AppShell, i18n.ts + locales/{en,id}.json, useMediaQuery — shell, i18n & layout
-  features/  <feature>/{routes.ts, store.ts, views/*.vue} — auth, setup, dashboard
-  shared/    api/{client.ts, errors.ts, index.ts} — SATU-SATUNYA axios instance
+  app/       AppShell (komposisi shared/shell), i18n.ts + locales/{en,id}.json, navigation, menuStore
+  features/  <feature>/{routes.ts, store.ts, views/*.vue} — auth, setup, account, dashboard, question, topic, practice, event, student, todos, backup, onboarding, school
+  shared/    shell/{AppPageHeader, ShellSidebar, MobileBottomNav, MobileMenuSheet} — shell reusable;
+             api/{client.ts, errors.ts, index.ts} — SATU-SATUNYA axios instance
   router/    index.ts + guard.ts + meta.d.ts
 ```
+
+- **Shell reusable di `shared/shell/`**: `AppPageHeader` (breadcrumb desktop /
+  `PageHeaderMobile` + tombol menu mobile), `ShellSidebar`, `MobileBottomNav`,
+  `MobileMenuSheet` (menu sidebar — dari tombol menu `AppPageHeader`).
+  `AppShell.vue` hanya komposisi: nav dari
+  `app/navigation.ts` (role + menu preferences) di-map jadi `ShellNavItem` (label
+  sudah di-resolve `t()`, `active` = nama route) lalu di-pass ke komponen.
+  Header sidebar (brand/logo/menu avatar) lewat slot `#header`; tab avatar di
+  bottom nav lewat slot default — klik langsung buka `UserSettingsDialog`
+  (tab profile, `openSettings('profile')`, `:active="settingsOpen"`).
+  State sheet global: `shared/shell/mobile-menu.ts` (`openMobileMenu()`).
 
 - **Selalu** `import { api } from '@/shared/api'` dengan route tanpa prefix
   (`baseURL: '/api/v1'` sudah handles). **Jangan** `axios.create()` baru,
@@ -419,8 +504,10 @@ src/
   Tema di Preferences. Wizard setup punya select bahasa di langkah Brand
   (disimpan ke `settings.appLang`).
 - **Router guard urutan**: setup dulu (`setupRequired` → semua nav ke `/setup`),
-  baru auth (`requiresAuth` / `guestOnly`). `setupRequired` = schema atau
-  user kosong.
+  baru auth (`requiresAuth` / `guestOnly`), baru klasifikasi (non-admin,
+  `classification === "none"` → semua nav ke `/onboarding`), baru admin
+  (`requiresAdmin` → redirect `/` kalau `appRole !== "admin"` — dipakai route `/users`).
+  `setupRequired` = schema atau user kosong.
 - **Per-page `<head>`**: `router.afterEach` (`router/index.ts`) mengisi
   `document.title`/`meta description` dari kunci i18n `route.<Name>.title`
   dan `route.<Name>.description` (fallback `meta.title`/`meta.description`
@@ -429,6 +516,27 @@ src/
   `route.<Name>.*` di **kedua** locale.
 - **401 global**: interceptor fire event `auth:unauthorized` → router
   redirect. **Jangan** tangani 401 per-request.
+- **Async readiness gate di View**: template utama dirender hanya setelah
+  fetch backend selesai, cegah flash UI default. Pola kanonik per View:
+  `const gateReady = computed(...)` dari state store yang sudah ada
+  (tanpa ubah store/API) atau `gateReady` lokal (`ref(false)`), `onMounted`
+  fetch lalu `gateReady.value = true` di akhir (termasuk gagal), lalu
+  `<Spinner v-if="!gateReady" />` + `<div v-else>...</div>`.
+  Contoh: Dashboard `auth.checked`; Setup
+  `setup.status !== null || setup.statusFailed`; Login
+  `auth.checked && auth.registrationMode !== null`; Register
+  `!!auth.user || auth.registrationMode !== null`. Wajib fail-safe:
+  error fetch tetap membuka gate (store harus set flag `checked`/
+  `statusFailed` di `finally`), jangan spinner selamanya. Jangan
+  tambah `gateReady` ke store kalau computed view cukup. **Gate wajib
+  `v-else`** — jangan dua `v-if` independen.
+- **Pola list**: tanpa card wrapper. Chain state lewat
+  `shared/components/ListState.vue`: `loading` → `<Spinner>` di
+  `flex justify-center py-10`, `error` → `ErrorMessage`, `empty` → icon
+  centered tanpa border + pesan `shared.noResults` (override prop
+  `emptyMessage`) + slot `#action` opsional, lalu default slot untuk
+  `<List>`. `ListFoot` di-guard `v-if="!empty"` di luar `ListState`.
+  Prop `icon` harus literal string. Detail: skill `wiring` §List pages.
 - **Ikon**: `lucide-*` (string, via unplugin-icons). Shape:
   `<span class="lucide-log-in size-6" aria-hidden="true" />` atau
   `:icon-left="'lucide-log-in'"`.
@@ -488,13 +596,30 @@ Ini gotcha paling sering terlewat.
 12. **UUID = UUIDv7** (`framework.infra.uuid7`) — time-ordered, bukan `uuid4`.
     Primary key selalu `String(36)` + `default=_uuid`.
 13. **Migrasi on boot jalan di dalam `create_app()`**, sebelum
-    `ensure_member_role()` — jangan panggil `run_migrations()` lagi di
+    `ensure_builtin_roles()` — jangan panggil `run_migrations()` lagi di
     `run.py`, dan jangan seed sebelum migrasi.
-14. **Brand/SEO** — `<title>`, meta description, robots, canonical, OG di
-    `index.html` di-inject server-side (`app/infra/seo.py` →
-    `_apply_seo`); sumber kebenaran = tabel `settings`. `<title>` di
-    `frontend/index.html` hanya fallback dev. SPA membaca
+14. **Brand/SEO** — `<title>`, meta description, robots, canonical, OG,
+    favicon, dan `og:image` logo di `index.html` di-inject server-side
+    (`app/infra/seo.py` → `_apply_seo`); sumber kebenaran = tabel `settings`.
+    `<title>` di `frontend/index.html` hanya fallback dev. SPA membaca
     `window.brand`; `seo` tidak pernah jadi window global.
+
+## Forking (sibling worktrees)
+
+Fork (`tantanganbebras` / `labba` / `tenancy`) adalah worktree terpisah dari
+repo ini — perubahan master mengalir ke fork saat mereka merge `master`.
+
+- Aturan generik merge master→fork + peta resolusi konflik + security
+  invariants: **`docs/forking.md`**. Skeleton `FORK.md` per fork:
+  `docs/FORK.template.md`.
+- **Stash protocol** untuk fork yang sengaja belum commit WIP sebelum merge:
+  `git stash push --include-untracked` sebelum `git merge master`, lalu
+  `git stash pop` SETELAH verifikasi hijau — konflik pop diselesaikan aditif
+  (master wins skeleton). Unmerged index entries (merge half-done) **tidak
+  bisa di-stash** — heal dulu. Jangan `stash drop` sebelum suite hijau.
+- Jangan pernah commit/pull/restore dari worktree fork lewat repo ini, dan
+  jangan hapus file hanya karena fork tampak tidak memakainya — fork-compat
+  gerbang untuk deletions.
 
 ## Deployment
 

@@ -6,17 +6,17 @@ import {
   Button,
   Checkbox,
   Dialog,
-  ErrorMessage,
   FormControl,
   Select,
-  Skeleton,
+  Spinner,
   dialog as imperativeDialog,
   toast,
 } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import ListFoot from '@/shared/components/ListFoot.vue'
 import ListHead from '@/shared/components/ListHead.vue'
+import ListState from '@/shared/components/ListState.vue'
 import ListToolbar from '@/shared/components/ListToolbar.vue'
 import { List, ListCell, ListHeaderCell, ListRow, ListRows } from 'frappe-ui/list'
 import { useListControls } from '@/shared/composables/useListControls'
@@ -34,6 +34,7 @@ const saving = ref(false)
 const form = reactive({ title: '', description: '', completed: false, dueDate: '' })
 
 const empty = computed(() => !store.loading && store.items.length === 0)
+const gateReady = ref(false)
 
 const completedFilter = computed(() => [
   { label: t('todos.allStatuses'), value: '' },
@@ -52,7 +53,7 @@ const { search, perPage, reload: refresh, goToPage } = useListControls({
     store.page = page
   },
   fetch: (query) => {
-    store.list({
+    return store.list({
       search: query.search || undefined,
       completed: completed.value || undefined,
       page: store.page,
@@ -125,7 +126,10 @@ async function onDelete(todo: Todo) {
   })
 }
 
-onMounted(refresh)
+onMounted(async () => {
+  await refresh()
+  gateReady.value = true
+})
 </script>
 
 <template>
@@ -148,7 +152,11 @@ onMounted(refresh)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
     <ListToolbar
       v-model:search="search"
       v-model:per-page="perPage"
@@ -159,17 +167,17 @@ onMounted(refresh)
     </ListToolbar>
 
     <div>
-      <div v-if="store.loading" class="space-y-2">
-        <Skeleton v-for="i in 6" :key="i" class="h-9" />
-      </div>
-
-      <div v-else-if="empty" class="flex flex-col items-center gap-2 py-10 text-center">
-        <span class="lucide-list-todo size-8 text-ink-gray-4" aria-hidden="true" />
-        <p class="text-p-sm text-ink-gray-5">{{ t('todos.noData') }}</p>
-        <Button variant="outline" theme="gray" icon-left="lucide-plus" :label="t('todos.add')" @click="openCreate" />
-      </div>
-
-      <List v-else :row-height="40" :columns="columns" class="list-row-px-3">
+      <ListState
+        :loading="store.loading"
+        :error="store.error"
+        :empty="empty"
+        icon="lucide-list-todo"
+        :empty-message="t('todos.noData')"
+      >
+        <template #action>
+          <Button variant="outline" theme="gray" icon-left="lucide-plus" :label="t('todos.add')" @click="openCreate" />
+        </template>
+        <List :row-height="40" :columns="columns" class="list-row-px-3">
         <ListHead>
           <ListHeaderCell>{{ t('list.title') }}</ListHeaderCell>
           <ListHeaderCell>{{ t('list.status') }}</ListHeaderCell>
@@ -214,6 +222,7 @@ onMounted(refresh)
           </ListRow>
         </ListRows>
       </List>
+      </ListState>
       <ListFoot
         v-if="!empty"
         :total="store.total"
@@ -222,8 +231,6 @@ onMounted(refresh)
         @update:page="goToPage"
       />
     </div>
-
-    <ErrorMessage v-if="store.error" :message="store.error" />
   </div>
 
   <Dialog

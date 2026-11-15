@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from app.infra.seo import (
+    DEFAULT_BRAND,
     get_app_lang,
     get_brand,
     index_context,
@@ -42,6 +43,7 @@ def test_get_brand_returns_defaults_when_empty(app):
             "tagline": "",
             "description": "",
             "siteUrl": "",
+            "logoUrl": "",
         }
 
 
@@ -62,7 +64,7 @@ def test_save_brand_upserts_rows(app):
         db.session.commit()
 
         rows = db.session.scalars(db.select(AppSetting)).all()
-        assert len(rows) == len(("name", "tagline", "description", "siteUrl"))
+        assert len(rows) == len(DEFAULT_BRAND)
         name_row = db.session.scalar(
             db.select(AppSetting).where(AppSetting.key == "name")
         )
@@ -71,7 +73,7 @@ def test_save_brand_upserts_rows(app):
         save_brand(db.session, {"name": "Acme 2"})
         db.session.commit()
         rows = db.session.scalars(db.select(AppSetting)).all()
-        assert len(rows) == 4
+        assert len(rows) == len(DEFAULT_BRAND)
         assert name_row.value == "Acme 2"
 
 
@@ -104,6 +106,55 @@ def test_index_context_noindex_when_disabled(app):
 
     with app.app_context():
         assert index_context()["seo"]["robots"] == "noindex, nofollow"
+
+
+def test_index_context_exposes_logo_for_icon_and_og_image(app):
+    logo = "/uploads/0190a0aa-0000-7000-8000-000000000000.png"
+
+    with app.app_context():
+        save_brand(
+            db.session,
+            {
+                "name": "Acme",
+                "siteUrl": "https://acme.test",
+                "logoUrl": logo,
+            },
+        )
+        db.session.commit()
+
+        ctx = index_context()
+
+    assert ctx["brand"]["logoUrl"] == logo
+    assert ctx["seo"]["icon"] == logo
+    assert ctx["seo"]["image"] == f"https://acme.test{logo}"
+
+
+def test_index_context_skips_og_image_without_site_url(app):
+    logo = "/uploads/0190a0aa-0000-7000-8000-000000000000.png"
+
+    with app.app_context():
+        save_brand(db.session, {"logoUrl": logo})
+        db.session.commit()
+
+        ctx = index_context()
+
+    assert ctx["seo"]["icon"] == logo
+    assert ctx["seo"]["image"] == ""
+
+
+def test_index_context_og_image_uses_site_origin(app):
+    logo = "/uploads/0190a0aa-0000-7000-8000-000000000000.png"
+
+    with app.app_context():
+        save_brand(
+            db.session,
+            {"siteUrl": "https://acme.test/app", "logoUrl": logo},
+        )
+        db.session.commit()
+
+        ctx = index_context()
+
+    assert ctx["seo"]["image"] == f"https://acme.test{logo}"
 
 
 def test_get_app_lang_defaults_to_en(app):
@@ -223,6 +274,41 @@ def test_render_injects_seo_tags_and_boot(app, tmp_path):
     assert "window[\"brand\"]" in html
     assert "window[\"seo\"]" not in html
     assert "csrfToken" in html
+
+
+def test_render_injects_logo_icon_and_og_image(app, tmp_path):
+    (tmp_path / "index.html").write_text(
+        MINIMAL_INDEX.replace(
+            "<title>Minimals</title>",
+            '<link rel="icon" href="data:," />\n    <title>Minimals</title>',
+        ),
+        encoding="utf-8",
+    )
+
+    def provider():
+        return {
+            "seo": {
+                "title": "Acme",
+                "canonical": "https://acme.test",
+                "icon": "/uploads/logo.png",
+                "image": "https://acme.test/uploads/logo.png",
+            },
+        }
+
+    with app.test_request_context("/"):
+        html = _render_index_html(str(tmp_path), provider)
+
+    assert '<link rel="icon" href="/uploads/logo.png" />' in html
+    assert 'href="data:,"' not in html
+    assert (
+        '<meta property="og:image" content="https://acme.test/uploads/logo.png" />'
+        in html
+    )
+    assert (
+        '<meta name="twitter:image" content="https://acme.test/uploads/logo.png" />'
+        in html
+    )
+    assert '<meta name="twitter:card" content="summary_large_image" />' in html
 
 
 def test_render_survives_provider_failure(app, tmp_path):

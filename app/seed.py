@@ -28,6 +28,8 @@ from app.practice.models import (
     PracticeQuestion,
 )
 from app.question.models import Question
+from app.school.models import City, School
+from app.school.names import normalize_name
 from app.student.models import Student
 from app.todos.models import Todo
 from app.topic.models import Topic
@@ -92,8 +94,32 @@ def _ensure_staff(username: str, full_name: str, app_role: str) -> User:
     return user
 
 
+def _find_or_create_school(name: str, city_name: str = "Kota Mataram") -> School:
+    norm = normalize_name(name)
+    for school in db.session.query(School).all():
+        if normalize_name(school.name) == norm:
+            return school
+    city = _find_city(city_name)
+    if city is None:
+        city = City(name=city_name)
+        db.session.add(city)
+        db.session.flush()
+    school = School(name=name.strip(), city_id=city.id)
+    db.session.add(school)
+    db.session.flush()
+    return school
+
+
+def _find_city(name: str) -> City | None:
+    norm = normalize_name(name)
+    for city in db.session.query(City).all():
+        if normalize_name(city.name) == norm:
+            return city
+    return None
+
+
 def _ensure_student(
-    username: str, first: str, last: str, category: str, school: str
+    username: str, first: str, last: str, category: str, school: str, city: str
 ) -> tuple[User, Student]:
     user = _user(username)
     if user is None:
@@ -111,12 +137,11 @@ def _ensure_student(
         db.session.flush()
     student = db.session.query(Student).filter_by(user_id=user.id).first()
     if student is None:
+        school_row = _find_or_create_school(school, city)
         student = Student(
             user_id=user.id,
             category=category,
-            school=school,
-            city="Bandung",
-            country="Indonesia",
+            school_id=school_row.id,
             status="Active",
         )
         db.session.add(student)
@@ -293,9 +318,15 @@ def seed() -> dict[str, int]:
 
     admin = _ensure_staff("admin", "Admin User", "admin")
     _ensure_staff("editor", "Editor User", "user")
-    budi, _ = _ensure_student("budi", "Budi", "Santoso", "cub", "SMP Negeri 1 Bandung")
-    siti, _ = _ensure_student("siti", "Siti", "Rani", "scout", "SMP Negeri 2 Yogyakarta")
-    rani, _ = _ensure_student("rani", "Rani", "Putri", "rover", "SMA Negeri 1 Surabaya")
+    budi, _ = _ensure_student(
+        "budi", "Budi", "Santoso", "cub", "SMP Negeri 1 Bandung", "Kota Bandung"
+    )
+    siti, _ = _ensure_student(
+        "siti", "Siti", "Rani", "scout", "SMP Negeri 2 Yogyakarta", "Kota Yogyakarta"
+    )
+    rani, _ = _ensure_student(
+        "rani", "Rani", "Putri", "rover", "SMA Negeri 1 Surabaya", "Kota Surabaya"
+    )
     db.session.flush()
 
     topic_names: dict[str, list[str]] = {}

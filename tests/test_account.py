@@ -215,49 +215,89 @@ def test_promoted_user_gains_admin_access(admin, app):
     assert newcomer.get("/api/v1/account/users").status_code == 200
 
 
-def test_create_user(admin):
+
+def create_user_payload(**overrides):
+    payload = {
+        "email": "fresh@example.com",
+        "username": "freshuser",
+        "password": "Str0ng!pass",
+        "fullName": "Fresh User",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_create_user_requires_admin(member):
+    response = member.post("/api/v1/account/users", json=create_user_payload())
+    assert response.status_code == 403
+    assert response.get_json() == {"message": "forbidden"}
+
+
+def test_create_user_returns_201(admin):
+    response = admin.post("/api/v1/account/users", json=create_user_payload())
+    assert response.status_code == 201
+
+    body = response.get_json()
+    assert set(body) == USER_ITEM_KEYS
+    assert body["email"] == "fresh@example.com"
+    assert body["appRole"] == "user"
+    assert body["roles"] == ["Member"]
+    assert body["isActive"] is True
+
+
+def test_create_user_can_be_admin(admin):
     response = admin.post(
         "/api/v1/account/users",
-        json={
-            "email": "creator@example.com",
-            "password": "S3cret!pass",
-            "fullName": "Course Creator",
-            "appRole": "user",
-        },
+        json=create_user_payload(email="boss@example.com", username="boss", appRole="admin"),
     )
     assert response.status_code == 201
-    body = response.get_json()
-    assert body["email"] == "creator@example.com"
-    assert body["username"] == "creator@example.com"
-    assert body["appRole"] == "user"
+    assert response.get_json()["appRole"] == "admin"
 
 
-def test_create_user_duplicate_email(admin):
-    admin.post(
-        "/api/v1/account/users",
-        json={"email": "dup@example.com", "password": "S3cret!pass", "fullName": "Dup"},
-    )
+def test_create_user_rejects_invalid_app_role(admin):
     response = admin.post(
-        "/api/v1/account/users",
-        json={"email": "dup@example.com", "password": "S3cret!pass", "fullName": "Dup"},
+        "/api/v1/account/users", json=create_user_payload(appRole="superadmin")
+    )
+    assert response.status_code == 400
+    assert response.get_json() == {"message": "app_role_invalid_app_role"}
+
+
+def test_create_user_rejects_duplicate_email(admin):
+    admin.post("/api/v1/account/users", json=create_user_payload())
+
+    response = admin.post(
+        "/api/v1/account/users", json=create_user_payload(username="someoneelse")
     )
     assert response.status_code == 409
     assert response.get_json() == {"message": "email_already_registered"}
 
 
-def test_create_user_requires_admin(member):
-    response = member.post(
-        "/api/v1/account/users",
-        json={"email": "x@example.com", "password": "S3cret!pass", "fullName": "X"},
-    )
-    assert response.status_code == 403
 
+def test_create_user_rejects_duplicate_username(admin):
+    admin.post("/api/v1/account/users", json=create_user_payload())
+
+    response = admin.post(
+        "/api/v1/account/users", json=create_user_payload(email="other@example.com")
+    )
+    assert response.status_code == 409
+    assert response.get_json() == {"message": "username_taken"}
+
+
+def test_create_user_rejects_weak_password(admin):
+    response = admin.post(
+        "/api/v1/account/users", json=create_user_payload(password="password")
+    )
+    assert response.status_code == 400
+    assert response.get_json() == {"message": "password_password_must_contain_uppercase"}
 
 def test_delete_user(admin):
     created = admin.post(
         "/api/v1/account/users",
-        json={"email": "gone@example.com", "password": "S3cret!pass", "fullName": "Gone"},
+        json=create_user_payload(
+            email="gone@example.com", username="goneuser", fullName="Gone"
+        ),
     ).get_json()
     response = admin.delete(f"/api/v1/account/users/{created['id']}")
     assert response.status_code == 204
     assert admin.get(f"/api/v1/account/users/{created['id']}").status_code == 404
+

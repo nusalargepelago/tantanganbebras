@@ -3,11 +3,14 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Alert, Button, ErrorMessage, toast } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useStudentStore, type ImportResult } from '../store'
+import { useAuthStore } from '@/features/auth/store'
 
 const store = useStudentStore()
+const auth = useAuthStore()
 const { t } = useI18n()
+const isTeacher = computed(() => auth.isTeacher)
 
 const file = ref<File | null>(null)
 const uploading = ref(false)
@@ -53,11 +56,14 @@ function pickFile() {
   <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <div class="space-y-3 rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-5">
       <h2 class="text-xl-semibold text-ink-gray-8">{{ t('import.uploadTitle') }}</h2>
-      <p class="text-p-sm text-ink-gray-5">
+      <p v-if="isTeacher" class="text-p-sm text-ink-gray-5">
+        {{ t('import.teacherDesc') }}
+      </p>
+      <p v-else class="text-p-sm text-ink-gray-5">
         {{ t('import.uploadDesc1') }}
-        <code class="text-p-xs">first_name, last_name, email, username, password, category</code>
+        <code class="text-p-xs">first_name, last_name, email, username, password, category, school</code>
         {{ t('import.uploadDesc2') }}
-        <code class="text-p-xs">school, city, country, status</code>
+        <code class="text-p-xs">status</code>
         {{ t('import.uploadDesc3') }}
       </p>
 

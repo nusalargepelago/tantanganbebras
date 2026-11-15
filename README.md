@@ -46,11 +46,23 @@ dan tanpa layanan tambahan.
   soal tidak mengubah hasil yang sudah berjalan.
 - Halaman hasil untuk guru: skor dan durasi setiap peserta.
 
+### Akun, peran & master sekolah
+
+- **Satu pintu pendaftaran** — setelah register, setiap akun memilih peran
+  sekali di `/onboarding`: **siswa** (menunggu aktivasi admin) atau **guru**
+  (langsung dapat peran Teacher). Pilihan ini permanen.
+- **Kota ikut mengikuti sekolah** — form siswa/guru hanya memilih sekolah;
+  kota/kabupaten dibaca dari data induk sekolah dan negara selalu Indonesia.
+  Admin mengelola data induk sekolah lewat `/schools`.
+- Guru/siswa diblokir dari semua halaman staf; hanya admin yang bisa
+  mengelola sekolah.
+
 ### Manajemen siswa
 
-- Data siswa dengan kategori, sekolah, dan kota; aktivasi akun, hapus lunak, dan
-  pemulihan.
-- Impor massal dari XLSX, lengkap dengan templat yang bisa diunduh.
+- Data siswa dengan kategori, sekolah, dan kota (ikut sekolah); aktivasi akun,
+  hapus lunak, dan pemulihan.
+- Impor massal dari XLSX, lengkap dengan templat yang bisa diunduh — nama
+  sekolah harus terdaftar di data induk.
 - Pencarian dan filter berdasarkan kategori maupun status.
 
 ### Dasbor & laporan
@@ -93,7 +105,30 @@ dan tanpa layanan tambahan.
 | **Database** | SQLite · MariaDB/MySQL · PostgreSQL |
 | **Deploy** | Docker (non-root) + Caddy (TLS) · cPanel/Passenger |
 
-## Menjalankan di lokal
+## Architecture
+
+Satu service dengan domain berlapis (`api -> dto -> services -> repositories ->
+models -> presenters`); commit hanya di service; response camelCase, error
+`{"message": "<snake_case_key>"}`. Detail & konvensi lengkap:
+[CLAUDE.md](CLAUDE.md), [ramework/README.md](framework/README.md).
+
+## Highlights
+
+- **White-label & SEO** — brand (nama, tagline, deskripsi, site URL, bahasa)
+  diatur sekali di wizard; logo diganti admin dari Pengaturan. Semuanya
+  di-inject server-side ke `<title>`/meta/robots/Open Graph, plus label SPA &
+  judul/meta description per halaman. Default seluruh stack "Minimals".
+- **Auth lengkap** — session + API key, role admin/member, dan **registration
+  gate**: admin bisa menutup/membuka pendaftaran lewat API, efektif tanpa
+  restart, untuk deployment invite-only.
+- **First-run wizard** — pilih database (SQLite/MySQL/PostgreSQL), tes
+  koneksi, brand, lalu buat administrator. Hanya menerima klien loopback.
+- **Keamanan aktif by default** — CSRF, rate limit, CSP/HSTS, audit log,
+  password scrypt.
+- **SPA Vue 3 di-serve Flask** — tanpa web server terpisah untuk frontend;
+  Docker image non-root.
+
+## Quick Start
 
 ```bash
 uv sync
@@ -116,7 +151,38 @@ yarn build      # hasil build ke app/static/frontend/
 yarn typecheck
 ```
 
-Pengujian dan lint:
+Dev lokal via HTTP biasa: set `FORCE_HTTPS=false` — default `.env.example`
+`true`, dan tanpa TLS proxy akan loop redirect.
+
+## First-run Setup
+
+Sampai setup selesai, SPA mengarahkan semua navigasi ke `/setup`. Wizard
+(loopback-only — buka dari server atau SSH tunnel
+`ssh -L 8000:localhost:8000 server` → `http://127.0.0.1:8000/setup`) menulis
+`DATABASE_URL` ke `.env`, memigrasi target, membuat admin, dan menyimpan brand
++ bahasa. Kalau database target beda dari engine aktif, respons meminta
+restart.
+
+## White-label & SEO
+
+Brand disimpan di tabel `settings` dan di-inject server-side tiap request
+`index.html` — crawler tidak perlu menjalankan JS. `robots.txt` dan
+`sitemap.xml` mengikuti brand; canonical/`og:url` hanya muncul setelah **Site
+URL** diisi (tidak pernah dari header `Host`).
+
+- Env: `SEO_INDEXABLE=false` → `noindex` + robots disallow; `APP_LANG` →
+  fallback bahasa (`en` default). Preferensi pengunjung di cookie
+  `minimals-lang`.
+- Logo (admin saja) diunggah dari **Pengaturan → Aplikasi → Brand**; dipakai
+  di sidebar, halaman masuk, favicon, dan `og:image` (saat Site URL diisi).
+  Sebelum diunggah, logo dipotong persegi di klien (geser + zoom, output PNG
+  ≤512px). Hanya URL `/uploads/*` hasil upload aplikasi yang diterima, dan file
+  lama dihapus saat logo diganti atau dikosongkan.
+- DB lama yang dibuat **sebelum** fitur ini tidak otomatis punya tabel
+  `settings` — recreate DB, atau buat manual
+  (`id CHAR(36) PK, key VARCHAR(64) UNIQUE, value TEXT DEFAULT ''`).
+
+## Development
 
 ```bash
 uv run pytest
@@ -172,10 +238,15 @@ Beberapa hal yang perlu dibaca sebelum instalasi dibuka ke internet:
 - `/uploads/*` disajikan tanpa autentikasi — jangan menyimpan berkas sensitif di sana.
 - Pendaftaran akun staf terbuka secara default dan langsung membuat sesi; tutup lewat
   `PUT /api/v1/auth/registration` untuk instalasi invite-only.
-- `/health`, `/ready`, dan `/api/v1/setup/status` bersifat publik dan menampilkan
-  informasi terbatas tentang instalasi.
-- Rate limit berjalan per IP; untuk deployment multi-worker, arahkan
-  `RATE_LIMIT_STORAGE_URL` ke Redis.
+- `/health`, `/ready`, dan `/api/v1/setup/status` bersifat publik. Status setup hanya
+  mengekspos `setupRequired` + `reason` (info terbatas: instance belum dikonfigurasi);
+  detail engine/URL database ter-mask hanya untuk klien loopback. `/health` mengekspos
+  metrik agregat.
+- API key hanya mengautentikasi request read; mutasi tetap butuh CSRF session.
+- Rate limit berjalan per IP efektif, hanya route API; untuk deployment multi-worker,
+  arahkan `RATE_LIMIT_STORAGE_URL` ke Redis.
+- `TRUSTED_PROXY=true` hanya di belakang proxy: rewrite `X-Forwarded-*` cuma dipercaya
+  dari peer private/loopback.
 - CSRF, CSP/HSTS, dan audit log aktif secara default; password di-hash dengan scrypt.
 
 ## Dokumentasi

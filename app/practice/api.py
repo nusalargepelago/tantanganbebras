@@ -4,7 +4,11 @@ from __future__ import annotations
 from flask import request
 from flask_login import current_user, login_required
 
-from app.infra.roles import require_staff
+from app.infra.roles import (
+    require_staff,
+    require_student_manager,
+    student_manager_scope,
+)
 from app.practice.dto import AnswerTempIn, CreateIn, PracticeSettingsIn, SubmitIn
 from app.practice.services import PracticeService
 from framework.api import (
@@ -80,20 +84,21 @@ def my_practices():
 @staff_bp.get("/<string:name>")
 @login_required
 def admin_detail(name: str):
-    if denied := require_staff():
+    if denied := require_student_manager():
         return denied
-    return ok(PracticeService().admin_detail(name))
+    return ok(PracticeService().admin_detail(name, school_id=student_manager_scope()))
 
 
 @staff_bp.get("")
 @login_required
 def list_practices():
-    if denied := require_staff():
+    if denied := require_student_manager():
         return denied
 
     page = PageIn.validate(request.args)
     args = request.args
     items, total = PracticeService().list_admin(
+        school_id=student_manager_scope(),
         category=args.get("category") or None,
         student_id=(args.get("studentId") or args.get("student_id") or None),
         page=page.page,

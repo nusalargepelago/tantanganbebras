@@ -5,10 +5,11 @@ import { useI18n } from 'vue-i18n'
 import { Button, PageHeader, PageHeaderMobile } from 'frappe-ui'
 
 import { breadcrumbMap } from '@/app/breadcrumbs'
-import { openMobileMenu } from '@/app/mobile-menu'
-import { useMediaQuery } from '@/app/useMediaQuery'
+import { brand } from '@/shared/brand'
+import PageBreadcrumbs from '@/shared/components/PageBreadcrumbs.vue'
+import { useMediaQuery } from '@/shared/composables/useMediaQuery'
 
-import PageBreadcrumbs from './PageBreadcrumbs.vue'
+import { openMobileMenu } from './mobile-menu'
 
 const props = defineProps<{
   /** Overrides the last breadcrumb (desktop) and the centered title (mobile). */
@@ -16,16 +17,18 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
-const { t } = useI18n()
+const { t, te } = useI18n()
 const slots = useSlots()
-
 const isDesktop = useMediaQuery('(min-width: 640px)')
 
 const mobileTitle = computed(() => {
   if (props.title) return props.title
-  const entry = breadcrumbMap[route.name as string]
+  const name = String(route.name ?? '')
+  const titleKey = `route.${name}.title`
+  if (name && te(titleKey)) return t(titleKey)
+  const entry = name ? breadcrumbMap[name] : undefined
   if (entry) return t(entry.label)
-  return typeof route.meta.title === 'string' ? route.meta.title : ''
+  return typeof route.meta.title === 'string' ? route.meta.title : brand.name
 })
 </script>
 
@@ -38,6 +41,7 @@ const mobileTitle = computed(() => {
     <div v-if="slots.actions" class="ml-auto flex items-center gap-2">
       <slot name="actions" />
     </div>
+    <slot v-else />
   </PageHeader>
 
   <PageHeaderMobile v-else :title="mobileTitle">
@@ -45,12 +49,15 @@ const mobileTitle = computed(() => {
       <Button
         variant="ghost"
         icon="lucide-panel-left"
-        :label="t('menu.open')"
+        :label="t('menu.menu')"
         @click="openMobileMenu()"
       />
     </template>
     <template v-if="slots['mobile-actions']" #suffix>
       <slot name="mobile-actions" />
+    </template>
+    <template v-else-if="slots.suffix" #suffix>
+      <slot name="suffix" />
     </template>
   </PageHeaderMobile>
 </template>

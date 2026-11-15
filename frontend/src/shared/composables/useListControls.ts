@@ -1,7 +1,7 @@
 import { onScopeDispose, ref, watch } from 'vue'
 
 export interface ListControlsOptions {
-  fetch: (query: { search: string; perPage: number }) => void
+  fetch: (query: { search: string; perPage: number }) => void | Promise<unknown>
   setPage: (page: number) => void
   initialSearch?: string
   initialPerPage?: number
@@ -14,7 +14,7 @@ export function useListControls(options: ListControlsOptions) {
   let searchTimer: ReturnType<typeof setTimeout> | null = null
 
   function reload() {
-    options.fetch({ search: search.value, perPage: perPage.value })
+    return options.fetch({ search: search.value, perPage: perPage.value })
   }
 
   watch(search, () => {

@@ -12,7 +12,7 @@ Rencana + **keputusan porting & status hazard**: [`PLAN.md`](PLAN.md).
 | # | Feature | Endpoint / Route | UI | Spec |
 |---|---------|------------------|----|------|
 | F1 | Staff auth (register, login, logout, `/me`) | `POST /api/v1/auth/*`, `GET /me` | `/login` | [01 §2](specs/01-auth-student-users.md) |
-| F2 | Student auth (self-register, login, logout, `/me`, branding) | `/api/v1/student/auth/*` | `/student-login`, `/student-register` | [01 §3](specs/01-auth-student-users.md) |
+| F2 | Student login & session (branding, login, logout, `/me`) | `/api/v1/student/auth/*` | `/student-login` (register lewat `/register` + onboarding) | [01 §3](specs/01-auth-student-users.md) |
 | F3 | User admin (CRUD, role-list) | `/api/v1/account/users*` | `/users`, `/users/new`, `/users/:id` | [01 §4](specs/01-auth-student-users.md) |
 | F4 | Role & authorization (`app_role` + student discriminator) | startup `ensure_member_role` + `require_staff` | session guard | [01 §5](specs/01-auth-student-users.md), [00 §6](specs/00-master-overview.md) |
 | F5 | Topic (chapter grouping, CRUD, reorder) | `/api/v1/topic/*` | question-editor panel | [02 §2](specs/02-topic-question.md) |
@@ -27,6 +27,9 @@ Rencana + **keputusan porting & status hazard**: [`PLAN.md`](PLAN.md).
 | F14 | ToDo (CRUD, owner-or-admin RBAC) | `/api/v1/todos/*` | `/todos` | [06 §3](specs/06-supporting.md) |
 | F15 | File upload (image, ≤5 MiB, admin) | `POST /api/v1/uploads` | TextEditor (future) | [06 §4.3](specs/06-supporting.md) |
 | F16 | Default seeder (accounts, students, sample data) | `uv run python -m app.seed` | — | [07](specs/07-seeder-default-pack.md) |
+| F17 | Onboarding classification (siswa/guru sekali seumur akun) | `/api/v1/onboarding/*` | `/onboarding` | [01 §3](specs/01-auth-student-users.md) |
+| F18 | Master sekolah & kota/kabupaten (data induk, kota ikut sekolah, create terbuka 409-dup) | `/api/v1/school`, `/api/v1/city` | `/schools` (admin), `/onboarding` (*Tambah sekolah* saat hasil kosong) | [08](specs/08-master-schools-cities.md) |
+| F19 | Teacher student management (school-scoped, `has_role('Teacher')`) | subset `/api/v1/student/*` + `GET /api/v1/practice(/:name)` (own-school) | sidebar Guru (data siswa & latihan) | [05 §2](specs/05-student.md), [03](specs/03-practice.md) |
 
 ## Deviations from the reference
 
@@ -35,6 +38,7 @@ Keputusan porting lengkap ada di [`PLAN.md`](PLAN.md) §1. Ringkasan yang paling
 - **UUID PK + slug `name`** sebagai natural key untuk URL (bukan slug-PK).
 - **Attempt event = snapshot** — menghilangkan mixed key-space hazard (spek §14.3).
 - **`require_staff`** menutup celah RBAC spek §6.3 (student ditolak 403 di domain staff).
+- **`require_student_manager`** menutup gap F19 — guru (`has_role('Teacher')` + baris `teachers`) di-scope ke sekolahnya; siswa tetap 403, delete/restore/purge tetap staff-only.
 - **Konten soal = plain text** (`frappe-ui` tak punya `TextEditor`) — rich text defer.
 - **Pagination `page`/`perPage`**, error key ikut formatter Minimals, timestamp `+00:00`.
 - **Migration per domain** bernama tanggal (`20261018_<n>_<domain>.py`); `0001_initial.py` freeze.

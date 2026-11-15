@@ -2,25 +2,13 @@
 from __future__ import annotations
 
 from app.account.models import ApiKey
-from app.auth.models import Role, User
+from app.auth.models import Role
+from app.auth.presenters import UserOut
 from framework.base import PresenterBase
 
 
-class UserAdminOut(PresenterBase):
-    """Admin-facing user response."""
-
-    id: str
-    email: str
-    username: str
-    full_name: str = PresenterBase.field("", alias="fullName")
-    app_role: str = PresenterBase.field("", alias="appRole")
-    roles: list[str] = PresenterBase.field(default_factory=list)
-    is_active: bool = PresenterBase.field(True, alias="isActive")
-    created_on: str | None = PresenterBase.field(None, alias="createdOn")
-
-    @classmethod
-    def from_user(cls, user: User) -> UserAdminOut:
-        return cls.from_model(user, roles=[r.name for r in user.roles])
+class UserAdminOut(UserOut):
+    """Admin-facing user response — same contract, admin-scoped name."""
 
 
 class RoleOut(PresenterBase):

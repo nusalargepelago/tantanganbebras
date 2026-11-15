@@ -8,6 +8,7 @@ from __future__ import annotations
 import click
 import pytest
 from click.testing import CliRunner
+from sqlalchemy import select
 
 
 @pytest.fixture()
@@ -69,12 +70,15 @@ def test_setup_command_creates_admin_and_brand(fresh_app, tmp_path):
     assert "Administrator created: boss@example.com" in result.output
 
     with fresh_app.app_context():
-        user = db.session.query(User).filter_by(email="boss@example.com").one()
+        user = (
+            db.session.execute(select(User).where(User.email == "boss@example.com"))
+            .scalars().unique().one()
+        )
         assert user.username == "boss"
         assert user.app_role == "admin"
         assert [role.name for role in user.roles] == ["Member"]
 
-        settings = {row.key: row.value for row in db.session.query(AppSetting)}
+        settings = {row.key: row.value for row in db.session.scalars(select(AppSetting))}
         assert settings["name"] == "Acme"
         assert settings["tagline"] == "A tagline"
         assert settings["siteUrl"] == "https://acme.test"

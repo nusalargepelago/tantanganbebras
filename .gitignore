@@ -28,6 +28,10 @@ logs/
 node_modules/
 dist/
 app/static/frontend/
+app/static/frontend.zip
+
+# --- Tooling caches ---
+.qoder/
 
 # --- User uploads (runtime, served without auth) ---
 app/static/uploads/*

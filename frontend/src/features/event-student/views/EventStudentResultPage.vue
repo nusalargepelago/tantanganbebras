@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Button, ErrorMessage, Skeleton } from 'frappe-ui'
+import { Button, ErrorMessage, Spinner, Skeleton } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import CelebrationOverlay from '@/shared/components/CelebrationOverlay.vue'
 
 import { useAuthStore } from '@/features/auth/store'
@@ -17,15 +17,17 @@ const { t } = useI18n()
 
 const attemptName = computed(() => route.params.name as string)
 const attempt = computed(() => store.result)
+const gateReady = ref(false)
 
 const backToListRoute = computed(() =>
   auth.isAdmin ? { name: 'EventList' } : { name: 'EventStudentList' },
 )
-const dashboardRoute = computed(() =>
-  auth.isAdmin ? { name: 'AdminDashboard' } : { name: 'Dashboard' },
-)
+const dashboardRoute = { name: 'Dashboard' }
 
-onMounted(() => store.fetchResult(attemptName.value))
+onMounted(async () => {
+  await store.fetchResult(attemptName.value)
+  gateReady.value = true
+})
 </script>
 
 <template>
@@ -60,7 +62,11 @@ onMounted(() => store.fetchResult(attemptName.value))
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <Skeleton v-if="store.resultLoading" class="h-40" />
     <ErrorMessage v-else-if="store.error" :message="store.error" />
 

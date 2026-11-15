@@ -1,6 +1,9 @@
 """Auth presenter — end-user serialization for user responses."""
 from __future__ import annotations
 
+from typing import Self
+
+from app.auth.models import User
 from framework.base import PresenterBase
 
 
@@ -17,7 +20,7 @@ class UserOut(PresenterBase):
     created_on: str | None = PresenterBase.field(None, alias="createdOn")
 
     @classmethod
-    def from_user(cls, user) -> UserOut:
+    def from_user(cls, user: User) -> Self:
         return cls.from_model(user, roles=[r.name for r in user.roles])
 
 

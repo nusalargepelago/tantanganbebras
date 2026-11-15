@@ -48,6 +48,7 @@ class PracticeRepository(RepositoryBase[Practice]):
         *,
         category: str | None = None,
         student_id: str | None = None,
+        student_ids: list[str] | None = None,
         page: int = 1,
         per_page: int = 20,
     ) -> tuple[list[Practice], int]:
@@ -56,6 +57,8 @@ class PracticeRepository(RepositoryBase[Practice]):
             query = query.filter(Practice.category == category)
         if student_id:
             query = query.filter(Practice.student_id == student_id)
+        if student_ids is not None:
+            query = query.filter(Practice.student_id.in_(student_ids))
         total = query.count()
         items = (
             query.order_by(Practice.created_at.desc())

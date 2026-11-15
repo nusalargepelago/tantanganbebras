@@ -6,7 +6,7 @@ from io import BytesIO
 from flask import request, send_file
 from flask_login import current_user, login_required
 
-from app.infra.roles import require_staff
+from app.infra.roles import require_student_manager, student_manager_scope
 from app.student.services import StudentService, build_template
 from framework.api import BlueprintFactory, error, ok
 from framework.extensions.rate_limit import limiter
@@ -20,29 +20,33 @@ _rate_5 = limiter.limit("5/minute")
 @_rate_5
 @login_required
 def import_students():
-    if denied := require_staff():
+    if denied := require_student_manager():
         return denied
 
+    scope = student_manager_scope()
     upload = request.files.get("file")
     if upload is None or not upload.filename:
         return error("file_required", 400)
 
     service = StudentService()
-    rows, file_error = service.parse_workbook(upload.stream)
+    # Teachers' rows always land in their own school — no school column needed.
+    rows, file_error = service.parse_workbook(upload.stream, school_required=scope is None)
     if file_error is not None:
         return ok({"inserted": 0, "updated": 0, "errors": [file_error]})
 
-    summary = service.import_rows(rows, actor_id=current_user.id)
+    summary = service.import_rows(
+        rows, actor_id=current_user.id, actor_school_id=scope
+    )
     return ok(summary)
 
 
 @bp.get("/import-template")
 @login_required
 def import_template():
-    if denied := require_staff():
+    if denied := require_student_manager():
         return denied
 
-    data = build_template()
+    data = build_template(school_required=student_manager_scope() is None)
     return send_file(
         BytesIO(data),
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

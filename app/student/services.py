@@ -11,19 +11,27 @@ from app.auth.models import User
 from app.auth.repositories import UserRepository
 from app.infra.audit import log as audit_log
 from app.infra.passwords import hash_password, is_legacy_hash, verify_password
+from app.school.services import SchoolService
 from app.student.dto import (
     StudentCreateIn,
     StudentLoginIn,
-    StudentRegisterIn,
     StudentUpdateIn,
 )
 from app.student.models import Student
 from app.student.repositories import StudentRepository
 from framework.base import ServiceBase
-from framework.exceptions import Conflict, DomainException, NotFound, ValidationFailed
+from framework.exceptions import (
+    Conflict,
+    DomainException,
+    InvalidOperation,
+    NotFound,
+    ValidationFailed,
+)
 
-REQUIRED_COLUMNS = ("first_name", "last_name", "email", "username", "password", "category")
-OPTIONAL_COLUMNS = ("school", "city", "country", "status")
+REQUIRED_COLUMNS = (
+    "first_name", "last_name", "email", "username", "password", "category", "school",
+)
+OPTIONAL_COLUMNS = ("status",)
 _ACTIVE_VALUES = {"aktif", "active", "1", "true", "yes"}
 
 
@@ -36,7 +44,7 @@ def branding() -> dict[str, Any]:
             "Sign in to take the Bebras Computational Thinking Challenge "
             "according to your category (Cub / Scout / Rover)."
         ),
-        "registerUrl": "/student-register",
+        "registerUrl": "/register",
         "passwordMinLength": 6,
         "categoryOptions": ["cub", "scout", "rover"],
     }
@@ -51,55 +59,11 @@ class StudentAuthService(ServiceBase[StudentRepository]):
         self,
         repo: StudentRepository | None = None,
         users: UserRepository | None = None,
+        schools: SchoolService | None = None,
     ):
         super().__init__(repo)
         self._users = users or UserRepository()
-
-    def register(self, dto: StudentRegisterIn) -> tuple[User, Student]:
-        try:
-            if self._users.find_by_username(dto.username):
-                raise Conflict("username_already_registered")
-            if self._users.find_by_email(dto.email):
-                raise Conflict("email_already_registered")
-        except DomainException as exc:
-            audit_log(
-                "student_register_failure",
-                resource="student-auth/register",
-                details={"username": dto.username, "reason": exc.message},
-            )
-            self._commit()
-            raise
-
-        user = User(
-            username=dto.username,
-            email=dto.email,
-            first_name=dto.first_name,
-            last_name=dto.last_name,
-            full_name=f"{dto.first_name} {dto.last_name}",
-            password=hash_password(dto.password),
-            active=True,
-            app_role="user",
-        )
-        self._users.add(user)
-        self._flush()
-
-        student = Student(
-            user_id=user.id,
-            category=dto.category,
-            school=dto.school,
-            city=dto.city,
-            country=dto.country,
-            status="Inactive",
-        )
-        self._repo.add(student)
-        audit_log(
-            "student_register_success",
-            user_id=user.id,
-            resource="student-auth/register",
-            details={"username": user.username, "category": dto.category},
-        )
-        self._commit()
-        return user, student
+        self._schools = schools or SchoolService()
 
     def authenticate(self, dto: StudentLoginIn) -> tuple[User, Student | None] | None:
         user = self._users.find_by_username(dto.username)
@@ -149,24 +113,41 @@ class StudentService(ServiceBase[StudentRepository]):
         self,
         repo: StudentRepository | None = None,
         users: UserRepository | None = None,
+        schools: SchoolService | None = None,
     ):
         super().__init__(repo)
         self._users = users or UserRepository()
+        self._schools = schools or SchoolService()
 
     def list_students(self, **filters) -> tuple[list[Student], int]:
         return self._repo.list_students(**filters)
 
-    def get_student(self, user_id: str) -> tuple[User, Student]:
+    def get_student(self, user_id: str, *, school_id: str | None = None) -> tuple[User, Student]:
         student = self._repo.find_by_user_id(user_id)
         if student is None:
             raise NotFound("student_not_found")
+        if school_id is not None and student.school_id != school_id:
+            raise NotFound("student_not_found")
         return student.user, student
 
-    def create_student(self, dto: StudentCreateIn, *, actor_id: str | None) -> Student:
+    def create_student(
+        self,
+        dto: StudentCreateIn,
+        *,
+        actor_id: str | None,
+        actor_school_id: str | None = None,
+    ) -> Student:
         if self._users.find_by_username(dto.username):
             raise Conflict("username_already_registered")
         if self._users.find_by_email(dto.email):
             raise Conflict("email_already_registered")
+
+        school_id = actor_school_id or dto.school_id
+        if not school_id:
+            raise ValidationFailed("school_id_required")
+        status = "Inactive" if actor_school_id else dto.status
+
+        self._schools.require_school(school_id)
 
         user = self._build_user(dto)
         self._users.add(user)
@@ -175,24 +156,42 @@ class StudentService(ServiceBase[StudentRepository]):
         student = Student(
             user_id=user.id,
             category=dto.category,
-            school=dto.school,
-            city=dto.city,
-            country=dto.country,
-            status=dto.status,
+            school_id=school_id,
+            status=status,
         )
         self._repo.add(student)
         audit_log(
             "student_created",
             user_id=actor_id,
             resource=f"student/{user.id}",
-            details={"category": dto.category, "status": dto.status},
+            details={"category": dto.category, "status": status},
         )
         self._commit()
         return student
 
-    def update_student(self, user_id: str, dto: StudentUpdateIn, *, actor_id: str) -> tuple[User, Student]:
-        user, student = self.get_student(user_id)
+    def update_student(
+        self,
+        user_id: str,
+        dto: StudentUpdateIn,
+        *,
+        actor_id: str,
+        school_id: str | None = None,
+    ) -> tuple[User, Student]:
+        user, student = self.get_student(user_id, school_id=school_id)
         data = dto.model_dump(exclude_unset=True)
+
+        if "school_id" in data and data["school_id"] == student.school_id:
+            # Identical value (FE sends full-form payloads) — not a change,
+            # skip it entirely so other fields stay editable even when the
+            # school was deactivated in the meantime.
+            data.pop("school_id")
+        if "school_id" in data and school_id is not None:
+            # Teacher-scoped updates may not touch the school at all.
+            raise InvalidOperation("school_change_not_allowed")
+        if "status" in data and school_id is not None:
+            # Teacher-scoped updates may not touch the lifecycle — use the
+            # dedicated activate endpoint instead.
+            raise InvalidOperation("status_change_not_allowed")
 
         if "username" in data and data["username"] != user.username:
             existing = self._users.find_by_username(data["username"])
@@ -212,9 +211,12 @@ class StudentService(ServiceBase[StudentRepository]):
             user.full_name = f"{user.first_name} {user.last_name}".strip()
         if data.get("password"):
             user.password = hash_password(data["password"])
-        for field in ("category", "school", "city", "country", "status"):
+        for field in ("category", "status"):
             if field in data:
                 setattr(student, field, data[field])
+        if "school_id" in data:
+            self._schools.require_school(data["school_id"])
+            student.school_id = data["school_id"]
 
         audit_log(
             "student_updated",
@@ -242,8 +244,8 @@ class StudentService(ServiceBase[StudentRepository]):
         self._commit()
         return user, student
 
-    def activate(self, user_id: str, *, actor_id: str) -> tuple[User, Student]:
-        user, student = self.get_student(user_id)
+    def activate(self, user_id: str, *, actor_id: str, school_id: str | None = None) -> tuple[User, Student]:
+        user, student = self.get_student(user_id, school_id=school_id)
         if student.disabled:
             raise NotFound("student_disabled")
         student.status = "Active"
@@ -259,8 +261,17 @@ class StudentService(ServiceBase[StudentRepository]):
         self._commit()
 
     # --- import -------------------------------------------------------
-    def parse_workbook(self, stream) -> tuple[list[dict], dict | None]:
-        """Parse an XLSX upload into row dicts. Returns (rows, file_error)."""
+    def parse_workbook(self, stream, *, school_required: bool = True) -> tuple[list[dict], dict | None]:
+        """Parse an XLSX upload into row dicts. Returns (rows, file_error).
+
+        ``school_required=False`` drops the ``school`` column requirement
+        (used for teachers, whose students always land in their own school).
+        """
+        required = (
+            REQUIRED_COLUMNS
+            if school_required
+            else tuple(c for c in REQUIRED_COLUMNS if c != "school")
+        )
         try:
             workbook = load_workbook(stream, read_only=True, data_only=True)
         except Exception as exc:
@@ -281,7 +292,7 @@ class StudentService(ServiceBase[StudentRepository]):
                 for idx, cell in enumerate(header)
                 if cell is not None and str(cell).strip()
             }
-            missing = [c for c in REQUIRED_COLUMNS if c not in columns]
+            missing = [c for c in required if c not in columns]
             if missing:
                 return [], {"row": 0, "message": f"missing_required_columns: {','.join(missing)}"}
 
@@ -301,7 +312,13 @@ class StudentService(ServiceBase[StudentRepository]):
         finally:
             workbook.close()
 
-    def import_rows(self, rows: list[dict], *, actor_id: str | None) -> dict[str, Any]:
+    def import_rows(
+        self,
+        rows: list[dict],
+        *,
+        actor_id: str | None,
+        actor_school_id: str | None = None,
+    ) -> dict[str, Any]:
         inserted = 0
         updated = 0
         errors: list[dict] = []
@@ -309,7 +326,24 @@ class StudentService(ServiceBase[StudentRepository]):
         for offset, record in enumerate(rows):
             excel_row = offset + 2
             payload = dict(record)
-            payload["status"] = _resolve_status(record.get("status"))
+            if actor_school_id is not None:
+                payload["status"] = "Inactive"
+            else:
+                payload["status"] = _resolve_status(record.get("status"))
+
+            if actor_school_id is not None:
+                payload["schoolId"] = actor_school_id
+            else:
+                school = self._schools.find_school_by_name(str(record.get("school") or ""))
+                if school is None:
+                    errors.append({"row": excel_row, "message": "school_not_in_master"})
+                    continue
+                if not school.is_active:
+                    errors.append({"row": excel_row, "message": "school_inactive"})
+                    continue
+                payload["schoolId"] = school.id
+            payload.pop("school", None)
+            payload.pop("city", None)
             try:
                 dto = StudentCreateIn.validate(payload)
             except ValidationFailed as exc:
@@ -329,10 +363,16 @@ class StudentService(ServiceBase[StudentRepository]):
                 continue
             try:
                 if existing_by_username is not None:
-                    self._import_update(existing_by_username, dto, actor_id=actor_id)
+                    self._import_update(
+                        existing_by_username,
+                        dto,
+                        actor_id=actor_id,
+                        school_id=actor_school_id,
+                        keep_status=actor_school_id is not None,
+                    )
                     updated += 1
                 else:
-                    self.create_student(dto, actor_id=actor_id)
+                    self.create_student(dto, actor_id=actor_id, actor_school_id=actor_school_id)
                     inserted += 1
             except DomainException as exc:
                 errors.append({"row": excel_row, "message": exc.message})
@@ -346,20 +386,38 @@ class StudentService(ServiceBase[StudentRepository]):
         self._commit()
         return {"inserted": inserted, "updated": updated, "errors": errors}
 
-    def _import_update(self, user: User, dto: StudentCreateIn, *, actor_id: str | None) -> None:
+    def _import_update(
+        self,
+        user: User,
+        dto: StudentCreateIn,
+        *,
+        actor_id: str | None,
+        school_id: str | None = None,
+        keep_status: bool = False,
+    ) -> None:
         student = self._repo.find_by_user_id(user.id)
+        if student is not None and school_id is not None and student.school_id != school_id:
+            raise DomainException("student_outside_school")
+        new_school_id = school_id or dto.school_id
+        if student is None or student.school_id != new_school_id:
+            # New placement or a change — target school must be active.
+            self._schools.require_school(new_school_id)
         if student is None:
-            student = Student(user_id=user.id, category=dto.category, status="Inactive")
+            student = Student(
+                user_id=user.id,
+                category=dto.category,
+                school_id=new_school_id,
+                status="Inactive",
+            )
             self._repo.add(student)
         user.first_name = dto.first_name
         user.last_name = dto.last_name
         user.full_name = f"{dto.first_name} {dto.last_name}"
         user.email = dto.email
         student.category = dto.category
-        student.school = dto.school
-        student.city = dto.city
-        student.country = dto.country
-        student.status = dto.status
+        student.school_id = new_school_id
+        if not keep_status:
+            student.status = dto.status
         audit_log(
             "student_updated",
             user_id=actor_id,
@@ -369,7 +427,7 @@ class StudentService(ServiceBase[StudentRepository]):
         self._commit()
 
     @staticmethod
-    def _build_user(dto: StudentCreateIn | StudentRegisterIn) -> User:
+    def _build_user(dto: StudentCreateIn) -> User:
         return User(
             username=dto.username,
             email=dto.email,
@@ -382,18 +440,32 @@ class StudentService(ServiceBase[StudentRepository]):
         )
 
 
-def build_template() -> bytes:
-    """Generate the student import XLSX template."""
+def build_template(school_required: bool = True) -> bytes:
+    """Generate the student import XLSX template.
+
+    ``school_required=False`` omits the ``school`` column (teachers'
+    students always land in their own school).
+    """
     from openpyxl import Workbook
 
+    columns = (
+        list(REQUIRED_COLUMNS) if school_required else [c for c in REQUIRED_COLUMNS if c != "school"]
+    )
     workbook = Workbook()
     sheet = workbook.active
     sheet.title = "student"
-    sheet.append(list(REQUIRED_COLUMNS) + list(OPTIONAL_COLUMNS))
-    sheet.append(
-        ["Budi", "Santoso", "budi@example.test", "budi", "Siswa1234", "scout",
-         "SMPN 1 Bandung", "Bandung", "Indonesia", "Inactive"]
-    )
+    sheet.append(columns + list(OPTIONAL_COLUMNS))
+    sample = {
+        "first_name": "Budi",
+        "last_name": "Santoso",
+        "email": "budi@example.test",
+        "username": "budi",
+        "password": "Siswa1234",
+        "category": "scout",
+        "school": "SMPN 1 Pemenang",
+        "status": "Inactive",
+    }
+    sheet.append([sample[c] for c in columns] + [sample["status"]])
     buffer = BytesIO()
     workbook.save(buffer)
     return buffer.getvalue()

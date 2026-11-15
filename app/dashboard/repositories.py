@@ -3,11 +3,12 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import case, extract, func
+from sqlalchemy import extract, func
 
 from app.event.models import Event, EventAttempt, EventQuestion
 from app.practice.models import Practice
 from app.question.models import Question
+from app.school.models import School
 from app.student.models import Student
 from framework.extensions import db
 
@@ -37,15 +38,11 @@ class DashboardRepository:
         return dict(rows)
 
     def students_by_school(self) -> list[tuple[str, int]]:
-        label = case(
-            (Student.school.is_(None), "(No school)"),
-            (Student.school == "", "(No school)"),
-            else_=Student.school,
-        )
         rows = (
-            db.session.query(label, func.count())
-            .group_by(label)
-            .order_by(func.count().desc(), label.asc())
+            db.session.query(School.name, func.count())
+            .join(Student, Student.school_id == School.id)
+            .group_by(School.name)
+            .order_by(func.count().desc(), School.name.asc())
             .all()
         )
         return [(str(school), count) for school, count in rows]
@@ -60,9 +57,7 @@ class DashboardRepository:
     def student_totals(self) -> tuple[int, int]:
         total = db.session.query(func.count(Student.user_id)).scalar() or 0
         schools = (
-            db.session.query(func.count(func.distinct(Student.school)))
-            .filter(Student.school.isnot(None), Student.school != "")
-            .scalar()
+            db.session.query(func.count(func.distinct(Student.school_id))).scalar()
             or 0
         )
         return total, schools

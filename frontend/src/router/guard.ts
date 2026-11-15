@@ -20,10 +20,28 @@ export async function authGuard(to: any) {
   if (to.meta.requiresAuth && !auth.user && !auth.student) {
     return { path: '/login', query: { redirect: to.fullPath } }
   }
-  if (to.meta.requiresStaff && auth.isStudent && !auth.isAdmin) {
+  if (to.name === 'Onboarding' && (!auth.user || auth.isAdmin)) {
     return '/'
   }
-  if (to.meta.requiresAdmin && !auth.isAdmin) {
+  if (to.meta.requiresAuth && auth.user && !auth.isAdmin) {
+    if (auth.classification === null) {
+      await auth.fetchClassification()
+    }
+    if (auth.classification === 'none' && to.name !== 'Onboarding') {
+      return { name: 'Onboarding' }
+    }
+    if (auth.classification !== 'none' && to.name === 'Onboarding') {
+      return '/'
+    }
+  }
+  if (
+    to.meta.requiresStaff &&
+    !auth.isAdmin &&
+    (auth.isStudent || (auth.isTeacher && !to.meta.allowTeacher))
+  ) {
+    return '/'
+  }
+  if (to.meta.requiresAdmin && auth.user?.appRole !== 'admin') {
     return '/'
   }
   if (to.meta.guestOnly) {

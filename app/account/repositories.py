@@ -1,6 +1,8 @@
 """Account repositories — database access for users, API keys, and preferences."""
 from __future__ import annotations
 
+from sqlalchemy import func, or_, select
+
 from app.account.models import ApiKey, UserPreference
 from app.auth.models import User
 from framework.base import RepositoryBase
@@ -24,18 +26,32 @@ class AccountRepository(RepositoryBase[User]):
     def list_users(
         self, *, search: str | None = None, page: int = 1, per_page: int = 20
     ) -> tuple[list[User], int]:
-        q = db.session.query(User)
+        condition = None
         if search:
             like = f"%{search}%"
-            q = q.filter(
-                db.or_(
-                    User.email.ilike(like),
-                    User.username.ilike(like),
-                    User.full_name.ilike(like),
-                )
+            condition = or_(
+                User.email.ilike(like),
+                User.username.ilike(like),
+                User.full_name.ilike(like),
             )
-        total = q.count()
-        items = q.order_by(User.id).offset((page - 1) * per_page).limit(per_page).all()
+        # Page over bare ids first: limit on the entity select would
+        # paginate the joinedload fan-out instead of distinct users.
+        count_stmt = select(func.count(func.distinct(User.id)))
+        page_stmt = (
+            select(User.id)
+            .order_by(User.id)
+            .offset((page - 1) * per_page)
+            .limit(per_page)
+        )
+        if condition is not None:
+            count_stmt = count_stmt.where(condition)
+            page_stmt = page_stmt.where(condition)
+        total = db.session.execute(count_stmt).scalar() or 0
+        items = list(
+            db.session.execute(
+                select(User).where(User.id.in_(page_stmt)).order_by(User.id)
+            ).scalars().unique().all()
+        )
         return items, total
 
 
@@ -45,19 +61,18 @@ class ApiKeyRepository(RepositoryBase[ApiKey]):
     model = ApiKey
 
     def list_for_user(self, user_id: str) -> list[ApiKey]:
-        return (
-            db.session.query(ApiKey)
-            .filter(ApiKey.user_id == user_id)
-            .order_by(ApiKey.created_on.desc())
-            .all()
+        return list(
+            db.session.scalars(
+                select(ApiKey)
+                .where(ApiKey.user_id == user_id)
+                .order_by(ApiKey.created_on.desc())
+            )
         )
 
     def find_by_prefix(self, prefix: str) -> ApiKey | None:
-        return (
-            db.session.query(ApiKey)
-            .filter(ApiKey.prefix == prefix, ApiKey.is_active.is_(True))
-            .first()
-        )
+        return db.session.scalars(
+            select(ApiKey).where(ApiKey.prefix == prefix, ApiKey.is_active.is_(True))
+        ).first()
 
 
 class UserPreferenceRepository(RepositoryBase[UserPreference]):

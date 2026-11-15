@@ -31,17 +31,17 @@ function onPerPage(value: SelectOptionValue | null | undefined) {
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-2">
+  <div class="flex flex-col items-start gap-2">
     <TextInput
       v-model="search"
       type="search"
       :placeholder="props.placeholder ?? t('shared.search')"
-      class="w-full min-w-0 lg:w-56"
+      class="w-full min-w-0 sm:w-56"
     />
-    <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2 min-[860px]:flex-nowrap">
+    <div class="flex w-full min-w-0 flex-wrap items-center gap-2">
       <slot />
-      <!-- Below 860px the sidebar leaves too little room for the filters plus
-           this select, so it drops to its own line instead of squeezing them. -->
+      <!-- When the filters leave no room for this select, flex-wrap drops it
+           to its own line (right-aligned via ml-auto) instead of overflowing. -->
       <div class="ml-auto w-36 shrink-0">
         <Select
           v-if="showPerPage"

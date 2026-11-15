@@ -18,6 +18,7 @@ export const practiceRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresStaff: true,
+      allowTeacher: true,
       title: 'Practice Review',
       description: 'Review practice sheets submitted by students.',
     },
@@ -29,6 +30,7 @@ export const practiceRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresStaff: true,
+      allowTeacher: true,
       title: 'Practice Detail',
       description: 'Compare a practice sheet before and after shuffling.',
     },

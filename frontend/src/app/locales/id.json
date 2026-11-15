@@ -13,7 +13,8 @@
     "practiceReview": "Review Latihan",
     "todo": "ToDo",
     "users": "Pengguna",
-    "backup": "Backup"
+    "backup": "Cadangan",
+    "schools": "Sekolah"
   },
   "menu": {
     "theme": "Tema",
@@ -24,7 +25,9 @@
     "logout": "Keluar",
     "settings": "Pengaturan",
     "section": "Menu",
-    "open": "Buka menu"
+    "open": "Buka menu",
+    "more": "Lainnya",
+    "menu": "Menu"
   },
   "tour": {
     "menu": "Panduan",
@@ -256,6 +259,68 @@
           "body": "Setiap soal menampilkan jawaban siswa dan benar/salahnya."
         }
       }
+    },
+    "teacher-home": {
+      "title": "Tur cepat guru",
+      "description": "Tur dua langkah untuk layar beranda dan jalan pintasnya.",
+      "steps": {
+        "welcome": {
+          "title": "Selamat datang di beranda",
+          "body": "Layar ini menyapa kamu dan menampilkan jalan pintas di bawah. Semua yang kamu kelola di sini dibatasi pada sekolahmu sendiri."
+        },
+        "actions": {
+          "title": "Dua jalan pintas kamu",
+          "body": "\"Kelola siswa\" membuka daftar siswa sekolahmu. \"Latihan siswa\" membuka lembar latihan yang dikerjakan siswa — hanya untuk ditinjau."
+        }
+      }
+    },
+    "teacher-students": {
+      "title": "Kelola siswa",
+      "description": "Telusuri, tambah, dan impor siswa — terbatas pada sekolahmu.",
+      "steps": {
+        "list": {
+          "title": "Siswa sekolahmu",
+          "body": "Hanya siswa dari sekolahmu yang tercantum. Cari nama atau email, atau filter berdasarkan kategori dan status."
+        },
+        "add": {
+          "title": "Tambah siswa",
+          "body": "Buat akun siswa satu per satu. Akun baru dimulai Inactive — aktifkan lewat halaman detail siswa."
+        },
+        "import": {
+          "title": "Impor dari XLSX",
+          "body": "Unduh template, isi daftar kelasmu, lalu unggah filenya. Kolom sekolah dan status diabaikan — setiap baris impor dimulai Inactive di sekolahmu."
+        },
+        "row": {
+          "title": "Buka siswa",
+          "body": "Klik baris mana pun untuk melihat profil lengkap — dari sana kamu bisa mengubah, menonaktifkan, atau mengaktifkan akun."
+        }
+      }
+    },
+    "teacher-practice": {
+      "title": "Tinjau lembar latihan",
+      "description": "Periksa cara siswa menjawab — sebelum dan sesudah pengacakan.",
+      "steps": {
+        "list": {
+          "title": "Lembar latihan sekolahmu",
+          "body": "Semua lembar latihan dari sekolahmu, terbaru di atas. Filter berdasarkan kategori bila perlu."
+        },
+        "row": {
+          "title": "Buka lembar",
+          "body": "Klik baris mana pun untuk membukanya. Kamu akan melihat soal sebelum dan sesudah pengacakan, plus jawaban siswa."
+        },
+        "before": {
+          "title": "Sebelum diacak",
+          "body": "Ini kumpulan soal asli yang dipilih untuk siswa."
+        },
+        "after": {
+          "title": "Sesudah diacak",
+          "body": "Urutan acak inilah yang benar-benar dijawab siswa. Opsinya juga bisa diacak."
+        },
+        "answers": {
+          "title": "Jawaban siswa",
+          "body": "Setiap soal menampilkan jawaban siswa dan apakah benar."
+        }
+      }
     }
   },
   "error": {
@@ -382,18 +447,6 @@
       "noAccount": "Belum punya akun?",
       "register": "Daftar"
     },
-    "studentRegister": {
-      "title": "Registrasi Siswa",
-      "adminActivate": "Akun akan diaktifkan oleh admin.",
-      "firstName": "Nama depan",
-      "lastName": "Nama belakang",
-      "usernameMin": "Min. 3 karakter",
-      "passwordMin": "Min. 6 karakter",
-      "category": "Kategori",
-      "school": "Sekolah",
-      "city": "Kota",
-      "country": "Negara"
-    },
     "passwordRules": {
       "uppercase": "Satu huruf besar",
       "lowercase": "Satu huruf kecil",
@@ -401,6 +454,51 @@
       "special": "Satu karakter khusus",
       "length": "Minimal 8 karakter"
     }
+  },
+  "onboarding": {
+    "title": "Lengkapi profil",
+    "subtitle": "Pilih peran untuk akun ini. Pilihan tidak dapat diubah nanti.",
+    "student": "Siswa",
+    "studentHint": "Saya siswa yang akan mengikuti tantangan",
+    "teacher": "Guru",
+    "teacherHint": "Saya guru yang membimbing siswa",
+    "back": "Pilih ulang",
+    "firstName": "Nama depan",
+    "lastName": "Nama belakang",
+    "category": "Kategori",
+    "school": "Sekolah",
+    "city": "Kota",
+    "country": "Negara",
+    "schoolPlaceholder": "Cari sekolah…",
+    "schoolsLoadFailed": "Gagal memuat daftar sekolah. Periksa koneksi Anda lalu muat ulang halaman.",
+    "submitStudent": "Bergabung sebagai siswa",
+    "submitTeacher": "Daftar sebagai guru",
+    "adminActivate": "Akun siswa akan diaktifkan oleh admin.",
+    "failure": "Gagal menyimpan. Silakan coba lagi."
+  },
+  "teacher": {
+    "welcomeTitle": "Selamat datang, {name}!",
+    "welcomeBody": "Tambahkan siswa di sekolahmu dan tinjau hasil latihan mereka.",
+    "manageStudents": "Kelola siswa",
+    "viewPractices": "Latihan siswa"
+  },
+  "schools": {
+    "add": "Tambah sekolah",
+    "name": "Sekolah",
+    "namePlaceholder": "mis. SMPN 1 Mataram",
+    "city": "Kota",
+    "cityPlaceholder": "Cari kota/kabupaten…",
+    "searchPlaceholder": "Cari sekolah…",
+    "noData": "Belum ada sekolah",
+    "loadFailed": "Gagal memuat sekolah",
+    "citiesLoadFailed": "Gagal memuat daftar kota/kabupaten",
+    "saveFailed": "Gagal menyimpan sekolah",
+    "createdToast": "Sekolah berhasil dibuat",
+    "updatedToast": "Sekolah berhasil diperbarui",
+    "deactivatedToast": "Sekolah dinonaktifkan",
+    "activatedToast": "Sekolah diaktifkan",
+    "deactivate": "Nonaktifkan",
+    "activate": "Aktifkan"
   },
   "shared": {
     "search": "Cari…",
@@ -411,9 +509,12 @@
     "cancel": "Batal",
     "save": "Simpan",
     "ok": "OK",
+    "selectPlaceholder": "Pilih…",
+    "selectSchoolFirst": "Pilih sekolah dulu",
     "forbiddenTitle": "Akses Ditolak",
     "forbiddenMessage": "Halaman ini memerlukan hak akses administrator. Akun Anda terdaftar sebagai pengguna biasa. Hubungi administrator untuk mendapatkan akses.",
-    "close": "Tutup"
+    "close": "Tutup",
+    "noResults": "Tidak ada hasil ditemukan"
   },
   "list": {
     "all": "Semua",
@@ -513,6 +614,7 @@
     "purgeFailed": "Gagal menghapus permanen siswa",
     "purgedToast": "Siswa dihapus permanen",
     "loadFailed": "Gagal memuat siswa",
+    "schoolsLoadFailed": "Gagal memuat daftar sekolah. Periksa koneksi Anda lalu muat ulang halaman.",
     "saveFailed": "Gagal menyimpan siswa",
     "updatedToast": "Siswa diperbarui",
     "createdToast": "Siswa dibuat",
@@ -521,7 +623,8 @@
     "createStudent": "Gagal membuat siswa",
     "updateStudent": "Gagal memperbarui siswa",
     "purgeStudent": "Gagal menghapus permanen siswa",
-    "importStudents": "Gagal mengimpor siswa"
+    "importStudents": "Gagal mengimpor siswa",
+    "teacherStudentNote": "Siswa yang kamu tambahkan terdaftar di sekolahmu dan berstatus Inactive sampai diaktifkan."
   },
   "dash": {
     "home": {
@@ -599,6 +702,14 @@
     },
     "loadStatistics": "Gagal memuat statistik",
     "loadDashboard": "Gagal memuat dasbor",
+    "totalUsers": "Total pengguna",
+    "registration": "Registrasi",
+    "registrationOpen": "Terbuka",
+    "registrationClosed": "Tertutup",
+    "adminConsole": "Administrasi",
+    "adminConsoleHint": "Kelola pengguna, peran, dan registrasi.",
+    "manageUsers": "Kelola pengguna",
+    "loadStatsFailed": "Gagal memuat statistik akun",
     "welcomeBack": "Selamat datang kembali",
     "roles": "Peran",
     "noRoles": "Belum ada peran"
@@ -646,32 +757,6 @@
     "purgeEvent": "Gagal menghapus permanen event",
     "loadResults": "Gagal memuat hasil"
   },
-  "users": {
-    "addUser": "Tambah Pengguna",
-    "searchPlaceholder": "Cari pengguna…",
-    "noData": "Tidak ada pengguna.",
-    "role": "Peran",
-    "created": "Dibuat",
-    "deleteTitle": "Hapus Pengguna",
-    "deleteMessage": "Hapus \"{name}\"? Tindakan ini tidak bisa dibatalkan.",
-    "deleteFailed": "Gagal menghapus pengguna",
-    "deletedToast": "Pengguna dihapus",
-    "loadFailed": "Gagal memuat pengguna",
-    "saveFailed": "Gagal menyimpan pengguna",
-    "updatedToast": "Pengguna diperbarui",
-    "createdToast": "Pengguna dibuat",
-    "roleUser": "Pengguna",
-    "roleAdmin": "Admin",
-    "resetPassword": "Atur Ulang Kata Sandi",
-    "resetMessage": "Masukkan kata sandi baru untuk pengguna ini.",
-    "resetToast": "Kata sandi diatur ulang",
-    "resetFieldLabel": "Kata sandi baru",
-    "resetFailed": "Gagal mengatur ulang kata sandi",
-    "loadUsers": "Gagal memuat daftar pengguna",
-    "loadUser": "Gagal memuat pengguna",
-    "createUser": "Gagal membuat pengguna",
-    "updateUser": "Gagal memperbarui pengguna"
-  },
   "import": {
     "uploadTitle": "Unggah XLSX",
     "uploadDesc1": "Unggah berkas xlsx. Kolom yang diharapkan:",
@@ -685,11 +770,14 @@
     "failed": "Gagal mengimpor",
     "successTitle": "Berhasil: {inserted} ditambahkan, {updated} diperbarui.",
     "summary": "{inserted} ditambahkan, {updated} diperbarui, {errors} galat.",
-    "rowError": "Baris {row}: {message}"
+    "rowError": "Baris {row}: {message}",
+    "teacherDesc": "Unggah berkas xlsx. Kolom wajib: first_name, last_name, email, username, password, category. Siswa ditambahkan ke sekolahmu dengan status Inactive."
   },
   "practice": {
     "startPractice": "Mulai Latihan",
     "noData": "Belum ada latihan.",
+    "searchPlaceholder": "Cari nama, email, atau sekolah…",
+    "noMatch": "Tidak ada latihan yang cocok dengan filter.",
     "startFailed": "Gagal memulai latihan",
     "createdToast": "Lembar latihan baru dibuat",
     "cardTitle": "Latihan {date}",
@@ -973,25 +1061,21 @@
       "title": "Masuk Siswa",
       "description": "Masuk dengan akun siswa Anda."
     },
-    "StudentRegister": {
-      "title": "Registrasi Siswa",
-      "description": "Daftar sebagai siswa untuk mengikuti tantangan dan latihan."
+    "Onboarding": {
+      "title": "Pilih peranmu",
+      "description": "Pilih bergabung sebagai siswa atau guru."
+    },
+    "SchoolList": {
+      "title": "Sekolah",
+      "description": "Kelola daftar sekolah resmi."
     },
     "Setup": {
       "title": "Setup",
       "description": "Setup awal: hubungkan basis data, atur brand, dan buat administrator."
     },
     "Dashboard": {
-      "title": "Beranda",
-      "description": "Tautan cepat ke halaman latihan, tantangan, dan akun Anda."
-    },
-    "AdminDashboard": {
       "title": "Dasbor",
-      "description": "Ringkasan event, siswa, dan statistik platform."
-    },
-    "StudentDashboard": {
-      "title": "Dasbor Saya",
-      "description": "Aktivitas latihan dan tantangan Anda dalam sekilas."
+      "description": "Dasbor Anda: ringkasan akun, peran, dan administrasi."
     },
     "QuestionList": {
       "title": "Soal",
@@ -1031,22 +1115,6 @@
     "StudentEdit": {
       "title": "Edit Siswa",
       "description": "Ubah profil siswa ini."
-    },
-    "UsersList": {
-      "title": "Pengguna",
-      "description": "Kelola akun dan peran pengguna."
-    },
-    "UserNew": {
-      "title": "Pengguna Baru",
-      "description": "Buat akun pengguna baru."
-    },
-    "UserDetail": {
-      "title": "Detail Pengguna",
-      "description": "Lihat detail, peran, dan akses pengguna."
-    },
-    "UserEdit": {
-      "title": "Edit Pengguna",
-      "description": "Ubah akun pengguna ini."
     },
     "PracticeList": {
       "title": "Latihan",
@@ -1103,12 +1171,17 @@
     "TodosList": {
       "title": "Tugas",
       "description": "Catat tugas dan pengingat Anda."
+    },
+    "Users": {
+      "title": "Pengguna",
+      "description": "Administrasi pengguna: peran, status, dan grup."
     }
   },
   "settings": {
     "title": "Pengaturan",
     "nav": {
-      "user": "Pengaturan pengguna"
+      "user": "Pengaturan pengguna",
+      "app": "Aplikasi"
     },
     "profile": {
       "title": "Profil",
@@ -1130,6 +1203,62 @@
       "description": "Seret untuk mengubah urutan. Matikan item untuk menyembunyikannya dari sidebar dan navigasi bawah.",
       "show": "Tampilkan {name}",
       "saveFailed": "Preferensi menu gagal disimpan."
+    },
+    "brand": {
+      "title": "Brand",
+      "description": "Logo untuk seluruh aplikasi, tampil di sidebar, halaman masuk, dan favicon browser.",
+      "logo": "Logo",
+      "logoDescription": "PNG, JPG, WebP, atau GIF maksimal 5 MB. Anda akan memotongnya menjadi persegi sebelum disimpan.",
+      "upload": "Unggah logo",
+      "replace": "Ganti logo",
+      "remove": "Hapus",
+      "updated": "Logo diperbarui.",
+      "removed": "Logo dihapus.",
+      "updateFailed": "Logo gagal diperbarui.",
+      "removeFailed": "Logo gagal dihapus.",
+      "invalidType": "Pilih gambar PNG, JPG, WebP, atau GIF.",
+      "tooLarge": "Ukuran gambar maksimal 5 MB.",
+      "crop": {
+        "title": "Potong logo",
+        "hint": "Geser untuk mengatur posisi, lalu perbesar bila perlu.",
+        "zoom": "Perbesaran",
+        "apply": "Gunakan gambar",
+        "cancel": "Batal",
+        "loadFailed": "Gambar tidak bisa dimuat. Coba file lain.",
+        "stage": "Pratinjau potongan logo"
+      }
+    }
+  },
+  "account": {
+    "searchUsers": "Cari pengguna…",
+    "noUsers": "Belum ada pengguna.",
+    "noUsersFound": "Tidak ada pengguna yang cocok.",
+    "columns": {
+      "user": "Pengguna",
+      "appRole": "Peran app",
+      "roles": "Grup",
+      "status": "Status",
+      "actions": "Aksi"
+    },
+    "addUser": "Tambah pengguna",
+    "editUser": "Edit pengguna",
+    "fullName": "Nama lengkap",
+    "appRole": "Peran app",
+    "roleUser": "Pengguna",
+    "roleAdmin": "Admin",
+    "roleNames": "Grup",
+    "rolesPlaceholder": "Pilih grup…",
+    "statusActive": "Aktif",
+    "statusInactive": "Nonaktif",
+    "isActive": "Aktif",
+    "saveChanges": "Simpan perubahan",
+    "createUser": "Buat pengguna",
+    "userUpdated": "Pengguna diperbarui.",
+    "userCreated": "Pengguna ditambahkan.",
+    "errors": {
+      "loadUsersFailed": "Gagal memuat pengguna.",
+      "updateUserFailed": "Gagal memperbarui pengguna.",
+      "createUserFailed": "Gagal menambah pengguna."
     }
   }
 }

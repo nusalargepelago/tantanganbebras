@@ -111,6 +111,15 @@ def test_setup_status_is_camel_case(client):
     assert set(body) == {"setupRequired", "reason", "activeEngine", "activeUrl"}
 
 
+def test_setup_status_public_omits_db_details(client):
+    response = client.get(
+        "/api/v1/setup/status",
+        environ_overrides={"REMOTE_ADDR": "203.0.113.7"},
+    )
+    assert response.status_code == 200
+    assert set(response.get_json()) == {"setupRequired", "reason"}
+
+
 def test_cross_service_ping(client):
     assert client.get("/api/v1/app/ping").get_json() == {
         "status": "ok",

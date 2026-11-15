@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Badge, Button, ErrorMessage, Skeleton, toast } from 'frappe-ui'
+import { Badge, Button, Spinner, toast } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
+import ListState from '@/shared/components/ListState.vue'
 import { categoryLabel } from '@/shared/labels'
 
 import { usePracticeStore, type Practice } from '../store'
@@ -14,6 +15,7 @@ const store = usePracticeStore()
 const { t } = useI18n()
 
 const empty = computed(() => !store.loading && store.mine.length === 0)
+const gateReady = ref(false)
 
 function statusOf(p: Practice) {
   if (p.finishedAt) return { label: t('list.completed'), theme: 'green' as const }
@@ -56,7 +58,10 @@ function open(p: Practice) {
   router.push({ name: 'PracticeResult', params: { name: p.name } })
 }
 
-onMounted(store.listMine)
+onMounted(async () => {
+  await store.listMine()
+  gateReady.value = true
+})
 </script>
 
 <template>
@@ -83,33 +88,31 @@ onMounted(store.listMine)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6" data-tour="student-practice-list">
-    <ErrorMessage v-if="store.error" :message="store.error" />
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
 
-    <div v-if="store.loading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Skeleton v-for="i in 6" :key="i" class="h-36" />
-    </div>
-
-    <div
-      v-else-if="empty"
-      class="flex flex-col items-center gap-2 rounded-6 border border-outline-gray-1 py-12 text-center"
+  <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6" data-tour="student-practice-list">
+    <ListState
+      :loading="store.loading"
+      :error="store.error"
+      :empty="empty"
+      icon="lucide-clipboard-list"
+      :empty-message="t('practice.noData')"
     >
-      <span class="lucide-clipboard-list size-8 text-ink-gray-4" aria-hidden="true" />
-      <p class="text-p-sm text-ink-gray-5">{{ t('practice.noData') }}</p>
-      <Button
-        variant="outline"
-        theme="gray"
-        icon-left="lucide-play"
-        :label="t('practice.startPractice')"
-        @click="onStart"
-      />
-    </div>
-
-    <div
-      v-else
-      class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-      data-tour="student-practice-history"
-    >
+      <template #action>
+        <Button
+          variant="outline"
+          theme="gray"
+          icon-left="lucide-play"
+          :label="t('practice.startPractice')"
+          @click="onStart"
+        />
+      </template>
+      <div
+        class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        data-tour="student-practice-history"
+      >
       <div
         v-for="p in store.mine"
         :key="p.name"
@@ -139,6 +142,7 @@ onMounted(store.listMine)
           <span class="text-ink-gray-5">{{ durationLabel(p) }}</span>
         </div>
       </div>
-    </div>
+      </div>
+    </ListState>
   </div>
 </template>

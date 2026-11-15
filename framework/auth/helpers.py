@@ -19,7 +19,12 @@ def _deny(status: int, message: str):
 
 
 def require_role(*roles: str):
-    """Return a 401/403 response if the current user lacks one of ``roles``.
+    """Gate untuk ``User.app_role`` (tier akses) — return 401/403 kalau kurang.
+
+    Membaca ``current_user.app_role`` **saja** — tidak pernah menyentuh
+    tabel ``roles``/``user_roles``. Gate peran fungsional (tabel ``roles``)
+    memakai ``User.has_role()`` di model user, bukan fungsi ini.
+    ``roles`` di sini = nilai ``app_role`` (mis. ``"admin"``).
 
     Returns ``None`` when the user is authenticated **and** their
     ``app_role`` is in ``roles``.  Otherwise returns a Flask response
@@ -44,6 +49,9 @@ def require_role(*roles: str):
 
 def require_owner_or_role(owner_id: str | None, *roles: str):
     """Return a 401/403 response unless the user owns the resource or has a privileged role.
+
+    ``roles`` di sini = nilai ``app_role`` (gate tier) — sama seperti
+    :func:`require_role`, tidak membaca tabel ``roles``.
 
     Returns ``None`` when:
     - The user is authenticated, **and**

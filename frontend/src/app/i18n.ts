@@ -7,6 +7,11 @@ import id from './locales/id.json'
 const STORAGE_KEY = 'minimals-lang'
 const SUPPORTED = ['en', 'id']
 
+export const languageOptions = [
+  { label: 'English', value: 'en' },
+  { label: 'Bahasa Indonesia', value: 'id' },
+]
+
 declare global {
   interface Window {
     appLang?: string

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Badge, Button, ErrorMessage, Skeleton } from 'frappe-ui'
+import { Badge, Button, ErrorMessage, Spinner, Skeleton } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import CelebrationOverlay from '@/shared/components/CelebrationOverlay.vue'
 import { categoryLabel } from '@/shared/labels'
 import { hasRichContent } from '@/shared/richText'
@@ -33,8 +33,12 @@ function answerFor(questionId: string) {
 }
 
 const score = computed(() => practice.value?.score ?? 0)
+const gateReady = ref(false)
 
-onMounted(() => store.fetchDetail(name.value))
+onMounted(async () => {
+  await store.fetchDetail(name.value)
+  gateReady.value = true
+})
 </script>
 
 <template>
@@ -57,7 +61,11 @@ onMounted(() => store.fetchDetail(name.value))
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
+
+  <div v-else class="mx-auto w-full max-w-2xl space-y-4 px-5 py-6">
     <Skeleton v-if="store.detailLoading" class="h-40" />
     <ErrorMessage v-else-if="store.error" :message="store.error" />
 

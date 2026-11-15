@@ -2,9 +2,10 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Badge, Button, ErrorMessage, Skeleton, toast } from 'frappe-ui'
+import { Badge, Button, Spinner, toast } from 'frappe-ui'
 
-import AppPageHeader from '@/shared/components/AppPageHeader.vue'
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
+import ListState from '@/shared/components/ListState.vue'
 import { useAuthStore } from '@/features/auth/store'
 import { categoryLabel } from '@/shared/labels'
 import { useEventStudentStore, type CandidateEvent } from '../store'
@@ -15,6 +16,7 @@ const store = useEventStudentStore()
 const { t } = useI18n()
 
 const empty = computed(() => !store.loading && store.candidates.length === 0)
+const gateReady = ref(false)
 const myCategory = computed(() => auth.student?.category ?? '')
 
 const starting = ref<string | null>(null)
@@ -48,7 +50,10 @@ function onViewResult(item: CandidateEvent) {
   router.push({ name: 'EventStudentResult', params: { name: item.attemptName } })
 }
 
-onMounted(store.listCandidates)
+onMounted(async () => {
+  await store.listCandidates()
+  gateReady.value = true
+})
 </script>
 
 <template>
@@ -60,25 +65,22 @@ onMounted(store.listCandidates)
     </template>
   </AppPageHeader>
 
-  <div class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
-    <ErrorMessage v-if="store.error" :message="store.error" />
+  <div v-if="!gateReady" class="flex justify-center py-10">
+    <Spinner />
+  </div>
 
-    <div v-if="store.loading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Skeleton v-for="i in 6" :key="i" class="h-40" />
-    </div>
-
-    <div
-      v-else-if="empty"
-      class="rounded-6 border border-outline-gray-1 py-12 text-center text-p-sm text-ink-gray-5"
+  <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
+    <ListState
+      :loading="store.loading"
+      :error="store.error"
+      :empty="empty"
+      icon="lucide-calendar"
+      :empty-message="t('eventStudent.noData')"
     >
-      {{ t('eventStudent.noData') }}
-    </div>
-
-    <div
-      v-else
-      class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-      data-tour="student-event-grid"
-    >
+      <div
+        class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        data-tour="student-event-grid"
+      >
       <div
         v-for="item in store.candidates"
         :key="item.name"
@@ -157,6 +159,7 @@ onMounted(store.listCandidates)
           />
         </div>
       </div>
-    </div>
+      </div>
+    </ListState>
   </div>
 </template>

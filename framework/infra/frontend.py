@@ -68,6 +68,8 @@ def _apply_seo(html: str, seo: dict) -> str:
     description = (seo.get("description") or "").strip()
     robots = (seo.get("robots") or "").strip()
     canonical = (seo.get("canonical") or "").strip()
+    icon = (seo.get("icon") or "").strip()
+    image = (seo.get("image") or "").strip()
 
     if title:
         tag = f"<title>{escape(title)}</title>"
@@ -83,6 +85,18 @@ def _apply_seo(html: str, seo: dict) -> str:
             html = html.replace("</head>", f"{tag}\n  </head>", 1)
 
     lines: list[str] = []
+    if icon:
+        tag = f'<link rel="icon" href="{_attr(icon)}" />'
+        if re.search(r'<link[^>]+rel="icon"[^>]*>', html, flags=re.IGNORECASE):
+            html = re.sub(
+                r'<link[^>]+rel="icon"[^>]*>',
+                lambda _: tag,
+                html,
+                count=1,
+                flags=re.IGNORECASE,
+            )
+        else:
+            lines.append(tag)
     if description:
         lines.append(f'<meta name="description" content="{_attr(description)}" />')
     if robots:
@@ -93,10 +107,14 @@ def _apply_seo(html: str, seo: dict) -> str:
         lines.append('<meta property="og:type" content="website" />')
         lines.append(f'<meta property="og:site_name" content="{_attr(title)}" />')
         lines.append(f'<meta property="og:title" content="{_attr(title)}" />')
-        lines.append('<meta name="twitter:card" content="summary" />')
+        card = "summary_large_image" if image else "summary"
+        lines.append(f'<meta name="twitter:card" content="{card}" />')
         lines.append(f'<meta name="twitter:title" content="{_attr(title)}" />')
     if canonical:
         lines.append(f'<meta property="og:url" content="{_attr(canonical)}" />')
+    if image:
+        lines.append(f'<meta property="og:image" content="{_attr(image)}" />')
+        lines.append(f'<meta name="twitter:image" content="{_attr(image)}" />')
     if description:
         lines.append(
             f'<meta property="og:description" content="{_attr(description)}" />'
