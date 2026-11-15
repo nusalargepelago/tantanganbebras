@@ -295,7 +295,7 @@ geometri tetap. Yang dilanggar di sini yang paling cepat terlihat "kurang rapi":
   atau `text-p-sm text-ink-gray-5`. Truncate keduanya.
 - **Aksi baris = satu ghost icon-only `<Button>`** (`variant="ghost" theme="gray"`,
   `:label` wajib untuk a11y, icon `lucide-pencil` / `lucide-more-horizontal`).
-  Badge status dan tombol aksi bisa satu sel (pola labba) atau dipisah kolom —
+  Badge status dan tombol aksi bisa satu sel atau dipisah kolom —
   pilih satu per page, jangan campur.
 - **Badge**: `variant="subtle"` — aktif `green`, nonaktif `gray`; `appRole` admin
   `blue`, user `gray`.
