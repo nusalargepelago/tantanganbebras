@@ -62,6 +62,13 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['staff'],
   },
   {
+    key: 'Schools',
+    labelKey: 'nav.schools',
+    icon: 'lucide-school',
+    route: { name: 'Schools' },
+    roles: ['admin'],
+  },
+  {
     key: 'StudentList',
     labelKey: 'nav.students',
     icon: 'lucide-users',
@@ -94,13 +101,6 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.backup',
     icon: 'lucide-database',
     route: { name: 'Backup' },
-    roles: ['admin'],
-  },
-  {
-    key: 'Schools',
-    labelKey: 'nav.schools',
-    icon: 'lucide-school',
-    route: { name: 'Schools' },
     roles: ['admin'],
   },
 ]

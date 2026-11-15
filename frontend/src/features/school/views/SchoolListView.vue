@@ -5,6 +5,7 @@ import { Badge, Button, Combobox, FormControl, Spinner, toast } from 'frappe-ui'
 
 import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import ListHead from '@/shared/components/ListHead.vue'
+import ListFoot from '@/shared/components/ListFoot.vue'
 import ListState from '@/shared/components/ListState.vue'
 import ListToolbar from '@/shared/components/ListToolbar.vue'
 import { List, ListCell, ListHeaderCell, ListRow, ListRows } from 'frappe-ui/list'
@@ -16,6 +17,8 @@ const store = useSchoolStore()
 const { t } = useI18n()
 
 const search = ref('')
+const page = ref(1)
+const perPage = ref(20)
 const gateReady = ref(false)
 const creating = ref(false)
 const newName = ref('')
@@ -35,6 +38,12 @@ const columns = {
 
 const empty = computed(() => !store.loading && store.items.length === 0)
 
+const totalRows = computed(() => store.items.length)
+const pagedItems = computed(() => {
+  const start = (page.value - 1) * perPage.value
+  return store.items.slice(start, start + perPage.value)
+})
+
 let searchTimer: number | null = null
 
 async function reload() {
@@ -42,11 +51,21 @@ async function reload() {
 }
 
 watch(search, () => {
+  page.value = 1
   if (searchTimer !== null) window.clearTimeout(searchTimer)
   searchTimer = window.setTimeout(() => {
     searchTimer = null
     void reload()
   }, 300)
+})
+
+watch(perPage, () => {
+  page.value = 1
+})
+
+watch(totalRows, (n) => {
+  const maxPage = Math.max(1, Math.ceil(n / perPage.value))
+  if (page.value > maxPage) page.value = maxPage
 })
 
 async function onCreate() {
@@ -151,7 +170,8 @@ onMounted(async () => {
 
     <ListToolbar
       v-model:search="search"
-      :show-per-page="false"
+      v-model:per-page="perPage"
+      :show-per-page="!empty"
       :placeholder="t('schools.searchPlaceholder')"
     />
 
@@ -173,7 +193,7 @@ onMounted(async () => {
             <ListHeaderCell>{{ t('list.status') }}</ListHeaderCell>
             <ListHeaderCell>{{ t('list.actions') }}</ListHeaderCell>
           </ListHead>
-          <ListRows :items="store.items" v-slot="{ item }">
+          <ListRows :items="pagedItems" v-slot="{ item }">
             <ListRow :value="item.id">
               <ListCell>
                 <form v-if="renamingId === item.id" class="flex items-center gap-1" @submit.prevent="saveEdit">
@@ -212,6 +232,14 @@ onMounted(async () => {
           </ListRows>
         </List>
       </ListState>
+
+      <ListFoot
+        v-if="!store.loading && !store.error && !empty"
+        :total="totalRows"
+        :page="page"
+        :per-page="perPage"
+        @update:page="page = $event"
+      />
     </div>
   </div>
 </template>
