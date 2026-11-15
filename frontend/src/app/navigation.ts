@@ -1,11 +1,12 @@
 import type { RouteDestination } from 'frappe-ui'
 
-export type NavRole = 'staff' | 'student' | 'admin'
+export type NavRole = 'staff' | 'student' | 'admin' | 'teacher'
 
 export interface NavRoleFlags {
   staff: boolean
   student: boolean
   admin: boolean
+  teacher: boolean
 }
 
 export interface NavItem {
@@ -64,14 +65,14 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.students',
     icon: 'lucide-users',
     route: { name: 'StudentList' },
-    roles: ['staff'],
+    roles: ['staff', 'teacher'],
   },
   {
     key: 'PracticeAdminList',
     labelKey: 'nav.practiceReview',
     icon: 'lucide-clipboard-check',
     route: { name: 'PracticeAdminList' },
-    roles: ['staff'],
+    roles: ['staff', 'teacher'],
   },
   {
     key: 'TodosList',

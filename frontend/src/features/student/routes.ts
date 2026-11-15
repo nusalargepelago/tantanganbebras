@@ -8,6 +8,7 @@ export const studentRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresStaff: true,
+      allowTeacher: true,
       title: 'Students',
       description: 'Browse and manage student accounts.',
     },
@@ -19,6 +20,7 @@ export const studentRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresStaff: true,
+      allowTeacher: true,
       title: 'Import Students',
       description: 'Import students in bulk from a CSV file.',
     },
@@ -30,6 +32,7 @@ export const studentRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresStaff: true,
+      allowTeacher: true,
       title: 'New Student',
       description: 'Create a new student account.',
     },
@@ -41,6 +44,7 @@ export const studentRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresStaff: true,
+      allowTeacher: true,
       title: 'Student Detail',
       description: "View a student's profile, school, and status.",
     },
@@ -52,6 +56,7 @@ export const studentRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresStaff: true,
+      allowTeacher: true,
       title: 'Edit Student',
       description: 'Edit this student profile.',
     },

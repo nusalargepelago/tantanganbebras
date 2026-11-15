@@ -57,8 +57,9 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAdmin = computed(() => user.value?.appRole === 'admin')
   const isStudent = computed(() => !!student.value)
-  // Mirrors the backend require_staff gate: admin, or an account without a student row.
-  const isStaff = computed(() => !!user.value && (!student.value || isAdmin.value))
+  const isTeacher = computed(() => !!user.value?.roles?.includes('Teacher'))
+  // Mirrors the backend require_staff gate: admin, or an account without a student/teacher discriminator.
+  const isStaff = computed(() => !!user.value && (isAdmin.value || (!student.value && !isTeacher.value)))
 
   async function syncStudentSession() {
     try {
@@ -203,6 +204,7 @@ export const useAuthStore = defineStore('auth', () => {
     isStudent,
     isStaff,
     isAdmin,
+    isTeacher,
     login,
     register,
     studentLogin,

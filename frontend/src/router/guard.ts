@@ -34,7 +34,11 @@ export async function authGuard(to: any) {
       return '/'
     }
   }
-  if (to.meta.requiresStaff && auth.isStudent && !auth.isAdmin) {
+  if (
+    to.meta.requiresStaff &&
+    !auth.isAdmin &&
+    (auth.isStudent || (auth.isTeacher && !to.meta.allowTeacher))
+  ) {
     return '/'
   }
   if (to.meta.requiresAdmin && auth.user?.appRole !== 'admin') {

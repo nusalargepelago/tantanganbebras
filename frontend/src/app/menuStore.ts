@@ -35,6 +35,7 @@ export const useMenuStore = defineStore('menu', () => {
     staff: auth.isStaff && auth.classification !== 'none',
     student: auth.isStudent,
     admin: auth.isAdmin,
+    teacher: auth.isTeacher,
   }))
   const visibleForRole = (items: NavItem[]) =>
     items.filter(

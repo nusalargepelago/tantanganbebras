@@ -10,11 +10,13 @@ import { hasRichContent } from '@/shared/richText'
 import { sanitizeHtml } from '@/shared/sanitize'
 
 import QuestionOptions from '../components/QuestionOptions.vue'
+import { useAuthStore } from '@/features/auth/store'
 import { usePracticeStore, type PracticeShuffleRow } from '../store'
 
 const route = useRoute()
 const router = useRouter()
 const store = usePracticeStore()
+const auth = useAuthStore()
 const { t } = useI18n()
 
 const name = computed(() => route.params.name as string)
@@ -81,7 +83,7 @@ onMounted(async () => {
 
 <template>
   <AppPageHeader>
-    <template v-if="practice" #actions>
+    <template v-if="practice && !auth.isTeacher" #actions>
       <Button
         variant="outline"
         theme="gray"
@@ -91,7 +93,7 @@ onMounted(async () => {
         @click="onTest"
       />
     </template>
-    <template v-if="practice" #mobile-actions>
+    <template v-if="practice && !auth.isTeacher" #mobile-actions>
       <Button
         variant="ghost"
         icon="lucide-play"

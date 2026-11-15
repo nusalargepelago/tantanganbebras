@@ -14,6 +14,7 @@ import {
 } from 'frappe-ui'
 
 import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
+import { useAuthStore } from '@/features/auth/store'
 import { useStudentStore } from '../store'
 import { categoryOptions, statusOptions } from '@/shared/labels'
 import { fetchSchools, schoolOptions, type SchoolItem } from '@/shared/masters'
@@ -21,7 +22,9 @@ import { fetchSchools, schoolOptions, type SchoolItem } from '@/shared/masters'
 const route = useRoute()
 const router = useRouter()
 const store = useStudentStore()
+const auth = useAuthStore()
 const { t } = useI18n()
+const isTeacher = computed(() => auth.isTeacher)
 
 const categorySelect = computed(() => categoryOptions())
 const statusSelect = computed(() => statusOptions())
@@ -58,7 +61,7 @@ const disabled = computed(
     !form.email.trim() ||
     !form.username.trim() ||
     (!isEdit.value && form.password.length < 6) ||
-    !form.schoolId,
+    (!isTeacher.value && !form.schoolId),
 )
 
 async function load() {
@@ -112,9 +115,13 @@ async function load() {
 
 async function onSubmit() {
   if (disabled.value || !isDirty.value) return
-  if (!form.schoolId) return
+  if (!isTeacher.value && !form.schoolId) return
   submitting.value = true
-  const schoolPart: Record<string, unknown> = { schoolId: form.schoolId, status: form.status }
+  // Teacher payloads omit schoolId/status — the backend pins the school
+  // and forces Inactive for students a teacher creates.
+  const schoolPart: Record<string, unknown> = isTeacher.value
+    ? {}
+    : { schoolId: form.schoolId, status: form.status }
   let saved
   if (isEdit.value) {
     const payload: Record<string, unknown> = {
@@ -244,29 +251,34 @@ onMounted(load)
 
     <section class="space-y-4 rounded-6 border border-outline-gray-1 bg-surface-elevation-2 p-5">
       <h2 class="text-xl-semibold text-ink-gray-8">{{ t('form.details') }}</h2>
+      <p v-if="isTeacher" class="text-p-sm text-ink-gray-5">
+        {{ t('student.teacherStudentNote') }}
+      </p>
       <div class="grid gap-4 sm:grid-cols-2">
         <Select v-model="form.category" :label="t('field.category')" :options="categorySelect" />
-        <Select v-model="form.status" :label="t('field.status')" :options="statusSelect" />
+        <Select v-if="!isTeacher" v-model="form.status" :label="t('field.status')" :options="statusSelect" />
       </div>
-      <Combobox
-        v-model="form.schoolId"
-        :label="t('field.school')"
-        :options="schoolSelect"
-        :placeholder="t('shared.selectPlaceholder')"
-        :required="true"
-      />
-      <dl class="space-y-1 rounded-6 border border-outline-gray-1 bg-surface-base px-3 py-2 text-p-sm">
-        <div class="flex items-center justify-between gap-3">
-          <dt class="text-ink-gray-5">{{ t('field.city') }}</dt>
-          <dd class="truncate text-ink-gray-8">
-            {{ pickedSchool?.city?.name ?? t('shared.selectSchoolFirst') }}
-          </dd>
-        </div>
-        <div class="flex items-center justify-between gap-3">
-          <dt class="text-ink-gray-5">{{ t('field.country') }}</dt>
-          <dd class="text-ink-gray-8">Indonesia</dd>
-        </div>
-      </dl>
+      <template v-if="!isTeacher">
+        <Combobox
+          v-model="form.schoolId"
+          :label="t('field.school')"
+          :options="schoolSelect"
+          :placeholder="t('shared.selectPlaceholder')"
+          :required="true"
+        />
+        <dl class="space-y-1 rounded-6 border border-outline-gray-1 bg-surface-base px-3 py-2 text-p-sm">
+          <div class="flex items-center justify-between gap-3">
+            <dt class="text-ink-gray-5">{{ t('field.city') }}</dt>
+            <dd class="truncate text-ink-gray-8">
+              {{ pickedSchool?.city?.name ?? t('shared.selectSchoolFirst') }}
+            </dd>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <dt class="text-ink-gray-5">{{ t('field.country') }}</dt>
+            <dd class="text-ink-gray-8">Indonesia</dd>
+          </div>
+        </dl>
+      </template>
     </section>
   </div>
 </template>

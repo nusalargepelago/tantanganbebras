@@ -22,11 +22,14 @@ import { useListControls } from '@/shared/composables/useListControls'
 import { useI18n } from 'vue-i18n'
 
 import { useStudentStore, type Student } from '../store'
+import { useAuthStore } from '@/features/auth/store'
 import { categoryLabel, categoryOptions, statusLabel, statusOptions } from '@/shared/labels'
 
 const router = useRouter()
 const store = useStudentStore()
+const auth = useAuthStore()
 const { t } = useI18n()
+const isTeacher = computed(() => auth.isTeacher)
 
 const category = ref('')
 const status = ref('')
@@ -77,6 +80,9 @@ function rowActions(item: Student) {
       icon: 'lucide-circle-check',
       onClick: () => onActivate(item),
     })
+  }
+  if (isTeacher.value) {
+    return actions
   }
   if (item.disabled) {
     actions.push({ label: t('list.restore'), icon: 'lucide-rotate-ccw', onClick: () => onRestore(item) })
@@ -189,7 +195,7 @@ onMounted(async () => {
     >
       <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
       <Select v-model="status" :options="statusFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
-      <div class="flex items-center gap-2">
+      <div v-if="!isTeacher" class="flex items-center gap-2">
         <span class="shrink-0 text-p-sm text-ink-gray-5">{{ t('list.deleted') }}</span>
         <Switch v-model="includeDisabled" />
       </div>

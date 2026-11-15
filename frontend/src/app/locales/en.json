@@ -414,6 +414,12 @@
     "adminActivate": "Your student account will be activated by an admin.",
     "failure": "Failed to save. Please try again."
   },
+  "teacher": {
+    "welcomeTitle": "Welcome, {name}!",
+    "welcomeBody": "Add students to your school and review their practice results.",
+    "manageStudents": "Manage students",
+    "viewPractices": "Student practices"
+  },
   "schools": {
     "add": "Add school",
     "name": "School",
@@ -555,7 +561,8 @@
     "createStudent": "Failed to create student",
     "updateStudent": "Failed to update student",
     "purgeStudent": "Failed to purge student",
-    "importStudents": "Failed to import students"
+    "importStudents": "Failed to import students",
+    "teacherStudentNote": "Students you add are registered to your school and start as Inactive until activated."
   },
   "dash": {
     "home": {
@@ -701,11 +708,14 @@
     "failed": "Failed to import",
     "successTitle": "Success: {inserted} inserted, {updated} updated.",
     "summary": "{inserted} inserted, {updated} updated, {errors} errors.",
-    "rowError": "Row {row}: {message}"
+    "rowError": "Row {row}: {message}",
+    "teacherDesc": "Upload an xlsx file. Required columns: first_name, last_name, email, username, password, category. Students are added to your school as Inactive."
   },
   "practice": {
     "startPractice": "Start Practice",
     "noData": "No practices yet.",
+    "searchPlaceholder": "Search name, email, or school…",
+    "noMatch": "No practices match the filters.",
     "startFailed": "Failed to start practice",
     "createdToast": "A new practice sheet was created",
     "cardTitle": "Practice {date}",

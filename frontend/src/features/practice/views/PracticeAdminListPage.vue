@@ -20,6 +20,7 @@ import { categoryLabel, categoryOptions } from '@/shared/labels'
 import ListFoot from '@/shared/components/ListFoot.vue'
 import ListHead from '@/shared/components/ListHead.vue'
 import ListState from '@/shared/components/ListState.vue'
+import ListToolbar from '@/shared/components/ListToolbar.vue'
 import { List, ListCell, ListHeaderCell, ListRow, ListRows } from 'frappe-ui/list'
 
 import { useAuthStore } from '@/features/auth/store'
@@ -31,6 +32,8 @@ const { t } = useI18n()
 const auth = useAuthStore()
 
 const category = ref('')
+const search = ref('')
+const perPage = ref(20)
 const settingsOpen = ref(false)
 const minDraft = ref<number | string>(10)
 const savingSettings = ref(false)
@@ -45,11 +48,23 @@ const columns = {
 
 const categoryFilter = computed(() => categoryOptions(true))
 
+// Search filters the current page client-side (the /practice endpoint has no
+// query param); same approach as EventListPage.
+const filteredItems = computed(() => {
+  const term = search.value.trim().toLowerCase()
+  if (!term) return store.adminItems
+  return store.adminItems.filter((item) =>
+    [item.studentName, item.studentEmail, item.studentSchool]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(term)),
+  )
+})
+
 function reload() {
   return store.listAdmin({
     category: category.value || undefined,
     page: store.adminPage,
-    perPage: store.adminPerPage,
+    perPage: perPage.value,
   })
 }
 
@@ -118,6 +133,11 @@ watch(category, () => {
   reload()
 })
 
+watch(perPage, () => {
+  store.adminPage = 1
+  reload()
+})
+
 onMounted(async () => {
   await reload()
   gateReady.value = true
@@ -135,6 +155,7 @@ onMounted(async () => {
         :route="{ name: 'StudentList' }"
       />
       <Button
+        v-if="auth.isAdmin"
         variant="outline"
         theme="gray"
         icon-left="lucide-settings-2"
@@ -151,6 +172,7 @@ onMounted(async () => {
         :route="{ name: 'StudentList' }"
       />
       <Button
+        v-if="auth.isAdmin"
         variant="ghost"
         icon="lucide-settings-2"
         :label="t('practice.settingsBtn')"
@@ -165,9 +187,14 @@ onMounted(async () => {
   </div>
 
   <div v-else class="mx-auto w-full max-w-6xl space-y-4 px-5 py-6">
-    <div class="flex items-center gap-2">
-      <Select v-model="category" :options="categoryFilter" class="w-36" />
-    </div>
+    <ListToolbar
+      v-model:search="search"
+      v-model:per-page="perPage"
+      :show-per-page="!empty"
+      :placeholder="t('practice.searchPlaceholder')"
+    >
+      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
+    </ListToolbar>
 
     <div data-tour="admin-practice-list">
       <ListState
@@ -175,7 +202,7 @@ onMounted(async () => {
         :error="store.error"
         :empty="empty"
         icon="lucide-clipboard-list"
-        :empty-message="t('practice.noData')"
+        :empty-message="category || search ? t('practice.noMatch') : t('practice.noData')"
       >
         <List :row-height="40" :columns="columns" class="list-row-px-3">
         <ListHead>
@@ -186,7 +213,7 @@ onMounted(async () => {
           <ListHeaderCell class="max-lg:hidden">{{ t('list.date') }}</ListHeaderCell>
           <ListHeaderCell>{{ t('list.status') }}</ListHeaderCell>
         </ListHead>
-        <ListRows :items="store.adminItems" v-slot="{ item }">
+        <ListRows :items="filteredItems" v-slot="{ item }">
           <ListRow :value="item.name" @click="openRow(item)">
             <ListCell>
               <div class="flex min-w-0 flex-col">
@@ -229,7 +256,7 @@ onMounted(async () => {
         v-if="!empty"
         :total="store.adminTotal"
         :page="store.adminPage"
-        :per-page="store.adminPerPage"
+        :per-page="perPage"
         @update:page="goToPage"
       />
     </div>

@@ -414,6 +414,12 @@
     "adminActivate": "Akun siswa akan diaktifkan oleh admin.",
     "failure": "Gagal menyimpan. Silakan coba lagi."
   },
+  "teacher": {
+    "welcomeTitle": "Selamat datang, {name}!",
+    "welcomeBody": "Tambahkan siswa di sekolahmu dan tinjau hasil latihan mereka.",
+    "manageStudents": "Kelola siswa",
+    "viewPractices": "Latihan siswa"
+  },
   "schools": {
     "add": "Tambah sekolah",
     "name": "Sekolah",
@@ -555,7 +561,8 @@
     "createStudent": "Gagal membuat siswa",
     "updateStudent": "Gagal memperbarui siswa",
     "purgeStudent": "Gagal menghapus permanen siswa",
-    "importStudents": "Gagal mengimpor siswa"
+    "importStudents": "Gagal mengimpor siswa",
+    "teacherStudentNote": "Siswa yang kamu tambahkan terdaftar di sekolahmu dan berstatus Inactive sampai diaktifkan."
   },
   "dash": {
     "home": {
@@ -701,11 +708,14 @@
     "failed": "Gagal mengimpor",
     "successTitle": "Berhasil: {inserted} ditambahkan, {updated} diperbarui.",
     "summary": "{inserted} ditambahkan, {updated} diperbarui, {errors} galat.",
-    "rowError": "Baris {row}: {message}"
+    "rowError": "Baris {row}: {message}",
+    "teacherDesc": "Unggah berkas xlsx. Kolom wajib: first_name, last_name, email, username, password, category. Siswa ditambahkan ke sekolahmu dengan status Inactive."
   },
   "practice": {
     "startPractice": "Mulai Latihan",
     "noData": "Belum ada latihan.",
+    "searchPlaceholder": "Cari nama, email, atau sekolah…",
+    "noMatch": "Tidak ada latihan yang cocok dengan filter.",
     "startFailed": "Gagal memulai latihan",
     "createdToast": "Lembar latihan baru dibuat",
     "cardTitle": "Latihan {date}",

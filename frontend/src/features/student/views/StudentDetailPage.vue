@@ -5,13 +5,16 @@ import { useI18n } from 'vue-i18n'
 import { Badge, Button, ErrorMessage, Spinner, Skeleton, dialog, toast } from 'frappe-ui'
 
 import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
+import { useAuthStore } from '@/features/auth/store'
 import { useStudentStore } from '../store'
 import { categoryLabel, statusLabel } from '@/shared/labels'
 
 const route = useRoute()
 const router = useRouter()
 const store = useStudentStore()
+const auth = useAuthStore()
 const { t } = useI18n()
+const isTeacher = computed(() => auth.isTeacher)
 
 const userId = computed(() => route.params.userId as string)
 const student = computed(() => store.current)
@@ -69,7 +72,7 @@ onMounted(load)
         :route="{ name: 'StudentEdit', params: { userId } }"
       />
       <Button
-        v-if="student && !student.disabled"
+        v-if="student && !student.disabled && !isTeacher"
         variant="outline"
         theme="red"
         icon-left="lucide-trash-2"
@@ -92,7 +95,7 @@ onMounted(load)
         :route="{ name: 'StudentEdit', params: { userId } }"
       />
       <Button
-        v-if="student && !student.disabled"
+        v-if="student && !student.disabled && !isTeacher"
         variant="ghost"
         icon="lucide-trash-2"
         :label="t('list.delete')"

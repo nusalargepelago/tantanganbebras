@@ -1,28 +1,29 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { Spinner } from 'frappe-ui'
 
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useAuthStore } from '@/features/auth/store'
 import AdminSchoolsDashboardView from './AdminSchoolsDashboardView.vue'
 import StudentDashboardView from './StudentDashboardView.vue'
+import TeacherDashboardView from './TeacherDashboardView.vue'
 
 const auth = useAuthStore()
 
 const gateReady = computed(() => auth.checked)
-const showAdmin = computed(() => auth.isAdmin || auth.isStaff)
-
-onMounted(async () => {
-  if (!auth.checked) await auth.fetchMe()
+const sector = computed(() => {
+  if (auth.isAdmin) return 'admin'
+  if (auth.isTeacher) return 'teacher'
+  return 'student'
 })
 </script>
 
 <template>
-  <div v-if="!gateReady" class="flex justify-center py-10">
-    <Spinner />
-  </div>
+  <AppPageHeader />
 
-  <template v-else>
-    <AdminSchoolsDashboardView v-if="showAdmin" />
-    <StudentDashboardView v-else />
-  </template>
+  <Spinner v-if="!gateReady" />
+
+  <AdminSchoolsDashboardView v-else-if="sector === 'admin'" />
+  <TeacherDashboardView v-else-if="sector === 'teacher'" />
+  <StudentDashboardView v-else />
 </template>
