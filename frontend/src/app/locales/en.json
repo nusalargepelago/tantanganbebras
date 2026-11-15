@@ -13,7 +13,8 @@
     "practiceReview": "Practice Review",
     "todo": "ToDo",
     "users": "Users",
-    "backup": "Backup"
+    "backup": "Backup",
+    "schools": "Schools"
   },
   "menu": {
     "theme": "Theme",
@@ -384,18 +385,6 @@
       "noAccount": "Don't have an account?",
       "register": "Register"
     },
-    "studentRegister": {
-      "title": "Student Register",
-      "adminActivate": "The account will be activated by an admin.",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "usernameMin": "Min. 3 characters",
-      "passwordMin": "Min. 6 characters",
-      "category": "Category",
-      "school": "School",
-      "city": "City",
-      "country": "Country"
-    },
     "passwordRules": {
       "uppercase": "One uppercase letter",
       "lowercase": "One lowercase letter",
@@ -403,6 +392,45 @@
       "special": "One special character",
       "length": "At least 8 characters"
     }
+  },
+  "onboarding": {
+    "title": "Complete your profile",
+    "subtitle": "Choose a role for your account. This cannot be changed later.",
+    "student": "Student",
+    "studentHint": "I'm a student joining the challenge",
+    "teacher": "Teacher",
+    "teacherHint": "I'm a teacher guiding students",
+    "back": "Choose again",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "category": "Category",
+    "school": "School",
+    "city": "City",
+    "country": "Country",
+    "schoolPlaceholder": "Search schools…",
+    "schoolsLoadFailed": "Failed to load the school list. Check your connection and reload the page.",
+    "submitStudent": "Join as student",
+    "submitTeacher": "Register as teacher",
+    "adminActivate": "Your student account will be activated by an admin.",
+    "failure": "Failed to save. Please try again."
+  },
+  "schools": {
+    "add": "Add school",
+    "name": "School",
+    "namePlaceholder": "e.g. SMPN 1 Mataram",
+    "city": "City",
+    "cityPlaceholder": "Search cities…",
+    "searchPlaceholder": "Search schools…",
+    "noData": "No schools yet",
+    "loadFailed": "Failed to load schools",
+    "citiesLoadFailed": "Failed to load cities",
+    "saveFailed": "Failed to save school",
+    "createdToast": "School created",
+    "updatedToast": "School updated",
+    "deactivatedToast": "School deactivated",
+    "activatedToast": "School activated",
+    "deactivate": "Deactivate",
+    "activate": "Activate"
   },
   "shared": {
     "search": "Search…",
@@ -413,6 +441,8 @@
     "cancel": "Cancel",
     "save": "Save",
     "ok": "OK",
+    "selectPlaceholder": "Select…",
+    "selectSchoolFirst": "Select a school first",
     "forbiddenTitle": "Access denied",
     "forbiddenMessage": "This page requires administrator privileges. Your account is registered as a regular user. Contact an administrator to get access.",
     "close": "Close",
@@ -516,6 +546,7 @@
     "purgeFailed": "Failed to purge student",
     "purgedToast": "Student purged",
     "loadFailed": "Failed to load student",
+    "schoolsLoadFailed": "Failed to load the school list. Check your connection and reload the page.",
     "saveFailed": "Failed to save student",
     "updatedToast": "Student updated",
     "createdToast": "Student created",
@@ -602,6 +633,14 @@
     },
     "loadStatistics": "Failed to load statistics",
     "loadDashboard": "Failed to load dashboard",
+    "totalUsers": "Total users",
+    "registration": "Registration",
+    "registrationOpen": "Open",
+    "registrationClosed": "Closed",
+    "adminConsole": "Administration",
+    "adminConsoleHint": "Manage users, roles, and registration.",
+    "manageUsers": "Manage users",
+    "loadStatsFailed": "Could not load account stats",
     "welcomeBack": "Welcome back",
     "roles": "Roles",
     "noRoles": "No roles assigned"
@@ -950,9 +989,13 @@
       "title": "Student Sign in",
       "description": "Sign in with your student account."
     },
-    "StudentRegister": {
-      "title": "Student Registration",
-      "description": "Register as a student to join challenges and practice."
+    "Onboarding": {
+      "title": "Choose your role",
+      "description": "Choose whether you join as a student or a teacher."
+    },
+    "SchoolList": {
+      "title": "Schools",
+      "description": "Manage the canonical school list."
     },
     "Setup": {
       "title": "Setup",

@@ -480,6 +480,10 @@ function onViewportChange(): void {
 
 function maybeAutoStart(): void {
   if (!auth.checked || !auth.user || !route.meta.requiresAuth) return
+  // The onboarding gate is not the place for a tour — it starts after the
+  // user has completed classification.
+  if (route.name === 'Onboarding') return
+  if (!auth.isAdmin && auth.classification !== 'student' && auth.classification !== 'teacher') return
   if (isRunning.value || autoTimer !== null) return
   const userId = auth.user.id
   if (autoStartedFor.value === userId) return

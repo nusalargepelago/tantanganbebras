@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import {
   Badge,
   Button,
+  Combobox,
   ErrorMessage,
   FormControl,
   Select,
@@ -15,6 +16,7 @@ import {
 import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useStudentStore } from '../store'
 import { categoryOptions, statusOptions } from '@/shared/labels'
+import { fetchSchools, schoolOptions, type SchoolItem } from '@/shared/masters'
 
 const route = useRoute()
 const router = useRouter()
@@ -34,11 +36,12 @@ const form = reactive({
   username: '',
   password: '',
   category: 'cub',
-  school: '',
-  city: '',
-  country: 'Indonesia',
+  schoolId: null as string | null,
   status: 'Inactive',
 })
+const schools = ref<SchoolItem[]>([])
+const schoolSelect = ref<{ label: string; value: string }[]>([])
+const pickedSchool = computed(() => schools.value.find((s) => s.id === form.schoolId))
 const snapshot = ref('')
 const submitting = ref(false)
 const loadError = ref('')
@@ -54,10 +57,20 @@ const disabled = computed(
     !form.lastName.trim() ||
     !form.email.trim() ||
     !form.username.trim() ||
-    (!isEdit.value && form.password.length < 6),
+    (!isEdit.value && form.password.length < 6) ||
+    !form.schoolId,
 )
 
 async function load() {
+  try {
+    schools.value = await fetchSchools()
+  } catch {
+    loadError.value = t('student.schoolsLoadFailed')
+    gateReady.value = true
+    return
+  } finally {
+    schoolSelect.value = schoolOptions(schools.value)
+  }
   if (!isEdit.value) {
     gateReady.value = true
     snapshot.value = JSON.stringify(form)
@@ -69,6 +82,20 @@ async function load() {
     gateReady.value = true
     return
   }
+  if (student.schoolId && !schools.value.some((s) => s.id === student.schoolId)) {
+    // The student's school was deactivated — it is hidden from the active
+    // list, so surface it read-only as the current option.
+    schools.value = [
+      ...schools.value,
+      {
+        id: student.schoolId,
+        name: student.school ? `${student.school} (${t('status.inactive')})` : student.schoolId,
+        isActive: false,
+        city: student.city ? { id: '', name: student.city } : null,
+      },
+    ]
+    schoolSelect.value = schoolOptions(schools.value)
+  }
   Object.assign(form, {
     firstName: student.firstName,
     lastName: student.lastName,
@@ -76,9 +103,7 @@ async function load() {
     username: student.username,
     password: '',
     category: student.category,
-    school: student.school ?? '',
-    city: student.city ?? '',
-    country: student.country ?? 'Indonesia',
+    schoolId: student.schoolId ?? null,
     status: student.status,
   })
   snapshot.value = JSON.stringify(form)
@@ -87,7 +112,9 @@ async function load() {
 
 async function onSubmit() {
   if (disabled.value || !isDirty.value) return
+  if (!form.schoolId) return
   submitting.value = true
+  const schoolPart: Record<string, unknown> = { schoolId: form.schoolId, status: form.status }
   let saved
   if (isEdit.value) {
     const payload: Record<string, unknown> = {
@@ -95,10 +122,7 @@ async function onSubmit() {
       lastName: form.lastName.trim(),
       email: form.email.trim(),
       category: form.category,
-      school: form.school.trim() || null,
-      city: form.city.trim() || null,
-      country: form.country.trim() || null,
-      status: form.status,
+      ...schoolPart,
     }
     if (form.password) payload.password = form.password
     saved = await store.update(userId.value!, payload)
@@ -110,10 +134,8 @@ async function onSubmit() {
       username: form.username.trim(),
       password: form.password,
       category: form.category,
-      school: form.school.trim() || undefined,
-      city: form.city.trim() || undefined,
-      country: form.country.trim() || undefined,
-      status: form.status,
+      status: 'Inactive',
+      ...schoolPart,
     })
   }
   submitting.value = false
@@ -226,11 +248,25 @@ onMounted(load)
         <Select v-model="form.category" :label="t('field.category')" :options="categorySelect" />
         <Select v-model="form.status" :label="t('field.status')" :options="statusSelect" />
       </div>
-      <div class="grid gap-4 sm:grid-cols-2">
-        <FormControl v-model="form.school" :label="t('field.school')" placeholder="SMPN 1" />
-        <FormControl v-model="form.city" :label="t('field.city')" placeholder="Bandung" />
-      </div>
-      <FormControl v-model="form.country" :label="t('field.country')" placeholder="Indonesia" />
+      <Combobox
+        v-model="form.schoolId"
+        :label="t('field.school')"
+        :options="schoolSelect"
+        :placeholder="t('shared.selectPlaceholder')"
+        :required="true"
+      />
+      <dl class="space-y-1 rounded-6 border border-outline-gray-1 bg-surface-base px-3 py-2 text-p-sm">
+        <div class="flex items-center justify-between gap-3">
+          <dt class="text-ink-gray-5">{{ t('field.city') }}</dt>
+          <dd class="truncate text-ink-gray-8">
+            {{ pickedSchool?.city?.name ?? t('shared.selectSchoolFirst') }}
+          </dd>
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          <dt class="text-ink-gray-5">{{ t('field.country') }}</dt>
+          <dd class="text-ink-gray-8">Indonesia</dd>
+        </div>
+      </dl>
     </section>
   </div>
 </template>

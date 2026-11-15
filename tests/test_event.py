@@ -1,6 +1,6 @@
 from datetime import UTC, datetime, timedelta
 
-from conftest import csrf_client
+from conftest import TEST_SCHOOL_ID, csrf_client
 
 MC = {
     "questionType": "Multiple Choice",
@@ -19,7 +19,7 @@ STUDENT = {
     "lastName": "Santoso",
     "email": "budi@example.test",
     "username": "budi",
-    "password": "Siswa1234",
+    "password": "Siswa!234",
     "category": "cub",
 }
 
@@ -42,8 +42,25 @@ def _make_questions(admin, codes=("Q000", "Q001"), **overrides):
 
 def _student(app, **overrides):
     client = csrf_client(app)
+    payload = {**STUDENT, **overrides}
     response = client.post(
-        "/api/v1/student/auth/register", json={**STUDENT, **overrides}
+        "/api/v1/auth/register",
+        json={
+            "email": payload["email"],
+            "username": payload["username"],
+            "password": payload["password"],
+            "fullName": f"{payload['firstName']} {payload['lastName']}",
+        },
+    )
+    assert response.status_code == 201, response.get_json()
+    response = client.post(
+        "/api/v1/onboarding/student",
+        json={
+            "firstName": payload["firstName"],
+            "lastName": payload["lastName"],
+            "category": payload["category"],
+            "schoolId": payload.get("schoolId", TEST_SCHOOL_ID),
+        },
     )
     assert response.status_code == 201, response.get_json()
     return client

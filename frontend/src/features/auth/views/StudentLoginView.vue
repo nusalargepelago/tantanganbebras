@@ -94,7 +94,7 @@ onMounted(loadBranding)
 
         <p class="text-center text-p-sm text-ink-gray-5">
           {{ t('auth.studentLogin.noAccount') }}
-          <router-link :to="{ name: 'StudentRegister' }" class="text-ink-blue-link">
+          <router-link :to="{ name: 'Register' }" class="text-ink-blue-link">
             {{ t('auth.studentLogin.register') }}
           </router-link>
         </p>

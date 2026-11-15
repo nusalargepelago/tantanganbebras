@@ -55,9 +55,9 @@ function pickFile() {
       <h2 class="text-xl-semibold text-ink-gray-8">{{ t('import.uploadTitle') }}</h2>
       <p class="text-p-sm text-ink-gray-5">
         {{ t('import.uploadDesc1') }}
-        <code class="text-p-xs">first_name, last_name, email, username, password, category</code>
+        <code class="text-p-xs">first_name, last_name, email, username, password, category, school</code>
         {{ t('import.uploadDesc2') }}
-        <code class="text-p-xs">school, city, country, status</code>
+        <code class="text-p-xs">status</code>
         {{ t('import.uploadDesc3') }}
       </p>
 

@@ -94,6 +94,13 @@ export const NAV_ITEMS: NavItem[] = [
     route: { name: 'Backup' },
     roles: ['admin'],
   },
+  {
+    key: 'Schools',
+    labelKey: 'nav.schools',
+    icon: 'lucide-school',
+    route: { name: 'Schools' },
+    roles: ['admin'],
+  },
 ]
 
 export function orderedNavItems(order: string[]): NavItem[] {

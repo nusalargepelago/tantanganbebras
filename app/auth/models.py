@@ -24,6 +24,7 @@ user_roles = db.Table(
 
 
 MEMBER_ROLE = "Member"
+TEACHER_ROLE = "Teacher"
 
 
 class Role(db.Model):
@@ -80,4 +81,4 @@ class User(db.Model, UserMixin):
         return any(r.name == name for r in self.roles)
 
 
-__all__ = ["MEMBER_ROLE", "Role", "User", "user_roles"]
+__all__ = ["MEMBER_ROLE", "TEACHER_ROLE", "Role", "User", "user_roles"]

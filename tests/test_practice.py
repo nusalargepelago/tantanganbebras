@@ -1,4 +1,9 @@
-from conftest import csrf_client
+from conftest import (
+    TEST_SCHOOL_ID,
+    TEST_SCHOOL_SD_ID,
+    TEST_SCHOOL_SD_NAME,
+    csrf_client,
+)
 
 MC = {
     "questionType": "Multiple Choice",
@@ -17,7 +22,7 @@ STUDENT = {
     "lastName": "Santoso",
     "email": "budi@example.test",
     "username": "budi",
-    "password": "Siswa1234",
+    "password": "Siswa!234",
     "category": "cub",
 }
 
@@ -37,8 +42,25 @@ def _make_questions(admin, n=10, **overrides):
 
 def _student(app, **overrides):
     client = csrf_client(app)
+    payload = {**STUDENT, **overrides}
     response = client.post(
-        "/api/v1/student/auth/register", json={**STUDENT, **overrides}
+        "/api/v1/auth/register",
+        json={
+            "email": payload["email"],
+            "username": payload["username"],
+            "password": payload["password"],
+            "fullName": f"{payload['firstName']} {payload['lastName']}",
+        },
+    )
+    assert response.status_code == 201, response.get_json()
+    response = client.post(
+        "/api/v1/onboarding/student",
+        json={
+            "firstName": payload["firstName"],
+            "lastName": payload["lastName"],
+            "category": payload["category"],
+            "schoolId": payload.get("schoolId", TEST_SCHOOL_ID),
+        },
     )
     assert response.status_code == 201, response.get_json()
     return client
@@ -294,14 +316,14 @@ def test_mine_lists_practices(app, admin):
 
 def test_admin_list_paginated_and_student_block(app, admin):
     _make_questions(admin)
-    student = _student(app, school="SMP Negeri 1")
+    student = _student(app, schoolId=TEST_SCHOOL_SD_ID)
     _create(student)
     body = admin.get("/api/v1/practice").get_json()
     assert set(body) == {"items", "total", "page", "perPage"}
     assert body["total"] == 1
     assert body["items"][0]["studentName"] == "Budi Santoso"
     assert body["items"][0]["studentEmail"] == "budi@example.test"
-    assert body["items"][0]["studentSchool"] == "SMP Negeri 1"
+    assert body["items"][0]["studentSchool"] == TEST_SCHOOL_SD_NAME
 
     assert student.get("/api/v1/practice").status_code == 403
 
@@ -495,3 +517,50 @@ def test_start_returns_unfinished_practice_when_newest_is_finished(app, admin):
 
     payload = student.get("/api/v1/student/practice/start").get_json()
     assert payload["practice"]["name"] == "stale-practice"
+
+
+# --- teacher (school-scoped practice review) -----------------------------
+
+
+def test_teacher_practice_list_scoped_to_school(app, admin, teacher):
+    _make_questions(admin)
+    own = _student(app)
+    _create(own)
+    foreign = _student(
+        app, username="budi2", email="budi2@example.test",
+        schoolId=TEST_SCHOOL_SD_ID,
+    )
+    _create(foreign)
+
+    body = teacher.get("/api/v1/practice").get_json()
+    assert body["total"] == 1
+    assert body["items"][0]["studentEmail"] == "budi@example.test"
+
+    body = admin.get("/api/v1/practice").get_json()
+    assert body["total"] == 2
+
+
+def test_teacher_practice_detail_own_school(app, admin, teacher):
+    _make_questions(admin)
+    student = _student(app)
+    created = _create(student)
+    body = teacher.get(f"/api/v1/practice/{created['name']}").get_json()
+    assert body["student"]["username"] == "budi"
+
+
+def test_teacher_practice_detail_foreign_is_404(app, admin, teacher):
+    _make_questions(admin)
+    foreign = _student(
+        app, username="budi2", email="budi2@example.test",
+        schoolId=TEST_SCHOOL_SD_ID,
+    )
+    created = _create(foreign)
+    response = teacher.get(f"/api/v1/practice/{created['name']}")
+    assert response.status_code == 404
+    assert response.get_json() == {"message": "practice_not_found"}
+
+
+def test_teacher_practice_settings_forbidden(teacher):
+    assert teacher.get("/api/v1/practice/settings").status_code == 403
+    response = teacher.put("/api/v1/practice/settings", json={"minQuestions": 3})
+    assert response.status_code == 403

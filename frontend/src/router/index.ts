@@ -16,7 +16,9 @@ import { backupRoutes } from '@/features/backup/routes'
 import { dashboardRoutes } from '@/features/dashboard/routes'
 import { eventRoutes } from '@/features/event/routes'
 import { eventStudentRoutes } from '@/features/event-student/routes'
+import { onboardingRoutes } from '@/features/onboarding/routes'
 import { practiceRoutes } from '@/features/practice/routes'
+import { schoolRoutes } from '@/features/school/routes'
 import { questionRoutes } from '@/features/question/routes'
 import { setupRoutes } from '@/features/setup/routes'
 import { studentRoutes } from '@/features/student/routes'
@@ -26,6 +28,7 @@ import { authGuard } from './guard'
 
 const routes: RouteRecordRaw[] = [
   ...authRoutes,
+  ...onboardingRoutes,
   ...setupRoutes,
   {
     path: '/',
@@ -40,6 +43,7 @@ const routes: RouteRecordRaw[] = [
       ...eventRoutes,
       ...eventStudentRoutes,
       ...todosRoutes,
+      ...schoolRoutes,
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },

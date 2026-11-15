@@ -257,13 +257,17 @@ class PracticeService(ServiceBase[PracticeRepository]):
             "beforeShuffle": before,
         }
 
-    def admin_detail(self, name: str) -> dict:
+    def admin_detail(self, name: str, *, school_id: str | None = None) -> dict:
         practice = self._repo.find_by_name(name)
         if practice is None:
             raise NotFound("practice_not_found")
 
         answer_map = {a.question_id: a for a in self._repo.get_answers(name)}
         student = self._students.find_by_user_id(practice.student_id)
+        if school_id is not None and (
+            student is None or student.school_id != school_id
+        ):
+            raise NotFound("practice_not_found")
         before = [
             {
                 "questionId": row.question_id,
@@ -306,7 +310,9 @@ class PracticeService(ServiceBase[PracticeRepository]):
             for p in self._repo.list_for_student(student_id, limit=100)
         ]
 
-    def list_admin(self, **filters) -> tuple[list[dict], int]:
+    def list_admin(self, *, school_id: str | None = None, **filters) -> tuple[list[dict], int]:
+        if school_id is not None:
+            filters["student_ids"] = self._students.ids_in_school(school_id)
         items, total = self._repo.list_all(**filters)
         students = {
             s.user_id: s
@@ -323,7 +329,7 @@ class PracticeService(ServiceBase[PracticeRepository]):
                     f"{student.user.first_name} {student.user.last_name}".strip() or None
                 )
                 email = student.user.email or None
-                school = student.school or None
+                school = student.school.name if student.school else None
             rows.append(
                 PracticeAdminOut.from_practice(
                     p, student_name=name, student_email=email, student_school=school

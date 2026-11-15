@@ -18,6 +18,7 @@ export interface Student {
   disabled: boolean
   disabledAt?: string | null
   createdAt?: string | null
+  schoolId?: string
 }
 
 export interface StudentPayload {
@@ -27,9 +28,8 @@ export interface StudentPayload {
   username: string
   password?: string
   category: string
-  school?: string | null
-  city?: string | null
-  country?: string | null
+  // Optional: teachers omit it — the backend pins the school and forces Inactive.
+  schoolId?: string
   status?: string
 }
 
@@ -40,9 +40,7 @@ export interface StudentUpdatePayload {
   username?: string
   password?: string
   category?: string
-  school?: string | null
-  city?: string | null
-  country?: string | null
+  schoolId?: string
   status?: string
 }
 

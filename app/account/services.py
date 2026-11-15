@@ -11,14 +11,14 @@ from app.account.repositories import (
     ApiKeyRepository,
     UserPreferenceRepository,
 )
-from app.auth.models import MEMBER_ROLE, Role, User
+from app.auth.models import MEMBER_ROLE, TEACHER_ROLE, Role, User
 from app.auth.repositories import RoleRepository, UserRepository
 from app.auth.services import AuthService
 from app.infra.audit import log as audit_log
 from framework.base import ServiceBase
 from framework.exceptions import Conflict, InvalidOperation, NotFound
 
-BUILTIN_ROLES = {MEMBER_ROLE}
+BUILTIN_ROLES = {MEMBER_ROLE, TEACHER_ROLE}
 
 
 class AccountService(ServiceBase[AccountRepository]):

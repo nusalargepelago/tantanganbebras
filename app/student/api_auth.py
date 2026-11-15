@@ -5,15 +5,14 @@ from flask import request
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.infra.csrf import clear_session_keep_csrf
-from app.student.dto import StudentLoginIn, StudentRegisterIn
+from app.student.dto import StudentLoginIn
 from app.student.presenters import StudentOut, StudentUserOut
 from app.student.services import StudentAuthService, branding
-from framework.api import BlueprintFactory, created, error, ok
+from framework.api import BlueprintFactory, error, ok
 from framework.extensions.rate_limit import limiter
 
 bp = BlueprintFactory("student_auth", __name__, url_prefix="/api/v1/student/auth")
 
-_rate_5 = limiter.limit("5/minute")
 _rate_10 = limiter.limit("10/minute")
 
 
@@ -27,17 +26,6 @@ def _session_payload(user, student) -> dict:
 @bp.get("/login")
 def student_branding():
     return ok(branding())
-
-
-@bp.post("/register")
-@_rate_5
-def student_register():
-    dto = StudentRegisterIn.validate(request.get_json(silent=True) or {})
-    user, student = StudentAuthService().register(dto)
-
-    clear_session_keep_csrf()
-    login_user(user, remember=True)
-    return created(_session_payload(user, student))
 
 
 @bp.post("/login")

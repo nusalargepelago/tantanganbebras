@@ -90,7 +90,7 @@ def create_app() -> Flask:
     init_api_key_auth(app)
 
     with app.app_context():
-        # Must precede ensure_member_role(): seeding checks that the roles table
+        # Must precede ensure_builtin_roles(): seeding checks that the roles table
         # exists, so on a fresh database it would silently skip without this.
         if migrations_enabled():
             run_migrations(app)
@@ -100,14 +100,16 @@ def create_app() -> Flask:
         from app.event.models import Event, EventAttempt  # noqa: F401
         from app.infra.audit import AuditLog  # noqa: F401
         from app.infra.models import AppSetting  # noqa: F401
-        from app.infra.roles import ensure_member_role
+        from app.infra.roles import ensure_builtin_roles
+        from app.onboarding.models import Teacher  # noqa: F401
         from app.practice.models import Practice  # noqa: F401
         from app.question.models import Question  # noqa: F401
+        from app.school.models import City, School  # noqa: F401
         from app.student.models import Student  # noqa: F401
         from app.todos.models import Todo  # noqa: F401
         from app.topic.models import Topic  # noqa: F401
 
-        ensure_member_role()
+        ensure_builtin_roles()
 
         from app.account import bp as account_bp
         from app.account.api_key_api import bp as account_api_key_bp
@@ -125,9 +127,11 @@ def create_app() -> Flask:
         from app.infra.seo import index_context
         from app.infra.setup import bp as setup_bp
         from app.infra.uploads import bp as uploads_bp
+        from app.onboarding import bp as onboarding_bp
         from app.practice import bp as practice_bp
         from app.practice import staff_bp as practice_staff_bp
         from app.question import bp as question_bp
+        from app.school import bp as school_bp
         from app.student import bp as student_bp
         from app.student import student_auth_bp, student_dashboard_bp, student_import_bp
         from app.todos import bp as todos_bp
@@ -152,6 +156,8 @@ def create_app() -> Flask:
         app.register_blueprint(student_auth_bp)
         app.register_blueprint(student_dashboard_bp)
         app.register_blueprint(student_import_bp)
+        app.register_blueprint(onboarding_bp)
+        app.register_blueprint(school_bp)
         app.register_blueprint(dashboard_bp)
         app.register_blueprint(todos_bp)
         app.register_blueprint(uploads_bp)

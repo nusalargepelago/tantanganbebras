@@ -20,9 +20,7 @@ class _StudentBase(DTOBase):
     first_name: str = DTOBase.field(..., alias="firstName", min_length=1, max_length=80)
     last_name: str = DTOBase.field(..., alias="lastName", min_length=1, max_length=80)
     category: Category = DTOBase.field(...)
-    school: str | None = DTOBase.field(None, max_length=140)
-    city: str | None = DTOBase.field(None, max_length=80)
-    country: str | None = DTOBase.field("Indonesia", max_length=80)
+    school_id: str | None = DTOBase.field(None, alias="schoolId", min_length=1, max_length=36)
 
     @field_validator("email", mode="before")
     @classmethod
@@ -38,12 +36,6 @@ class _StudentBase(DTOBase):
     @classmethod
     def normalize_username(cls, value):
         return value.strip() if isinstance(value, str) else value
-
-
-class StudentRegisterIn(_StudentBase):
-    """Validate a student self-registration payload (no password strength)."""
-
-    password: str = DTOBase.field(..., min_length=6, max_length=255)
 
 
 class StudentLoginIn(DTOBase):
@@ -76,9 +68,7 @@ class StudentUpdateIn(DTOBase):
     last_name: str | None = DTOBase.field(None, alias="lastName", min_length=1, max_length=80)
     password: str | None = DTOBase.field(None, min_length=6, max_length=255)
     category: Category | None = DTOBase.field(None)
-    school: str | None = DTOBase.field(None, max_length=140)
-    city: str | None = DTOBase.field(None, max_length=80)
-    country: str | None = DTOBase.field(None, max_length=80)
+    school_id: str | None = DTOBase.field(None, alias="schoolId", min_length=1, max_length=36)
     status: StudentStatus | None = DTOBase.field(None)
 
     @field_validator("email", mode="before")
@@ -107,7 +97,6 @@ __all__ = [
     "Category",
     "StudentCreateIn",
     "StudentLoginIn",
-    "StudentRegisterIn",
     "StudentStatus",
     "StudentUpdateIn",
 ]

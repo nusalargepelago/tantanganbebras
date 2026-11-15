@@ -3,6 +3,13 @@
 > Parent: [`00-master-overview.md`](00-master-overview.md)
 > Scope: `student` (discriminator above `ab_user`), API `/api/v1/student`, XLSX import, activation.
 
+> **Update (master sekolah/kota):** kolom free-text `school`/`city`/`country`
+> pada tabel siswa sudah diganti FK `school_id` → `schools` — kota dibaca dari
+> sekolah, negara selalu `"Indonesia"`. Lihat
+> [`08-master-schools-cities.md`](08-master-schools-cities.md). Pendaftaran
+> siswa kini lewat `/api/v1/auth/register` + klasifikasi onboarding (bukan
+> `/student/auth/register` lagi).
+
 ---
 
 ## 1. Entity & Tables

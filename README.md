@@ -46,11 +46,23 @@ dan tanpa layanan tambahan.
   soal tidak mengubah hasil yang sudah berjalan.
 - Halaman hasil untuk guru: skor dan durasi setiap peserta.
 
+### Akun, peran & master sekolah
+
+- **Satu pintu pendaftaran** — setelah register, setiap akun memilih peran
+  sekali di `/onboarding`: **siswa** (menunggu aktivasi admin) atau **guru**
+  (langsung dapat peran Teacher). Pilihan ini permanen.
+- **Kota ikut mengikuti sekolah** — form siswa/guru hanya memilih sekolah;
+  kota/kabupaten dibaca dari data induk sekolah dan negara selalu Indonesia.
+  Admin mengelola data induk sekolah lewat `/schools`.
+- Guru/siswa diblokir dari semua halaman staf; hanya admin yang bisa
+  mengelola sekolah.
+
 ### Manajemen siswa
 
-- Data siswa dengan kategori, sekolah, dan kota; aktivasi akun, hapus lunak, dan
-  pemulihan.
-- Impor massal dari XLSX, lengkap dengan templat yang bisa diunduh.
+- Data siswa dengan kategori, sekolah, dan kota (ikut sekolah); aktivasi akun,
+  hapus lunak, dan pemulihan.
+- Impor massal dari XLSX, lengkap dengan templat yang bisa diunduh — nama
+  sekolah harus terdaftar di data induk.
 - Pencarian dan filter berdasarkan kategori maupun status.
 
 ### Dasbor & laporan

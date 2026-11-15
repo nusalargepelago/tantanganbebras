@@ -13,7 +13,8 @@
     "practiceReview": "Review Latihan",
     "todo": "ToDo",
     "users": "Pengguna",
-    "backup": "Backup"
+    "backup": "Cadangan",
+    "schools": "Sekolah"
   },
   "menu": {
     "theme": "Tema",
@@ -384,18 +385,6 @@
       "noAccount": "Belum punya akun?",
       "register": "Daftar"
     },
-    "studentRegister": {
-      "title": "Registrasi Siswa",
-      "adminActivate": "Akun akan diaktifkan oleh admin.",
-      "firstName": "Nama depan",
-      "lastName": "Nama belakang",
-      "usernameMin": "Min. 3 karakter",
-      "passwordMin": "Min. 6 karakter",
-      "category": "Kategori",
-      "school": "Sekolah",
-      "city": "Kota",
-      "country": "Negara"
-    },
     "passwordRules": {
       "uppercase": "Satu huruf besar",
       "lowercase": "Satu huruf kecil",
@@ -403,6 +392,45 @@
       "special": "Satu karakter khusus",
       "length": "Minimal 8 karakter"
     }
+  },
+  "onboarding": {
+    "title": "Lengkapi profil",
+    "subtitle": "Pilih peran untuk akun ini. Pilihan tidak dapat diubah nanti.",
+    "student": "Siswa",
+    "studentHint": "Saya siswa yang akan mengikuti tantangan",
+    "teacher": "Guru",
+    "teacherHint": "Saya guru yang membimbing siswa",
+    "back": "Pilih ulang",
+    "firstName": "Nama depan",
+    "lastName": "Nama belakang",
+    "category": "Kategori",
+    "school": "Sekolah",
+    "city": "Kota",
+    "country": "Negara",
+    "schoolPlaceholder": "Cari sekolah…",
+    "schoolsLoadFailed": "Gagal memuat daftar sekolah. Periksa koneksi Anda lalu muat ulang halaman.",
+    "submitStudent": "Bergabung sebagai siswa",
+    "submitTeacher": "Daftar sebagai guru",
+    "adminActivate": "Akun siswa akan diaktifkan oleh admin.",
+    "failure": "Gagal menyimpan. Silakan coba lagi."
+  },
+  "schools": {
+    "add": "Tambah sekolah",
+    "name": "Sekolah",
+    "namePlaceholder": "mis. SMPN 1 Mataram",
+    "city": "Kota",
+    "cityPlaceholder": "Cari kota/kabupaten…",
+    "searchPlaceholder": "Cari sekolah…",
+    "noData": "Belum ada sekolah",
+    "loadFailed": "Gagal memuat sekolah",
+    "citiesLoadFailed": "Gagal memuat daftar kota/kabupaten",
+    "saveFailed": "Gagal menyimpan sekolah",
+    "createdToast": "Sekolah berhasil dibuat",
+    "updatedToast": "Sekolah berhasil diperbarui",
+    "deactivatedToast": "Sekolah dinonaktifkan",
+    "activatedToast": "Sekolah diaktifkan",
+    "deactivate": "Nonaktifkan",
+    "activate": "Aktifkan"
   },
   "shared": {
     "search": "Cari…",
@@ -413,6 +441,8 @@
     "cancel": "Batal",
     "save": "Simpan",
     "ok": "OK",
+    "selectPlaceholder": "Pilih…",
+    "selectSchoolFirst": "Pilih sekolah dulu",
     "forbiddenTitle": "Akses Ditolak",
     "forbiddenMessage": "Halaman ini memerlukan hak akses administrator. Akun Anda terdaftar sebagai pengguna biasa. Hubungi administrator untuk mendapatkan akses.",
     "close": "Tutup",
@@ -516,6 +546,7 @@
     "purgeFailed": "Gagal menghapus permanen siswa",
     "purgedToast": "Siswa dihapus permanen",
     "loadFailed": "Gagal memuat siswa",
+    "schoolsLoadFailed": "Gagal memuat daftar sekolah. Periksa koneksi Anda lalu muat ulang halaman.",
     "saveFailed": "Gagal menyimpan siswa",
     "updatedToast": "Siswa diperbarui",
     "createdToast": "Siswa dibuat",
@@ -602,6 +633,14 @@
     },
     "loadStatistics": "Gagal memuat statistik",
     "loadDashboard": "Gagal memuat dasbor",
+    "totalUsers": "Total pengguna",
+    "registration": "Registrasi",
+    "registrationOpen": "Terbuka",
+    "registrationClosed": "Tertutup",
+    "adminConsole": "Administrasi",
+    "adminConsoleHint": "Kelola pengguna, peran, dan registrasi.",
+    "manageUsers": "Kelola pengguna",
+    "loadStatsFailed": "Gagal memuat statistik akun",
     "welcomeBack": "Selamat datang kembali",
     "roles": "Peran",
     "noRoles": "Belum ada peran"
@@ -950,9 +989,13 @@
       "title": "Masuk Siswa",
       "description": "Masuk dengan akun siswa Anda."
     },
-    "StudentRegister": {
-      "title": "Registrasi Siswa",
-      "description": "Daftar sebagai siswa untuk mengikuti tantangan dan latihan."
+    "Onboarding": {
+      "title": "Pilih peranmu",
+      "description": "Pilih bergabung sebagai siswa atau guru."
+    },
+    "SchoolList": {
+      "title": "Sekolah",
+      "description": "Kelola daftar sekolah resmi."
     },
     "Setup": {
       "title": "Setup",

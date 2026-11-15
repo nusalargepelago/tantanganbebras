@@ -16,6 +16,7 @@ class StudentOut(UtcPresenterBase):
     first_name: str = PresenterBase.field(alias="firstName")
     last_name: str = PresenterBase.field(alias="lastName")
     category: str
+    school_id: str = PresenterBase.field(alias="schoolId")
     school: str | None = PresenterBase.field(None)
     city: str | None = PresenterBase.field(None)
     country: str | None = PresenterBase.field(None)
@@ -32,6 +33,9 @@ class StudentOut(UtcPresenterBase):
             email=user.email,
             first_name=user.first_name,
             last_name=user.last_name,
+            school=student.school.name if student.school else None,
+            city=student.school.city.name if student.school and student.school.city else None,
+            country="Indonesia",
         )
 
 

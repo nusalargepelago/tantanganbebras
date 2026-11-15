@@ -1,19 +1,36 @@
-from conftest import csrf_client
+from conftest import TEST_SCHOOL_ID, TEST_SCHOOL_NAME, csrf_client
 
 STUDENT = {
     "firstName": "Budi",
     "lastName": "Santoso",
     "email": "budi@example.test",
     "username": "budi",
-    "password": "Siswa1234",
+    "password": "Siswa!234",
     "category": "cub",
 }
 
 
 def _student(app, **overrides):
     client = csrf_client(app)
+    payload = {**STUDENT, **overrides}
     response = client.post(
-        "/api/v1/student/auth/register", json={**STUDENT, **overrides}
+        "/api/v1/auth/register",
+        json={
+            "email": payload["email"],
+            "username": payload["username"],
+            "password": payload["password"],
+            "fullName": f"{payload['firstName']} {payload['lastName']}",
+        },
+    )
+    assert response.status_code == 201, response.get_json()
+    response = client.post(
+        "/api/v1/onboarding/student",
+        json={
+            "firstName": payload["firstName"],
+            "lastName": payload["lastName"],
+            "category": payload["category"],
+            "schoolId": payload.get("schoolId", TEST_SCHOOL_ID),
+        },
     )
     assert response.status_code == 201, response.get_json()
     return client
@@ -70,22 +87,10 @@ def test_admin_dashboard_stats_populated(app, admin):
     from app.student.models import Student
     from framework.extensions import db
 
-    _student(
-        app,
-        email="stu1@example.test",
-        username="stu1",
-        school="SMA Negeri 1 Jakarta",
-        category="cub",
-    )
-    _student(
-        app,
-        email="stu2@example.test",
-        username="stu2",
-        school="SMA Negeri 1 Jakarta",
-        category="scout",
-    )
+    _student(app, email="stu1@example.test", username="stu1", category="cub")
+    _student(app, email="stu2@example.test", username="stu2", category="scout")
     _student(app, email="stu3@example.test", username="stu3", category="cub")
-    _student(app, email="stu4@example.test", username="stu4", school="", category="rover")
+    _student(app, email="stu4@example.test", username="stu4", category="rover")
 
     with app.app_context():
         rows = {s.user.email: s for s in db.session.query(Student).all()}
@@ -97,11 +102,7 @@ def test_admin_dashboard_stats_populated(app, admin):
 
     body = admin.get("/api/v1/dashboard/stats").get_json()
     assert body["totals"] == {"students": 4, "schools": 1}
-    # count ties break on label ASC; "(No school)" sorts before letters in ASCII
-    assert body["schools"] == [
-        {"school": "(No school)", "count": 2},
-        {"school": "SMA Negeri 1 Jakarta", "count": 2},
-    ]
+    assert body["schools"] == [{"school": TEST_SCHOOL_NAME, "count": 4}]
     assert body["registrations"] == [
         {"year": 2025, "count": 1},
         {"year": 2026, "count": 3},

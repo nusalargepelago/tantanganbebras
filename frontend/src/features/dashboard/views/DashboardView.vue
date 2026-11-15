@@ -3,13 +3,13 @@ import { computed, onMounted } from 'vue'
 import { Spinner } from 'frappe-ui'
 
 import { useAuthStore } from '@/features/auth/store'
-import AdminDashboardView from './AdminDashboardView.vue'
+import AdminSchoolsDashboardView from './AdminSchoolsDashboardView.vue'
 import StudentDashboardView from './StudentDashboardView.vue'
 
 const auth = useAuthStore()
 
 const gateReady = computed(() => auth.checked)
-const isAdmin = computed(() => auth.isAdmin || auth.isStaff)
+const showAdmin = computed(() => auth.isAdmin || auth.isStaff)
 
 onMounted(async () => {
   if (!auth.checked) await auth.fetchMe()
@@ -22,7 +22,7 @@ onMounted(async () => {
   </div>
 
   <template v-else>
-    <AdminDashboardView v-if="isAdmin" />
+    <AdminSchoolsDashboardView v-if="showAdmin" />
     <StudentDashboardView v-else />
   </template>
 </template>

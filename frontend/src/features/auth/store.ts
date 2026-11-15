@@ -53,9 +53,10 @@ export const useAuthStore = defineStore('auth', () => {
   const checked = ref(false)
   const error = ref('')
   const registrationMode = ref<'open' | 'closed' | null>(null)
+  const classification = ref<'none' | 'student' | 'teacher' | null>(null)
 
-  const isStudent = computed(() => !!student.value)
   const isAdmin = computed(() => user.value?.appRole === 'admin')
+  const isStudent = computed(() => !!student.value)
   // Mirrors the backend require_staff gate: admin, or an account without a student row.
   const isStaff = computed(() => !!user.value && (!student.value || isAdmin.value))
 
@@ -78,6 +79,7 @@ export const useAuthStore = defineStore('auth', () => {
       const { data } = await api.post('/auth/login', { identifier, password })
       user.value = data
       student.value = null
+      classification.value = null
       checked.value = true
       await syncStudentSession()
       return true
@@ -98,6 +100,7 @@ export const useAuthStore = defineStore('auth', () => {
       const { data } = await api.post('/auth/register', payload)
       user.value = data
       student.value = null
+      classification.value = null
       checked.value = true
       return true
     } catch (e: any) {
@@ -113,6 +116,7 @@ export const useAuthStore = defineStore('auth', () => {
       student.value = data.student
       user.value = data.student ? studentUserToAuthUser(data.user) : null
       checked.value = true
+      classification.value = null
       return true
     } catch (e: any) {
       error.value = getErrorMessage(e, i18n.global.t('auth.errors.loginFailed'))
@@ -120,29 +124,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function studentRegister(payload: {
-    firstName: string
-    lastName: string
-    email: string
-    username: string
-    password: string
-    category: string
-    school?: string
-    city?: string
-    country?: string
-  }): Promise<boolean> {
-    error.value = ''
-    try {
-      const { data } = await api.post<StudentSession>('/student/auth/register', payload)
-      student.value = data.student
-      user.value = data.student ? studentUserToAuthUser(data.user) : null
-      checked.value = true
-      return true
-    } catch (e: any) {
-      error.value = getErrorMessage(e, i18n.global.t('auth.errors.registrationFailed'))
-      return false
-    }
-  }
 
   async function studentLogout() {
     try {
@@ -152,6 +133,7 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       user.value = null
       student.value = null
+      classification.value = null
       error.value = ''
     }
   }
@@ -164,9 +146,26 @@ export const useAuthStore = defineStore('auth', () => {
     } catch {
       user.value = null
       student.value = null
+      classification.value = null
     } finally {
       checked.value = true
     }
+  }
+
+  async function fetchClassification(): Promise<'none' | 'student' | 'teacher' | null> {
+    if (!user.value && !student.value) {
+      classification.value = null
+      return null
+    }
+    try {
+      const { data } = await api.get<{ classification: 'none' | 'student' | 'teacher' }>(
+        '/onboarding/status',
+      )
+      classification.value = data.classification
+    } catch {
+      // Keep the previous value; the guard re-fetches on the next navigation.
+    }
+    return classification.value
   }
 
   async function fetchRegistrationMode(force = false) {
@@ -189,6 +188,7 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       user.value = null
       student.value = null
+      classification.value = null
       error.value = ''
     }
   }
@@ -199,15 +199,16 @@ export const useAuthStore = defineStore('auth', () => {
     checked,
     error,
     registrationMode,
+    classification,
     isStudent,
     isStaff,
     isAdmin,
     login,
     register,
     studentLogin,
-    studentRegister,
     studentLogout,
     fetchMe,
+    fetchClassification,
     fetchRegistrationMode,
     logout,
   }

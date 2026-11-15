@@ -32,7 +32,7 @@ export const useMenuStore = defineStore('menu', () => {
 
   const auth = useAuthStore()
   const flags = computed<NavRoleFlags>(() => ({
-    staff: auth.isStaff,
+    staff: auth.isStaff && auth.classification !== 'none',
     student: auth.isStudent,
     admin: auth.isAdmin,
   }))
