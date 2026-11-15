@@ -166,8 +166,8 @@ onMounted(async () => {
       :show-per-page="!empty"
       :placeholder="t('event.searchPlaceholder')"
     >
-      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
-      <Select v-model="published" :options="publishedFilter" class="w-36 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
+      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1" />
+      <Select v-model="published" :options="publishedFilter" class="w-36 max-sm:flex-1" />
     </ListToolbar>
 
     <div data-tour="admin-event-list">

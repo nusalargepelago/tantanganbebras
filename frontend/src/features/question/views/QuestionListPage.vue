@@ -204,9 +204,9 @@ onMounted(async () => {
       :show-per-page="!empty"
       :placeholder="t('question.searchPlaceholder')"
     >
-      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
-      <Select v-model="difficulty" :options="difficultyFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
-      <Select v-model="status" :options="statusFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
+      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1" />
+      <Select v-model="difficulty" :options="difficultyFilter" class="w-32 max-sm:flex-1" />
+      <Select v-model="status" :options="statusFilter" class="w-32 max-sm:flex-1" />
       <div class="flex items-center gap-2">
         <span class="shrink-0 text-p-sm text-ink-gray-5">{{ t('list.deleted') }}</span>
         <Switch v-model="includeDisabled" />

@@ -193,7 +193,7 @@ onMounted(async () => {
       :show-per-page="!empty"
       :placeholder="t('practice.searchPlaceholder')"
     >
-      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1 sm:flex-1 sm:min-w-[5rem]" />
+      <Select v-model="category" :options="categoryFilter" class="w-32 max-sm:flex-1" />
     </ListToolbar>
 
     <div data-tour="admin-practice-list">
