@@ -31,20 +31,26 @@ function onPerPage(value: SelectOptionValue | null | undefined) {
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
+  <div class="flex flex-col items-start gap-2">
     <TextInput
       v-model="search"
       type="search"
       :placeholder="props.placeholder ?? t('shared.search')"
-      class="w-64"
+      class="w-full min-w-0 sm:w-56"
     />
-    <slot />
-    <Select
-      v-if="showPerPage"
-      :model-value="perPage"
-      :options="props.perPageOptions ?? defaultPerPageOptions"
-      class="ml-auto w-36"
-      @update:model-value="onPerPage"
-    />
+    <div class="flex w-full min-w-0 flex-wrap items-center gap-2">
+      <slot />
+      <!-- When the filters leave no room for this select, flex-wrap drops it
+           to its own line (right-aligned via ml-auto) instead of overflowing. -->
+      <div class="ml-auto w-36 shrink-0">
+        <Select
+          v-if="showPerPage"
+          :model-value="perPage"
+          :options="props.perPageOptions ?? defaultPerPageOptions"
+          class="w-full"
+          @update:model-value="onPerPage"
+        />
+      </div>
+    </div>
   </div>
 </template>
