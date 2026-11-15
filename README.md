@@ -231,10 +231,15 @@ Beberapa hal yang perlu dibaca sebelum instalasi dibuka ke internet:
 - `/uploads/*` disajikan tanpa autentikasi — jangan menyimpan berkas sensitif di sana.
 - Pendaftaran akun staf terbuka secara default dan langsung membuat sesi; tutup lewat
   `PUT /api/v1/auth/registration` untuk instalasi invite-only.
-- `/health`, `/ready`, dan `/api/v1/setup/status` bersifat publik dan menampilkan
-  informasi terbatas tentang instalasi.
-- Rate limit berjalan per IP; untuk deployment multi-worker, arahkan
-  `RATE_LIMIT_STORAGE_URL` ke Redis.
+- `/health`, `/ready`, dan `/api/v1/setup/status` bersifat publik. Status setup hanya
+  mengekspos `setupRequired` + `reason` (info terbatas: instance belum dikonfigurasi);
+  detail engine/URL database ter-mask hanya untuk klien loopback. `/health` mengekspos
+  metrik agregat.
+- API key hanya mengautentikasi request read; mutasi tetap butuh CSRF session.
+- Rate limit berjalan per IP efektif, hanya route API; untuk deployment multi-worker,
+  arahkan `RATE_LIMIT_STORAGE_URL` ke Redis.
+- `TRUSTED_PROXY=true` hanya di belakang proxy: rewrite `X-Forwarded-*` cuma dipercaya
+  dari peer private/loopback.
 - CSRF, CSP/HSTS, dan audit log aktif secara default; password di-hash dengan scrypt.
 
 ## Dokumentasi

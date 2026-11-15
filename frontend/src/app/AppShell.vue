@@ -13,14 +13,13 @@ import {
 import { useAuthStore } from '@/features/auth/store'
 import { openCatalog } from '@/app/tour/store'
 import ForbiddenDialog from '@/shared/components/ForbiddenDialog.vue'
-import {
-  MobileBottomNav,
-  MobileMenuSheet,
-  ShellSidebar,
-  type ShellNavItem,
-} from '@/shared/shell'
+import BrandLogo from '@/shared/components/BrandLogo.vue'
+import MobileBottomNav from '@/shared/shell/MobileBottomNav.vue'
+import MobileMenuSheet from '@/shared/shell/MobileMenuSheet.vue'
+import ShellSidebar from '@/shared/shell/ShellSidebar.vue'
+import type { ShellNavItem } from '@/shared/shell/types'
 import { useMediaQuery } from '@/shared/composables/useMediaQuery'
-import { brand, useBrandLogo } from '@/shared/brand'
+import { brand } from '@/shared/brand'
 import { useFocusMode } from './focus-mode'
 import { mobileNavItems } from './navigation'
 import { useMenuStore } from './menuStore'
@@ -49,8 +48,6 @@ const isFullscreen = computed(
 const isDesktop = useMediaQuery('(min-width: 640px)')
 
 const displayName = computed(() => auth.user?.fullName || auth.user?.email || '')
-
-const { logoSrc, onLogoError } = useBrandLogo()
 
 const sidebarCollapsed = ref(false)
 const { active: focusMode } = useFocusMode()
@@ -128,19 +125,13 @@ async function onLogout() {
             :menu-items="headerMenu"
           >
             <template #prefix>
-              <img
-                v-if="logoSrc"
-                :src="logoSrc"
-                alt="Logo"
-                class="h-full w-full object-cover"
-                @error="onLogoError"
-              />
-              <div
-                v-else
-                class="flex h-full w-full items-center justify-center bg-surface-gray-4 text-ink-gray-7"
-              >
-                {{ brand.name.charAt(0).toUpperCase() }}
-              </div>
+              <BrandLogo fill :alt="brand.name">
+                <div
+                  class="flex h-full w-full items-center justify-center bg-surface-gray-4 text-ink-gray-7"
+                >
+                  {{ brand.name.charAt(0).toUpperCase() }}
+                </div>
+              </BrandLogo>
             </template>
           </SidebarHeader>
         </template>

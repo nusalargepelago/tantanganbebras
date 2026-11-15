@@ -142,7 +142,7 @@ Tidak ada CLI generator di project ini (berbeda dengan root `cells`).
 | GET | /api/v1/auth/me | Current user (session) |
 | GET | /api/v1/auth/registration | Registration mode open/closed (public) |
 | PUT | /api/v1/auth/registration | Set registration mode (admin) |
-| GET | /api/v1/setup/status | First-run setup status (public) |
+| GET | /api/v1/setup/status | First-run setup status (public; engine/URL only for loopback clients) |
 | POST | /api/v1/setup/db-test | Test DB connection (loopback client only) |
 | POST | /api/v1/setup | Run first-run setup (loopback client only) |
 | GET | /api/v1/csrf | Fetch CSRF token (public) |
@@ -603,6 +603,23 @@ Ini gotcha paling sering terlewat.
     (`app/infra/seo.py` → `_apply_seo`); sumber kebenaran = tabel `settings`.
     `<title>` di `frontend/index.html` hanya fallback dev. SPA membaca
     `window.brand`; `seo` tidak pernah jadi window global.
+
+## Forking (sibling worktrees)
+
+Fork (`tantanganbebras` / `labba` / `tenancy`) adalah worktree terpisah dari
+repo ini — perubahan master mengalir ke fork saat mereka merge `master`.
+
+- Aturan generik merge master→fork + peta resolusi konflik + security
+  invariants: **`docs/forking.md`**. Skeleton `FORK.md` per fork:
+  `docs/FORK.template.md`.
+- **Stash protocol** untuk fork yang sengaja belum commit WIP sebelum merge:
+  `git stash push --include-untracked` sebelum `git merge master`, lalu
+  `git stash pop` SETELAH verifikasi hijau — konflik pop diselesaikan aditif
+  (master wins skeleton). Unmerged index entries (merge half-done) **tidak
+  bisa di-stash** — heal dulu. Jangan `stash drop` sebelum suite hijau.
+- Jangan pernah commit/pull/restore dari worktree fork lewat repo ini, dan
+  jangan hapus file hanya karena fork tampak tidak memakainya — fork-compat
+  gerbang untuk deletions.
 
 ## Deployment
 

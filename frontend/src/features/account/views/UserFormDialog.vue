@@ -2,7 +2,6 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
-  Button,
   Dialog,
   ErrorMessage,
   MultiSelect,
@@ -13,7 +12,7 @@ import {
   toast,
 } from 'frappe-ui'
 
-import { checkPassword, passwordRules } from '@/features/auth/validation'
+import PasswordRules from '@/shared/components/PasswordRules.vue'
 import { useAccountStore, type AdminUser } from '../store'
 
 const props = defineProps<{
@@ -63,8 +62,6 @@ const appRoleOptions = computed(() => [
   { label: t('account.roleUser'), value: 'user' },
   { label: t('account.roleAdmin'), value: 'admin' },
 ])
-
-const passwordChecks = computed(() => checkPassword(password.value))
 
 const roleOptions = computed(() =>
   store.roles.map((role) => ({ label: role.name, value: role.name })),
@@ -164,21 +161,7 @@ async function onSave() {
         autocomplete="new-password"
       />
 
-      <ul v-if="password.length" class="space-y-1">
-        <li
-          v-for="rule in passwordRules"
-          :key="rule.key"
-          class="flex items-center gap-1.5 text-p-xs"
-          :class="passwordChecks[rule.key] ? 'text-ink-green-6' : 'text-ink-gray-5'"
-        >
-          <span
-            :class="passwordChecks[rule.key] ? 'lucide-check' : 'lucide-minus'"
-            class="size-3"
-            aria-hidden="true"
-          />
-          {{ t(rule.label) }}
-        </li>
-      </ul>
+      <PasswordRules :password="password" />
 
       <TextInput
         v-model="fullName"

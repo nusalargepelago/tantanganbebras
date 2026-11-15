@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from flask_login import current_user
 
+from sqlalchemy import select
+
 from app.auth.models import MEMBER_ROLE, TEACHER_ROLE, Role
 from framework.api.response import error
 from framework.extensions import db
@@ -22,7 +24,7 @@ def ensure_builtin_roles() -> None:
     if not _roles_table_exists():
         return
 
-    existing = {r.name for r in db.session.query(Role).all()}
+    existing = set(db.session.scalars(select(Role.name)).all())
     for name in (MEMBER_ROLE, TEACHER_ROLE):
         if name not in existing:
             db.session.add(Role(name=name))

@@ -15,22 +15,12 @@ EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s.]+(?:\.[^@\s.]+)+$")
 PASSWORD_SPECIAL = "!@#$%^&*()_+-=[]{}|;:,.<>?"
 
 
-class CredentialPolicy:
-    """Validation mixin for email / username / password / full_name.
+class UsernamePolicy:
+    """Username normalisation + charset rule.
 
-    Email and username are normalised in ``mode="before"`` so declared length
-    bounds apply to the cleaned value rather than to the raw input.
+    Normalised in ``mode="before"`` so declared length bounds apply to the
+    cleaned value rather than to the raw input.
     """
-
-    @field_validator("email", mode="before")
-    @classmethod
-    def normalize_email(cls, value):
-        if not isinstance(value, str):
-            return value
-        value = value.strip().lower()
-        if not EMAIL_PATTERN.match(value):
-            raise ValueError("invalid_email")
-        return value
 
     @field_validator("username", mode="before")
     @classmethod
@@ -46,6 +36,25 @@ class CredentialPolicy:
             ch.isalnum() or ch in "_.-" for ch in value
         ):
             raise ValueError("invalid_username")
+        return value
+
+
+class CredentialPolicy(UsernamePolicy):
+    """Validation mixin for email / password / full_name.
+
+    Username rules come from :class:`UsernamePolicy`. Email is normalised in
+    ``mode="before"`` so declared length bounds apply to the cleaned value
+    rather than to the raw input.
+    """
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def normalize_email(cls, value):
+        if not isinstance(value, str):
+            return value
+        value = value.strip().lower()
+        if not EMAIL_PATTERN.match(value):
+            raise ValueError("invalid_email")
         return value
 
     @field_validator("password")
@@ -69,4 +78,4 @@ class CredentialPolicy:
         return value
 
 
-__all__ = ["EMAIL_PATTERN", "PASSWORD_SPECIAL", "CredentialPolicy"]
+__all__ = ["EMAIL_PATTERN", "PASSWORD_SPECIAL", "CredentialPolicy", "UsernamePolicy"]

@@ -1,4 +1,4 @@
-export interface CropWindow {
+interface CropWindow {
   cx: number
   cy: number
   sx: number
@@ -8,7 +8,7 @@ export interface CropWindow {
   scale: number
 }
 
-export const MAX_OUTPUT_EDGE = 512
+const MAX_OUTPUT_EDGE = 512
 
 const NO_WINDOW: CropWindow = {
   cx: 0.5,

@@ -5,14 +5,14 @@ import { useI18n } from 'vue-i18n'
 import { Button, ErrorMessage, FormControl, Spinner, toast } from 'frappe-ui'
 
 import { useAuthStore } from '../store'
-import { checkPassword, isPasswordValid, passwordRules } from '../validation'
-import { brand, useBrandLogo } from '@/shared/brand'
+import { isPasswordValid } from '../validation'
+import BrandLogo from '@/shared/components/BrandLogo.vue'
+import PasswordRules from '@/shared/components/PasswordRules.vue'
+import { brand } from '@/shared/brand'
 
 const router = useRouter()
 const auth = useAuthStore()
 const { t } = useI18n()
-
-const { logoSrc, onLogoError } = useBrandLogo()
 
 const fullName = ref('')
 const username = ref('')
@@ -21,13 +21,12 @@ const password = ref('')
 const submitting = ref(false)
 
 const errorMessage = computed(() => auth.error)
-const gateReady = computed(() => !!auth.user || auth.registrationMode !== null)
+const gateReady = computed(() => auth.checked && auth.registrationMode !== null)
 
 onMounted(async () => {
   await auth.fetchRegistrationMode()
 })
 
-const passwordChecks = computed(() => checkPassword(password.value))
 const passwordValid = computed(() => isPasswordValid(password.value))
 
 const disabled = computed(
@@ -67,21 +66,14 @@ async function onSubmit() {
     >
       <form class="space-y-4" @submit.prevent="onSubmit">
         <div class="flex flex-col items-center gap-1.5 text-center">
-          <div
-            v-if="logoSrc"
-            class="size-12 overflow-hidden rounded-6 bg-surface-gray-2"
-          >
-            <img
-              :src="logoSrc"
-              alt=""
-              class="h-full w-full object-cover"
-              @error="onLogoError"
-            />
-          </div>
-          <div v-else class="rounded-full bg-surface-gray-2 p-3 text-ink-gray-5">
-            <span class="lucide-package size-6" aria-hidden="true" />
-          </div>
-          <h1 class="text-2xl-semibold text-ink-gray-8">{{ t('auth.createAccount') }}</h1>
+          <BrandLogo size="md">
+            <div class="flex h-full w-full items-center justify-center text-ink-gray-5">
+              <span class="lucide-package size-6" aria-hidden="true" />
+            </div>
+          </BrandLogo>
+          <h1 class="text-2xl-semibold text-ink-gray-8">
+            {{ t('auth.createAccount') }}
+          </h1>
           <p class="text-p-sm text-ink-gray-5">{{ brand.name }}</p>
         </div>
 
@@ -118,21 +110,7 @@ async function onSubmit() {
           required
         />
 
-        <ul v-if="password.length" class="space-y-1">
-          <li
-            v-for="rule in passwordRules"
-            :key="rule.key"
-            class="flex items-center gap-1.5 text-p-xs"
-            :class="passwordChecks[rule.key] ? 'text-ink-green-6' : 'text-ink-gray-5'"
-          >
-            <span
-              :class="passwordChecks[rule.key] ? 'lucide-check' : 'lucide-minus'"
-              class="size-3"
-              aria-hidden="true"
-            />
-            {{ t(rule.label) }}
-          </li>
-        </ul>
+        <PasswordRules :password="password" />
 
         <Button
           type="submit"

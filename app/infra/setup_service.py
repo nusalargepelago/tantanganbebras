@@ -7,7 +7,7 @@ import socket
 import threading
 from urllib.parse import urlsplit, urlunsplit
 
-from sqlalchemy import inspect, text
+from sqlalchemy import inspect, select, text
 from sqlalchemy.orm import Session
 
 from app.auth.models import MEMBER_ROLE, Role
@@ -115,17 +115,19 @@ def _build_url(cfg: DbConfigIn) -> str:
 class SetupService:
     """Owns every rule of the first-run wizard; the blueprint only translates HTTP."""
 
-    def status(self) -> dict:
+    def status(self, *, include_details: bool = False) -> dict:
         url = _active_engine_url()
-        safe_url = _mask_password(url)
+        details = {}
+        if include_details:
+            details = {
+                "activeEngine": _engine_name(url),
+                "activeUrl": _mask_password(url),
+            }
         if not _has_schema(url):
-            return {"setupRequired": True, "reason": "no_schema",
-                    "activeEngine": _engine_name(url), "activeUrl": safe_url}
+            return {"setupRequired": True, "reason": "no_schema", **details}
         if _user_count(url) == 0:
-            return {"setupRequired": True, "reason": "no_users",
-                    "activeEngine": _engine_name(url), "activeUrl": safe_url}
-        return {"setupRequired": False, "reason": None,
-                "activeEngine": _engine_name(url), "activeUrl": safe_url}
+            return {"setupRequired": True, "reason": "no_users", **details}
+        return {"setupRequired": False, "reason": None, **details}
 
     def test_db(self, cfg: DbConfigIn) -> str:
         if not self.status()["setupRequired"]:
@@ -211,7 +213,7 @@ def _seed_initial(url: str, admin: AdminCreateIn, brand: BrandIn, lang: str) -> 
     engine = db_bootstrap._engine_of(url)
     try:
         with Session(engine) as session:
-            member = session.query(Role).filter(Role.name == MEMBER_ROLE).first()
+            member = session.scalars(select(Role).where(Role.name == MEMBER_ROLE)).first()
             if member is None:
                 member = Role(name=MEMBER_ROLE)
                 session.add(member)

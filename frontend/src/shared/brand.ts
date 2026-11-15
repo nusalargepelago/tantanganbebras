@@ -1,6 +1,6 @@
 import { computed, reactive, ref, watch } from 'vue'
 
-export interface Brand {
+interface Brand {
   name: string
   tagline: string
   description: string
