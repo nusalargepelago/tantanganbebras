@@ -3,7 +3,8 @@
 Fork dari **minimals** (upstream: branch `master`).
 Aturan generik: **`docs/forking.md`** (master). Skeleton: `docs/FORK.template.md`.
 File ini hanya berisi selisih yang spesifik fork ini.
-Snapshot: 2026-11-15 · master `fba5c658` + cleanup working tree (uncommitted).
+Snapshot: 2026-11-15 · merge master `e31451d` — worktree master bersih,
+tidak ada pekerjaan ter-commit tertunda di kedua sisi.
 
 - Produk fork: platform lomba sekolah — event, practice, question bank,
   student import, todos, backup, "Tantangan Bebras". Spec: `docs/specs/`.
@@ -48,31 +49,40 @@ sebelum diserap):
 
 ## 3. Shared files dimodifikasi fork — tabel resolusi
 
+Status per baris = hasil merge master `e31451d` (2026-11-15), 18 file konflik.
+
 | File | Delta fork | Cara resolve |
 |---|---|---|
-| `frontend/src/app/navigation.ts` | nav lomba (+~73 baris) | Master skeleton; spread item fork di bawah item master |
-| `.../UserSettingsDialog.vue` | panel fork | Master skeleton; blok fork sebagai section baru |
-| `.../AppShell.vue` | shell tweaks | Master skeleton; re-apply |
-| `.../menuStore.ts` | preferensi fork | Master logic; field fork aditif |
-| `.../breadcrumbs.ts` | map breadcrumb fork | Union map |
-| `.../AppPageHeader.vue` | prop `title` | **Selesai 2026-11-15:** diserap master; file fork disamakan byte-identical — tidak ada delta fork |
-| `.../DashboardView.vue` | tweak fork | Master wins; re-apply |
-| `.../AdminDashboardView.vue` | rewrite (charts sekolah) | **Selesai 2026-11-15:** file = master persis; rewrite di `AdminSchoolsDashboardView.vue` (fork-owned); `DashboardView.vue` import fork view |
-| `.../{UsersView,RegisterView,LoginView}.vue`, `.../auth/{routes.ts,store.ts}` | panel/link fork | Master skeleton; re-apply aditif |
-| `.../account/store.ts` | **`fetchUserTotal` dihapus** | **Selesai 2026-11-15:** `fetchUserTotal` dikembalikan (dibutuhkan dashboard master). Penghapusan adalah penyebab regresi build di dashboard master — jangan dihapus lagi |
-| `.../setup/store.ts` | BOM UTF-8 tak sengaja | Buang BOM; master wins |
-| `app/account/api.py` | `DELETE /users/<id>` | Master skeleton; re-apply aditif + `@login_required` + `require_role("admin")` + `audit_log` |
-| `app/account/services.py` | ops user fork | Master skeleton; re-apply |
-| `app/auth/models.py` (worktree, belum ter-commit) | kolom/relasi fork | Master skeleton; kolom fork aditif + cek fork-migration nyambung |
-| `app/create_app.py` | register blueprint/model fork | Master skeleton; blok fork terpisah, sebelum `register_spa` |
-| `app/infra/{roles.py, seo.py, setup_dto.py}` | default brand fork | Master wins struktur; `setup_dto.py` boleh pertahankan default **fork** |
-| `framework/infra/config.py` | `MAX_CONTENT_LENGTH` → 64MB (restore backup) | Lebih baik set di `.env` fork; kembalikan default master |
-| `framework/infra/frontend.py` | `Cache-Control: no-cache` | **Selesai 2026-11-15:** diserap master; file fork = master byte-identical |
-| `locales/{en,id}.json` | kunci fork | Aditif + parity en↔id wajib |
-| `.env.example` | var fork | Aditif |
-| `pyproject.toml` / `uv.lock` | dep fork | `uv lock` ulang, jangan hand-merge |
-| `CLAUDE.md` / `README.md` | section fork | Master otoritatif; fork append section; tabel endpoint fork → `test_docs.py` hijau |
-| `.claude/skills/*`, `index.html`, `index.css`, `brand.ts`, `.gitignore` | fork tweaks | Master wins kecuali konflik nyata |
+| `frontend/src/app/navigation.ts` | nav lomba + `roles?: NavRole[]` | **Selesai:** interface **union** `roles?` + `requireAdmin?` (dua mekanisme hidup berdampingan); item `Users` = versi master (`lucide-users`, `requireAdmin: true`) |
+| `.../UserSettingsDialog.vue` | tombol tour (`openCatalog`) | **Selesai:** skeleton master (brandStore, `languageOptions` dari i18n, BrandLogo); delta fork di-re-apply aditif |
+| `.../AppShell.vue` | `focusMode`, `data-tour`, wrapper avatar | **Selesai:** skeleton master; **`BrandLogo size="fill"` menang** (fork masih `fill` polos — fix master `e31451d`); `v-if="!focusMode"` + `data-tour` re-apply |
+| `.../menuStore.ts` | `NavRoleFlags` + filter berbasis `roles` | **Selesai:** `isAdmin` (master) dan `flags` (fork) keduanya dipakai; `visibleForRole` cek `requireAdmin` dulu, baru `roles` |
+| `.../breadcrumbs.ts` | map breadcrumb fork | **Selesai:** fork = superset ketat, tidak ada kehilangan |
+| `.../AppPageHeader.vue` | prop `title` | sudah byte-identical ke master (lihat §8) |
+| `.../DashboardView.vue` | sector admin/teacher/student | **Selesai:** skeleton master (`AppPageHeader` + gate `auth.checked`) + sector fork → `AdminSchools/Teacher/StudentDashboardView`. `AdminDashboardView.vue` & `UserDashboardView.vue` tetap ada (versi master) tapi **tidak dirender** fork — dead code, disengaja |
+| `.../AdminDashboardView.vue` | rewrite charts sekolah | tetap byte-identical; rewrite di `AdminSchoolsDashboardView.vue` (fork-owned) |
+| `.../UsersView.vue` (add/add) | gate fork | **Selesai: master menang** — pakai `initialLoaded` + `gateReady` computed (fix master `0f6f9e0`) |
+| `.../{RegisterView,LoginView}.vue`, `.../auth/{routes.ts,store.ts}` | panel/link fork | auto-merge + delta fork re-apply (`fetchClassification`) |
+| `.../account/store.ts` | **`fetchUserTotal` dihapus** | jangan dihapus lagi (lihat §8) — sudah byte-identical ke master |
+| `.../setup/store.ts` | BOM UTF-8 tak sengaja | tidak ikut konflik merge ini |
+| `frontend/src/router/{guard,index,meta}.ts` | **di luar tabel lama** | **Selesai:** aditif — urutan guard auth **tidak** di-reorder; `requiresStaff`/`allowTeacher` + gate klasifikasi tetap; `children` routes fork = superset master (`accountRoutes` sudah termasuk) |
+| `frontend/src/shared/composables/useListControls.ts` | tipe `fetch` | **Selesai: master menang** (`void \| Promise<unknown>` — superset dari `Promise<unknown>` fork) |
+| `app/auth/repositories.py` | **di luar tabel lama** | **Selesai:** format master + delta fork di-re-apply — login tetap case-insensitive (`func.lower`) |
+| `app/infra/roles.py` | **di luar tabel lama** | **Selesai:** skeleton master — `ensure_member_role()` dipertahankan persis master; delta fork jadi `ensure_builtin_roles()` (wrapper: seed `Member` + `Teacher`); `require_staff`/`require_student_manager`/`student_manager_scope` utuh; `__all__` = master + fungsi fork |
+| `app/account/api.py` | `DELETE /users/<id>` | auto-merge; delta fork utuh (`@login_required` + `require_role("admin")` + `audit_log`) |
+| `app/account/services.py` | ops user fork | auto-merge |
+| `app/auth/models.py` | — | auto-merge (master hanya tambah docstring) |
+| `app/create_app.py` | register blueprint/model fork | auto-merge; `ensure_builtin_roles()` tetap yang dipanggil |
+| `app/infra/{seo,setup_dto}.py` | default brand fork | auto-merge; `setup_dto.py` tetap default fork |
+| `framework/infra/config.py` | `MAX_CONTENT_LENGTH` → 64MB | tidak ikut konflik; tetap set di `.env` fork, bukan default master |
+| `framework/infra/frontend.py` | `Cache-Control: no-cache` | byte-identical ke master `f89a413` |
+| `frontend/src/app/locales/{en,id}.json` | kunci fork | **Selesai:** three-way merge per-key → **0 true conflict**; fork = superset ketat master (142 key fork-only, 0 master-only, 0 both-changed); parity en↔id terjaga |
+| `.env.example` | var fork | tidak ikut konflik |
+| `pyproject.toml` / `uv.lock` | dep fork | master **tidak** mengubah deps → `uv lock` tidak diperlukan merge ini |
+| `CLAUDE.md` | section fork | **Selesai:** 6 konflik resolve ke fork (baris `DELETE /users/:id`, section onboarding/teacher, `BUILTIN_ROLES` `Member`+`Teacher`, daftar `features/`, `navigation.ts` role, urutan guard) — 0 konten master hilang |
+| `README.md` | intro produk fork | **Selesai:** resolusi rerere lama dipertahankan (README terlokalisasi = intro fork + seluruh section operasional master); **`## Architecture` master yang hilang dikembalikan** |
+| `tests/test_account.py` | `test_delete_user` | **Selesai:** test fork dipertahankan + test master masuk |
+| `.claude/skills/*`, `index.html`, `index.css`, `brand.ts`, `.gitignore` | fork tweaks | auto-merge |
 
 ## 4. File yang fork hapus
 
@@ -94,13 +104,23 @@ sebelum diserap):
 - `setup/store.ts` pernah terkontaminasi BOM — perhatikan saat konflik.
 - `AdminDashboardView.vue` sudah bersih dari konflik sejak §8 selesai —
   perubahan tampilan admin sekolah dikerjakan di `AdminSchoolsDashboardView.vue`.
-- Worktree berisi WIP (`M app/auth/models.py`, `M .gitignore`, dll.) yang
-  belum ter-commit — commit/stash dulu sebelum merge.
-- Lockfile perlu `uv lock` ulang; fork tidak boleh hand-merge.
+- Worktree harus bersih sebelum merge — WIP lama (`M app/auth/models.py`,
+  `M .gitignore`) sudah di-commit/stash per 2026-11-15 (prep `f41b21b`).
+  Cek `git status` dulu; kalau belum bersih → commit WIP > stash > jangan merge.
+- Lockfile perlu `uv lock` ulang; fork tidak boleh hand-merge. (Merge
+  `e31451d` tidak butuh — master tidak mengubah `pyproject.toml`/`uv.lock`.)
 - Migrasi fork `0002+` bergantung pada skema master: setelah merge yang
-  menyentuh `0001_initial.py`, jalankan fresh-boot check.
+  menyentuh `0001_initial.py`, jalankan fresh-boot check. Merge `e31451d`
+  tidak menyentuh `0001` — fresh-boot tetap dijalankan, bersih.
 - Endpoint fork (`/event`, `/practice`, …) tidak ada di CLAUDE.md table test
   master → `tests/test_docs.py` fork WAJIB punya baris fork; jangan matikan test.
+- **rerere aktif** (`rerere.enabled=true`, cache di gitdir utama `rr-cache`,
+  bukan worktree). Resolusi merge ini tercatat → konflik sama di merge
+  berikutnya akan di-auto-resolve. Tetap wajib verify.
+- **Jangan resolve konflik pakai `Set-Content` PowerShell 5.1** — menulis
+  BOM UTF-8 + mojibake (`·` → `Â·`). Pakai
+  `[System.IO.File]::ReadAllText/WriteAllText` dengan `UTF8Encoding($false)`
+  dan join baris `"`r`n"` (working tree ini CRLF).
 
 ## 7. Security checklist tambahan fork
 
@@ -110,7 +130,7 @@ sebelum diserap):
   `RATE_LIMIT_AUTH`.
 - Backup/restore: jangan aktif tanpa auth admin; `.env` backup tidak di-commit.
 
-## 8. Re-align — SELESAI 2026-11-15 (sebagian menunggu commit)
+## 8. Re-align — SELESAI 2026-11-15 (semua sudah ter-commit)
 
 Langkah yang dieksekusi:
 
@@ -129,13 +149,17 @@ Langkah yang dieksekusi:
 6. 2026-11-15 (lanjutan): delta `AppPageHeader.vue` (prop `title` +
    fallback `breadcrumbMap` di judul mobile) diserap ke master; file fork
    disamakan byte-identical. `DashboardView.vue` di-align ke skeleton
-   master (AppPageHeader + gate `auth.checked`), commit `38bcbf8`.
+   master (AppPageHeader + gate `auth.checked`) — masuk lewat `84e0bcc`
+   lalu dikunci lagi oleh merge `ce3ad0e`.
    Verifikasi: `yarn typecheck` ✓; `yarn build` ✓ (52s).
+   *(Rujukan `38bcbf8` di versi lama dokumen ini **dangling** — objek ada
+   tapi tidak di branch mana pun; sha di atas adalah yang benar.)*
 
 ## 9. Riwayat merge & re-align
 
 | Tanggal | Master sha | Konflik & resolve | Verifikasi |
 |---|---|---|---|
 | 2026-11-15 | `4c11655` | Bukan merge — re-align AdminDashboardView (lihat §8) | `typecheck` ✓; `pytest` 480 passed |
-| 2026-11-15 | master worktree (uncommitted) | Bukan merge — `AppPageHeader.vue` byte-identical ke master (delta `title` diserap); `DashboardView.vue` di-align skeleton master | `typecheck` ✓; `build` ✓ |
-| 2026-11-15 | master (uncommitted) | Bukan merge — `Cache-Control: no-cache` HTML diserap ke master; `framework/infra/frontend.py` file fork = master byte-identical; `sanitize.ts` ditetapkan fork-owned permanen | master `pytest` 243 passed; `ruff` ✓ |
+| 2026-11-15 | `498e808` | Bukan merge — `AppPageHeader.vue` byte-identical ke master (delta `title` diserap); `DashboardView.vue` di-align skeleton master | `typecheck` ✓; `build` ✓ |
+| 2026-11-15 | `f89a413` | Bukan merge — `Cache-Control: no-cache` HTML diserap ke master; `framework/infra/frontend.py` file fork = master byte-identical; `sanitize.ts` ditetapkan fork-owned permanen | master `pytest` 243 passed; `ruff` ✓ |
+| 2026-11-15 | `e31451d` | **Merge master → fork** (18 file konflik): resolve per tabel §3; `router/*` di luar tabel → aditif tanpa reorder guard; locale & `CLAUDE.md` = fork superset (0 konten master hilang); `UsersView.vue` master menang; `AppShell` ikut `size="fill"`; README: resolusi rerere dipertahankan + `## Architecture` master dikembalikan; `roles.py` = `ensure_member_role` (master) + `ensure_builtin_roles` (fork) | `pytest` **482 passed**; `ruff` ✓; `typecheck` ✓; `build` ✓ (56s); fresh-boot `flask db upgrade` `0001`→`20261114_9` ✓ |

@@ -21,8 +21,8 @@ import type { ShellNavItem } from '@/shared/shell/types'
 import { useMediaQuery } from '@/shared/composables/useMediaQuery'
 import { brand } from '@/shared/brand'
 import { useFocusMode } from './focus-mode'
-import { mobileNavItems } from './navigation'
 import { useMenuStore } from './menuStore'
+import { mobileNavItems } from './navigation'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 import UserSettingsDialog from './UserSettingsDialog.vue'
 
@@ -125,7 +125,7 @@ async function onLogout() {
             :menu-items="headerMenu"
           >
             <template #prefix>
-              <BrandLogo fill :alt="brand.name">
+              <BrandLogo size="fill" :alt="brand.name">
                 <div
                   class="flex h-full w-full items-center justify-center bg-surface-gray-4 text-ink-gray-7"
                 >

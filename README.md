@@ -105,6 +105,13 @@ dan tanpa layanan tambahan.
 | **Database** | SQLite · MariaDB/MySQL · PostgreSQL |
 | **Deploy** | Docker (non-root) + Caddy (TLS) · cPanel/Passenger |
 
+## Architecture
+
+Satu service dengan domain berlapis (`api -> dto -> services -> repositories ->
+models -> presenters`); commit hanya di service; response camelCase, error
+`{"message": "<snake_case_key>"}`. Detail & konvensi lengkap:
+[CLAUDE.md](CLAUDE.md), [ramework/README.md](framework/README.md).
+
 ## Highlights
 
 - **White-label & SEO** — brand (nama, tagline, deskripsi, site URL, bahasa)

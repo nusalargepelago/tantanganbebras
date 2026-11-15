@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from flask_login import current_user
-
 from sqlalchemy import select
 
 from app.auth.models import MEMBER_ROLE, TEACHER_ROLE, Role
@@ -19,16 +18,27 @@ def _roles_table_exists() -> bool:
         return False
 
 
-def ensure_builtin_roles() -> None:
-    """Seed the builtin roles. Idempotent; runs after migrations on boot."""
+def ensure_member_role() -> None:
+    """Seed the Member role. Idempotent; runs after migrations on boot."""
     if not _roles_table_exists():
         return
 
     existing = set(db.session.scalars(select(Role.name)).all())
-    for name in (MEMBER_ROLE, TEACHER_ROLE):
-        if name not in existing:
-            db.session.add(Role(name=name))
-            db.session.commit()
+    if MEMBER_ROLE not in existing:
+        db.session.add(Role(name=MEMBER_ROLE))
+        db.session.commit()
+
+
+def ensure_builtin_roles() -> None:
+    """Seed the builtin roles (Member + Teacher). Idempotent; runs after migrations on boot."""
+    ensure_member_role()
+    if not _roles_table_exists():
+        return
+
+    existing = set(db.session.scalars(select(Role.name)).all())
+    if TEACHER_ROLE not in existing:
+        db.session.add(Role(name=TEACHER_ROLE))
+        db.session.commit()
 
 
 def _has_row(table: str, user_id: str) -> bool:
@@ -124,9 +134,8 @@ def student_manager_scope() -> str | None:
 
 
 __all__ = [
-    "MEMBER_ROLE",
-    "TEACHER_ROLE",
     "ensure_builtin_roles",
+    "ensure_member_role",
     "require_staff",
     "require_student_manager",
     "student_manager_scope",

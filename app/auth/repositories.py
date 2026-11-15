@@ -25,14 +25,16 @@ class UserRepository(RepositoryBase[User]):
 
     def find_by_identifier(self, identifier: str) -> User | None:
         needle = identifier.lower()
-        return db.session.execute(
-            select(User).where(
-                or_(
-                    func.lower(User.email) == needle,
-                    func.lower(User.username) == needle,
+        return (
+            db.session.execute(
+                select(User).where(
+                    or_(
+                        func.lower(User.email) == needle,
+                        func.lower(User.username) == needle,
+                    )
                 )
-            )
-        ).scalars().unique().first()
+            ).scalars().unique().first()
+        )
 
 
 class RoleRepository(RepositoryBase[Role]):

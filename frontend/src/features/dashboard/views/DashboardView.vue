@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Spinner } from 'frappe-ui'
 
+import AppPageHeader from '@/shared/shell/AppPageHeader.vue'
 import { useAuthStore } from '@/features/auth/store'
 import AdminSchoolsDashboardView from './AdminSchoolsDashboardView.vue'
 import StudentDashboardView from './StudentDashboardView.vue'
@@ -18,6 +19,8 @@ const sector = computed(() => {
 </script>
 
 <template>
+  <AppPageHeader />
+
   <Spinner v-if="!gateReady" />
 
   <AdminSchoolsDashboardView v-else-if="sector === 'admin'" />

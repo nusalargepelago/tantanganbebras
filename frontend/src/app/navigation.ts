@@ -16,6 +16,7 @@ export interface NavItem {
   icon: string
   route: RouteDestination
   roles?: NavRole[]
+  requireAdmin?: boolean
   mobile?: boolean
 }
 
@@ -84,9 +85,9 @@ const NAV_ITEMS: NavItem[] = [
   {
     key: 'Users',
     labelKey: 'nav.users',
-    icon: 'lucide-user-cog',
+    icon: 'lucide-users',
     route: { name: 'Users' },
-    roles: ['admin'],
+    requireAdmin: true,
   },
   {
     key: 'Backup',

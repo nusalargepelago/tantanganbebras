@@ -31,6 +31,7 @@ export const useMenuStore = defineStore('menu', () => {
   let generation = 0
 
   const auth = useAuthStore()
+  const isAdmin = computed(() => auth.user?.appRole === 'admin')
   const flags = computed<NavRoleFlags>(() => ({
     staff: auth.isStaff && auth.classification !== 'none',
     student: auth.isStudent,
@@ -38,9 +39,10 @@ export const useMenuStore = defineStore('menu', () => {
     teacher: auth.isTeacher,
   }))
   const visibleForRole = (items: NavItem[]) =>
-    items.filter(
-      (item) => !item.roles || item.roles.some((role) => flags.value[role]),
-    )
+    items.filter((item) => {
+      if (item.requireAdmin && !isAdmin.value) return false
+      return !item.roles || item.roles.some((role) => flags.value[role])
+    })
 
   const allItems = computed(() => visibleForRole(orderedNavItems(order.value)))
   const items = computed(() =>

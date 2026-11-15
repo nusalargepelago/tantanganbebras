@@ -1,7 +1,7 @@
 import { onScopeDispose, ref, watch } from 'vue'
 
 export interface ListControlsOptions {
-  fetch: (query: { search: string; perPage: number }) => Promise<unknown>
+  fetch: (query: { search: string; perPage: number }) => void | Promise<unknown>
   setPage: (page: number) => void
   initialSearch?: string
   initialPerPage?: number
